@@ -283,7 +283,7 @@ Với tình huống an toàn, lý do thuyết phục là nêu được vì sao y
       messages: [{ role: 'user', content: prompt }],
       temperature: 0.2,
       response_format: { type: 'json_object' }
-    });
+    }, TUY_CHON_GOI);
 
     const ketQua = JSON.parse(response.choices[0].message.content);
     const muc = Object.values(MUC_LY_DO).includes(ketQua.muc) ? ketQua.muc : MUC_LY_DO.TAM_DUOC;
@@ -294,10 +294,11 @@ Với tình huống an toàn, lý do thuyết phục là nêu được vì sao y
       nguon: 'ai'
     };
   } catch (error) {
-    console.error('[groqService] Lỗi chamDiemLyDo:', error.message);
+    if (laQuaHan(error)) console.warn(`[groqService] Chấm lý do quá ${HAN_CHO_MS}ms, cho mức giữa`);
+    else console.error('[groqService] Lỗi chamDiemLyDo:', error.message);
     return {
       muc: MUC_LY_DO.TAM_DUOC,
-      feedback: 'Hệ thống chấm điểm gặp trục trặc, lý do của bạn được ghi nhận ở mức trung bình.',
+      feedback: 'Hệ thống chưa chấm được lý do của bạn lần này, nên phần điểm được ghi nhận ở mức trung bình.',
       nguon: 'du_phong'
     };
   }
