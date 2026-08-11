@@ -1,0 +1,120 @@
+{
+  "_note": "CASE MẪU — chuyển từ kịch bản 3.6 của Thảo Phương sang định dạng database. Dùng làm khuôn cho 17 case còn lại.",
+  "id": "case_het_dung_luong",
+  "type": "scam",
+  "difficulty": "trung_binh",
+  "harm": "lo_thong_tin",
+  "channel": "email",
+  "title": "Cảnh báo giả hết dung lượng lưu trữ công việc",
+
+  "context": {
+    "image": "/assets/context/van-phong-sang-thu-hai.png",
+    "text": "Sáng thứ hai, bạn đang mở loạt tài liệu chuẩn bị cho cuộc họp lúc chín giờ thì thấy một email mới trong hộp thư công ty."
+  },
+
+  "npc": {
+    "name": "Bộ phận hỗ trợ Công nghệ Thông tin",
+    "role": "tự xưng quản trị hệ thống nội bộ",
+    "org": "FunHack",
+    "avatar": "/assets/avatar/he-thong.png",
+    "display_name": "IT Helpdesk - FunHack",
+    "status_line": "it-helpdesk@workspace-upgrade-storage.net",
+    "phone": null,
+    "hotline": "024 3771 6208",
+    "account_no": null,
+    "account_name": null,
+    "amount": null,
+    "link": "it-support-login.com"
+  },
+
+  "email": {
+    "from_name": "IT Helpdesk - FunHack",
+    "from_address": "it-helpdesk@workspace-upgrade-storage.net",
+    "to_address": "ban@funhack.com.vn",
+    "subject": "Khẩn: Dung lượng lưu trữ của bạn đã đạt 99%",
+    "time": "Thứ hai, 08:12",
+    "ticket_id": "REQ-8492",
+    "has_progress_bar": true,
+    "progress_percent": 99,
+    "cta_label": "Yêu cầu nâng cấp bộ nhớ ngay",
+    "footer": "Email này được gửi tự động, vui lòng không phản hồi. Chính sách bảo mật quyền riêng tư."
+  },
+
+  "opening_message": "Kính gửi anh chị, hệ thống ghi nhận không gian lưu trữ đám mây của tài khoản anh chị đã đạt 99% giới hạn được cấp. Anh chị vui lòng truy cập it-support-login.com để xác thực danh tính và yêu cầu cấp thêm dung lượng. Việc cấp thêm là hoàn toàn miễn phí theo chính sách công ty. Nếu không thực hiện trong vòng 12 giờ, hệ thống sẽ tự động xoá các tài liệu cũ nhất để giải phóng không gian.",
+
+  "attachments": [],
+
+  "spans": [
+    {
+      "id": "sp_01",
+      "kind": "red_flag",
+      "text": "it-support-login.com",
+      "why": "Tên miền không thuộc công ty cũng không thuộc nhà cung cấp dịch vụ lưu trữ. Cổng nội bộ thật luôn nằm trên tên miền của FunHack."
+    },
+    {
+      "id": "sp_02",
+      "kind": "red_flag",
+      "text": "hệ thống sẽ tự động xoá các tài liệu cũ nhất",
+      "why": "Hệ thống quản trị doanh nghiệp không bao giờ tự xoá tài liệu của nhân viên. Hết dung lượng thì chỉ bị chặn tải lên tệp mới."
+    },
+    {
+      "id": "sp_03",
+      "kind": "red_flag",
+      "text": "trong vòng 12 giờ",
+      "why": "Thời hạn ngắn kèm hậu quả mất dữ liệu là cách ép người nhận hành động trước khi kịp kiểm tra."
+    },
+    {
+      "id": "sp_04",
+      "kind": "red_flag",
+      "text": "xác thực danh tính",
+      "why": "Không có lý do gì phải đăng nhập lại để xin thêm dung lượng. Đây là bước để lấy tài khoản của bạn."
+    },
+    {
+      "id": "sp_05",
+      "kind": "decoy",
+      "text": "hoàn toàn miễn phí theo chính sách công ty",
+      "why": "Nghe như chiêu dụ, nhưng cấp thêm dung lượng miễn phí đúng là chính sách bình thường ở nhiều công ty. Chi tiết này không tự nó nói lên điều gì."
+    },
+    {
+      "id": "sp_06",
+      "kind": "decoy",
+      "text": "đã đạt 99% giới hạn được cấp",
+      "why": "Hết dung lượng là chuyện rất hay xảy ra với dân văn phòng. Vấn đề không nằm ở con số mà ở chỗ bạn chưa tự kiểm tra lại."
+    }
+  ],
+
+  "max_chat_turns": 0,
+  "assistant_turns": 5,
+  "verification_limit": 1,
+
+  "system_prompt_extra": null,
+  "fallback_replies": [],
+
+  "verification": [
+    {
+      "id": "vf_01",
+      "label": "Tự mở nền tảng lưu trữ và xem thanh dung lượng",
+      "result": "Thanh dung lượng hiển thị mới dùng khoảng một nửa hạn mức được cấp.",
+      "is_independent": true
+    },
+    {
+      "id": "vf_02",
+      "label": "Kiểm tra tên miền trong nút nâng cấp",
+      "result": "Nút dẫn tới một tên miền không thuộc FunHack cũng không thuộc nhà cung cấp dịch vụ lưu trữ.",
+      "is_independent": true
+    },
+    {
+      "id": "vf_03",
+      "label": "Trả lời email hỏi bộ phận hỗ trợ",
+      "result": "Bên kia phản hồi kèm mã yêu cầu hỗ trợ và nhắc lại thời hạn mười hai giờ.",
+      "is_independent": false,
+      "note": "Hỏi lại chính kênh đang nghi ngờ không phải là kiểm chứng"
+    }
+  ],
+
+  "correct_action": "Không bấm vào liên kết trong email. Tự mở nền tảng lưu trữ từ dấu trang của mình để xem dung lượng thật, rồi báo email này cho bộ phận công nghệ thông tin của công ty.",
+
+  "lesson": "Kẻ gian mạo danh bộ phận công nghệ thông tin nội bộ và đánh vào nỗi sợ mất dữ liệu để lấy tài khoản email công ty. Hai điểm cần nhớ: hệ thống doanh nghiệp không bao giờ tự xoá tài liệu của nhân viên khi hết dung lượng, và mọi cổng đăng nhập nội bộ đều nằm trên tên miền của chính công ty.",
+
+  "support_hint": "sp_01"
+}

@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tỉnh táo — nhận diện lừa đảo</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600&family=Be+Vietnam+Pro:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="man-choi" id="man-choi">
+
+  <!-- ============ HÀNG TRÊN ============ -->
+  <header class="thanh-tren">
+    <div class="chip-giai-doan">
+      <span class="chip-giai-doan__icon" id="icon-giai-doan">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+        </svg>
+      </span>
+      <span id="ten-giai-doan">Đang tải</span>
+    </div>
+
+    <div class="nhom-chi-so">
+      <div class="chi-so chi-so--tinh-than">
+        <span class="chi-so__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l8.8 8.8 8.8-8.8a5.5 5.5 0 0 0 0-7.8z"/>
+          </svg>
+        </span>
+        <span class="chi-so__nhan">Tinh thần</span>
+        <span class="chi-so__ranh"><span class="chi-so__thanh" id="thanh-suc-khoe"></span></span>
+        <span class="chi-so__so" id="so-suc-khoe">80</span>
+      </div>
+
+      <div class="chi-so chi-so--ly-tri">
+        <span class="chi-so__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>
+          </svg>
+        </span>
+        <span class="chi-so__nhan">Lý trí</span>
+        <span class="chi-so__ranh"><span class="chi-so__thanh" id="thanh-ly-tri"></span></span>
+        <span class="chi-so__so" id="so-ly-tri">70</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ THANH TIẾN TRÌNH ============ -->
+  <div class="tien-trinh" id="tien-trinh" role="img" aria-label="Tiến trình các chặng"></div>
+
+  <!-- ============ BA CỘT ============ -->
+  <!-- Trái là sổ tay, giữa là lớp chat (thế giới thật), phải là trợ lý.
+       Chỉ cột giữa đổi hình dạng theo channel, hai cột kia giữ nguyên ở mọi kênh. -->
+  <main class="khu-choi">
+
+    <!-- ---------- CỘT TRÁI — SỔ TAY ---------- -->
+    <section class="cot cot--so-tay">
+      <div class="the the-boi-canh">
+        <!-- Không có ảnh bối cảnh thì ẩn hẳn ô này, không để khung giữ chỗ -->
+        <div class="the-boi-canh__anh" id="khung-anh-boi-canh" hidden>
+          <img id="anh-boi-canh" alt="">
+        </div>
+        <p class="nhan-nho">Bối cảnh</p>
+        <p class="the-boi-canh__chu" id="chu-boi-canh">Đang tải tình huống…</p>
+      </div>
+
+      <!-- details để trên màn hẹp ô này thu gọn thành một nút mở ra.
+           Trên màn rộng JS mở sẵn và khoá lại. -->
+      <details class="the the-bang-chung" id="the-bang-chung">
+        <summary class="the-bang-chung__dau">
+          <span class="nhan-nho">Bằng chứng đã đánh dấu</span>
+          <span class="the-bang-chung__dem" id="dem-bang-chung">0</span>
+        </summary>
+        <ul class="ds-bang-chung" id="ds-bang-chung"></ul>
+        <p class="the-bang-chung__goi-y" id="goi-y-bang-chung">Bấm vào chỗ đáng ngờ trong nội dung để thêm</p>
+      </details>
+
+      <div class="khu-mascot">
+        <div class="bong-thoai" id="bong-thoai">
+          <p id="chu-bong-thoai"></p>
+        </div>
+        <img class="mascot" id="mascot" data-mascot src="/assets/mascot/mascot-binh-thuong.png" alt="Người hướng dẫn" width="168" height="168">
+      </div>
+    </section>
+
+    <!-- ---------- CỘT GIỮA — NỘI DUNG TÌNH HUỐNG ---------- -->
+    <section class="cot cot--giua" id="cot-giua">
+
+      <!-- Khung điện thoại: dùng cho chat, và tạm dùng cho call/video_call -->
+      <div class="dien-thoai" id="khung-dien-thoai">
+        <div class="dien-thoai__ruot">
+
+          <div class="lien-he">
+            <span class="lien-he__avatar" id="khung-avatar">
+              <img id="anh-avatar" alt="">
+              <span id="chu-avatar" hidden></span>
+              <span class="lien-he__icon-nguoi" id="icon-nguoi" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/>
+                </svg>
+              </span>
+            </span>
+            <span class="lien-he__chu">
+              <span class="lien-he__ten" id="ten-lien-he">—</span>
+              <span class="lien-he__trang-thai" id="trang-thai-lien-he"></span>
+            </span>
+            <span class="lien-he__menu" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/>
+              </svg>
+            </span>
+          </div>
+
+          <div class="vung-tin" id="vung-tin" aria-live="polite"></div>
+
+          <p class="dem-luot" id="dem-luot"></p>
+
+          <!-- Ô nhập của NPC. Nhãn ghi rõ nhắn cho ai để không lẫn với ô hỏi
+               trợ lý ở cột phải. Ẩn hẳn khi max_chat_turns bằng 0. -->
+          <form class="o-nhap" id="o-nhap" autocomplete="off">
+            <input type="text" id="nhap-tin" placeholder="Nhắn cho người gửi" aria-label="Nhắn cho người gửi">
+            <button type="submit" class="nut-gui" id="nut-gui" aria-label="Gửi tin nhắn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+              </svg>
+            </button>
+          </form>
+
+        </div>
+      </div>
+
+      <!-- Khung hộp thư: dùng khi channel là email. Không có ô nhập tin. -->
+      <article class="thu" id="khung-thu" hidden>
+        <div class="thu__ruot">
+
+          <div class="thu__nguoi-gui">
+            <p class="thu__ten" id="thu-ten-nguoi-gui"></p>
+            <p class="thu__dia-chi" id="thu-dia-chi"></p>
+          </div>
+
+          <div class="thu__hang-toi">
+            <span class="thu__toi" id="thu-toi"></span>
+            <span class="thu__gio" id="thu-gio"></span>
+          </div>
+
+          <h2 class="thu__tieu-de" id="thu-tieu-de"></h2>
+
+          <div class="thu__than" id="thu-than"></div>
+
+          <div class="thu__dung-luong" id="thu-dung-luong" hidden>
+            <div class="thu__ranh"><span class="thu__thanh" id="thu-thanh"></span></div>
+            <p class="thu__phan-tram" id="thu-phan-tram"></p>
+          </div>
+
+          <p class="thu__ma" id="thu-ma" hidden></p>
+
+          <!-- Nút mô phỏng, cố ý không bấm được. Bấm vào chỉ nhắc nhẹ. -->
+          <button type="button" class="thu__nut" id="thu-nut" aria-disabled="true"></button>
+          <p class="thu__nhac" id="thu-nhac" hidden>Đây là thư mô phỏng nên nút này không dẫn đi đâu. Ngoài đời, đúng lúc này là lúc nên dừng lại và kiểm chứng.</p>
+
+          <p class="thu__chan" id="thu-chan"></p>
+
+        </div>
+      </article>
+
+      <!-- Kênh chưa dựng riêng thì nói thẳng, không giả vờ như đã xong -->
+      <p class="ghi-chu-kenh" id="ghi-chu-kenh" hidden></p>
+    </section>
+
+    <!-- ---------- CỘT PHẢI — TRỢ LÝ AN TOÀN ---------- -->
+    <!-- Luôn có ở mọi kênh: với email không có ai để đối thoại, nhưng người
+         chơi vẫn có chỗ để hỏi nên vòng lặp không bị gãy. -->
+    <section class="cot cot--tro-ly">
+      <div class="tro-ly">
+        <header class="tro-ly__dau">
+          <img class="tro-ly__avatar" data-mascot src="/assets/mascot/mascot-binh-thuong.png" alt="" width="40" height="40">
+          <span class="tro-ly__chu">
+            <span class="tro-ly__ten">Trợ lý an toàn</span>
+            <span class="tro-ly__dem" id="dem-luot-tro-ly"></span>
+          </span>
+        </header>
+
+        <div class="tro-ly__vung" id="vung-tro-ly" aria-live="polite"></div>
+
+        <form class="o-nhap o-nhap--tro-ly" id="o-nhap-tro-ly" autocomplete="off">
+          <input type="text" id="nhap-tro-ly" placeholder="Hỏi trợ lý" aria-label="Hỏi trợ lý">
+          <button type="submit" class="nut-gui" id="nut-gui-tro-ly" aria-label="Gửi câu hỏi cho trợ lý">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+            </svg>
+          </button>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============ BƯỚC 1 — HAI NÚT Ở MÀN HỘI THOẠI ============ -->
+  <!-- Kiểm chứng là hành động, không phải quyết định, nên ở lại màn này.
+       Nó không được chiếm hết chiều ngang để việc chọn vẫn là có ý thức. -->
+  <div class="nhom-nut" id="nhom-nut">
+    <button type="button" class="nut nut--chinh" id="nut-kiem-chung">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/>
+      </svg>
+      Kiểm chứng
+    </button>
+
+    <button type="button" class="nut nut--vien" id="nut-san-sang">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 12h14M13 6l6 6-6 6"/>
+      </svg>
+      Tôi đã sẵn sàng quyết định
+    </button>
+  </div>
+
+  <p class="ghi-chu-nut" id="ghi-chu-kiem-chung" hidden></p>
+
+</div>
+
+<!-- ============ BƯỚC 3 — MÀN QUYẾT ĐỊNH ============ -->
+<div class="man" id="man-quyet-dinh" hidden>
+  <h1 class="tieu-de-man">Quyết định của bạn</h1>
+  <p class="nhan-nho">Không quay lại hội thoại được nữa. Dưới đây là tin nhắn và những cụm bạn đã đánh dấu.</p>
+
+  <section class="the">
+    <p class="nhan-nho">Tin nhắn bạn đã nhận</p>
+    <div class="tin-goc tin-goc--thu-gon" id="tin-thu-gon"></div>
+    <p class="chu-thich" id="chu-thich-da-danh-dau"></p>
+  </section>
+
+  <!-- Ô nhập lý do chỉ hiện khi chọn Không làm -->
+  <div class="o-ly-do" id="o-ly-do" hidden>
+    <label class="nhan-nho" for="nhap-ly-do">Vì sao bạn không làm theo</label>
+    <textarea id="nhap-ly-do" rows="2" placeholder="Ví dụ: tên miền không thuộc công ty, tin nhắn ép làm gấp"></textarea>
+    <div class="o-ly-do__nut">
+      <button type="button" class="nut nut--vien nut--nho" id="nut-huy-ly-do">Quay lại</button>
+      <button type="button" class="nut nut--vien nut--nho" id="nut-gui-ly-do">Gửi quyết định</button>
+    </div>
+  </div>
+
+  <!-- Hai nút cùng kiểu viền: hệ thống không gợi ý làm theo kẻ gian -->
+  <div class="khu-quyet-dinh" id="khu-quyet-dinh">
+    <!-- Icon trung tính: một bên là đi theo yêu cầu, một bên là dừng và quay lại.
+         Không dùng dấu tích hay dấu x vì cả hai lựa chọn đều có thể đúng. -->
+    <button type="button" class="nut nut--vien nut--cao" id="nut-lam-theo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="m10 17 5-5-5-5"/><path d="M15 12H3"/>
+      </svg>
+      Làm theo
+    </button>
+
+    <button type="button" class="nut nut--vien nut--cao" id="nut-khong-lam">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m9 14-5-5 5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-4"/>
+      </svg>
+      Không làm
+    </button>
+  </div>
+</div>
+
+<!-- ============ MÀN BÓC TÁCH BÀI HỌC ============ -->
+<div class="man" id="man-boc-tach" hidden>
+
+  <div class="banner" id="banner-ket-qua">
+    <p class="banner__tieu-de" id="banner-tieu-de"></p>
+    <p class="banner__chu" id="banner-chu"></p>
+  </div>
+
+  <section class="the">
+    <p class="nhan-nho">Tin nhắn bạn đã nhận</p>
+    <div class="tin-goc" id="tin-goc"></div>
+    <p class="chu-thich" id="chu-thich-mau"></p>
+  </section>
+
+  <section class="the" id="khoi-nhan-ra" hidden>
+    <h2 class="tieu-de-phu">Bạn đã nhận ra</h2>
+    <ul class="ds-dau-hieu" id="ds-nhan-ra"></ul>
+  </section>
+
+  <section class="the" id="khoi-bo-sot" hidden>
+    <h2 class="tieu-de-phu">Bạn đã bỏ sót</h2>
+    <ul class="ds-dau-hieu" id="ds-bo-sot"></ul>
+  </section>
+
+  <section class="the" id="khoi-cum-moi" hidden>
+    <h2 class="tieu-de-phu">Cụm bạn đánh dấu nhưng thật ra bình thường</h2>
+    <ul class="ds-dau-hieu" id="ds-cum-moi"></ul>
+  </section>
+
+  <section class="the">
+    <h2 class="tieu-de-phu">Cách xử lý đúng</h2>
+    <p class="chu-thuong" id="chu-cach-xu-ly"></p>
+  </section>
+
+  <section class="the">
+    <h2 class="tieu-de-phu">Bài học</h2>
+    <p class="chu-thuong" id="chu-bai-hoc"></p>
+  </section>
+
+  <section class="the">
+    <h2 class="tieu-de-phu">Bảng điểm tình huống này</h2>
+    <table class="bang-diem">
+      <tbody id="than-bang-diem"></tbody>
+      <tfoot id="chan-bang-diem"></tfoot>
+    </table>
+    <p class="chu-thich" id="chu-thich-ly-do" hidden></p>
+  </section>
+
+  <div class="khu-mascot khu-mascot--cuoi">
+    <img class="mascot" id="mascot-bai-hoc" data-mascot src="/assets/mascot/mascot-binh-thuong.png" alt="" width="168" height="168">
+    <div class="bong-thoai">
+      <p id="chu-mascot-bai-hoc"></p>
+    </div>
+  </div>
+
+  <button type="button" class="nut nut--chinh nut--rong" id="nut-choi-tiep">Chơi tiếp</button>
+</div>
+
+<!-- ============ MÀN HÀNH TRÌNH ============ -->
+<div class="man" id="man-hanh-trinh" hidden>
+  <h1 class="tieu-de-man">Hành trình</h1>
+  <p class="nhan-nho" id="chu-hanh-trinh"></p>
+  <div class="ds-giai-doan" id="ds-giai-doan-hanh-trinh"></div>
+  <button type="button" class="nut nut--chinh nut--rong" id="nut-tiep-chang">Tiếp tục</button>
+</div>
+
+<!-- ============ MÀN KẾT ============ -->
+<div class="man" id="man-ket" hidden>
+  <h1 class="tieu-de-man" id="tieu-de-ket"></h1>
+  <p class="nhan-nho" id="chu-ket"></p>
+
+  <div class="the tom-tat">
+    <div class="tom-tat__o">
+      <span class="tom-tat__so" id="ket-so-dung">0/0</span>
+      <span class="nhan-nho">quyết định đúng</span>
+    </div>
+    <div class="tom-tat__o">
+      <span class="tom-tat__so tom-tat__so--tinh-than" id="ket-suc-khoe">100</span>
+      <span class="nhan-nho">sức khoẻ tinh thần</span>
+    </div>
+    <div class="tom-tat__o">
+      <span class="tom-tat__so tom-tat__so--ly-tri" id="ket-ly-tri">100</span>
+      <span class="nhan-nho">lý trí</span>
+    </div>
+  </div>
+
+  <p class="nhan-nho">Bấm vào từng chặng để xem lại tình huống</p>
+  <div class="ds-giai-doan" id="ds-giai-doan-ket"></div>
+
+  <button type="button" class="nut nut--chinh nut--rong" id="nut-on-tap" hidden>Vào màn ôn tập</button>
+</div>
+
+<!-- ============ BƯỚC 2 — OVERLAY XÁC NHẬN ============ -->
+<div class="lop-phu" id="lop-xac-nhan" hidden tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="tieu-de-xac-nhan">
+  <div class="hop-thoai">
+    <h2 class="tieu-de-phu" id="tieu-de-xac-nhan">Bạn đã đủ thông tin để quyết định chưa?</h2>
+
+    <p class="chu-canh-bao" id="chu-canh-bao">Sau bước này bạn không quay lại hội thoại được nữa.</p>
+
+    <ul class="ds-nhac">
+      <li id="nhac-luot-nhan"></li>
+      <li id="nhac-luot-kiem-chung"></li>
+    </ul>
+
+    <!-- Hai lối ra phải cân nhau về sức nặng thị giác: cùng kiểu viền,
+         cùng kích thước. Tô đậm một bên là biến đây thành hộp thoại thủ tục. -->
+    <div class="hop-thoai__hai-nut">
+      <button type="button" class="nut nut--vien" id="nut-quay-lai-hoi">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 12H5M11 18l-6-6 6-6"/>
+        </svg>
+        Quay lại hỏi thêm
+      </button>
+
+      <button type="button" class="nut nut--vien" id="nut-du-thong-tin">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14M13 6l6 6-6 6"/>
+        </svg>
+        Tôi đã đủ thông tin
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ OVERLAY KIỂM CHỨNG ============ -->
+<div class="lop-phu" id="lop-kiem-chung" hidden role="dialog" aria-modal="true" aria-labelledby="tieu-de-kiem-chung">
+  <div class="hop-thoai">
+    <div class="hop-thoai__dau">
+      <h2 class="tieu-de-phu" id="tieu-de-kiem-chung">Kiểm chứng</h2>
+      <button type="button" class="hop-thoai__dong" id="nut-dong-kiem-chung" aria-label="Đóng">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <p class="nhan-nho" id="chu-luot-kiem-chung"></p>
+
+    <div class="ds-kiem-chung" id="ds-kiem-chung"></div>
+
+    <div class="ket-kiem-chung" id="ket-kiem-chung" hidden>
+      <p class="nhan-nho" id="nhan-kenh-kiem-chung"></p>
+      <p class="chu-thuong" id="chu-ket-kiem-chung"></p>
+      <p class="chu-thich" id="chu-luu-y-kiem-chung" hidden></p>
+    </div>
+
+    <button type="button" class="nut nut--chinh nut--rong" id="nut-quay-lai-chat" hidden>Quay lại tin nhắn</button>
+  </div>
+</div>
+
+<!-- ============ BÁO LỖI ============ -->
+<div class="bao-loi" id="bao-loi" hidden role="alert">
+  <p id="chu-bao-loi"></p>
+  <button type="button" class="bao-loi__dong" id="nut-dong-loi" aria-label="Đóng thông báo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <path d="M18 6 6 18M6 6l12 12"/>
+    </svg>
+  </button>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

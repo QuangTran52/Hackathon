@@ -1,0 +1,74 @@
+{
+  "cases": [
+    {
+      "id": "case_01",
+      "stage": "hoc_sinh",
+      "difficulty": "normal",
+      "title": "Bẫy nhận Khoảnh khắc / Trang phục Game miễn phí",
+      "intro_scene": "Bạn nhận được tin nhắn từ tài khoản tên 'Admin_SuKien_Game': 'Chúc mừng bạn trúng thưởng bộ trang phục SSS cực hiếm! Truy cập link game-nhanqua-freetopup.com và nhập tài khoản + mật khẩu để nhận ngay trong 5 phút'.",
+      "final_conclusion": "FALSE",
+      "script_after_case": "Kẻ gian tạo các website giả mạo sự kiện game có giao diện giống hệt trang đăng nhập thật để đánh cắp tài khoản và mật khẩu của người chơi. Các nhà phát hành game chính thống không bao giờ yêu cầu gửi mật khẩu qua link lạ.",
+      "points_of_fake": [
+        "Tên miền giả mạo (game-nhanqua-freetopup.com) không thuộc nhà phát hành chính thức",
+        "Yêu cầu nhập cả tài khoản và mật khẩu",
+        "Tạo áp lực thời gian gấp gáp (trong 5 phút) để nạn nhân mất cảnh giác"
+      ]
+    },
+    {
+      "id": "case_02",
+      "stage": "hoc_sinh",
+      "difficulty": "hard",
+      "title": "Tuyển cộng tác viên chốt đơn mua hàng online",
+      "intro_scene": "Một tài khoản Facebook nhắn tin tuyển học sinh làm công việc 'Chốt đơn hàng TikTok Shop kiếm 200k/ngày'. Yêu cầu bạn dùng tiền tự có để nạp tiền làm nhiệm vụ chốt 3 đơn đầu tiên, hứa hẹn hoàn tiền + 20% hoa hồng ngay lập tức.",
+      "final_conclusion": "FALSE",
+      "script_after_case": "Đây là hình thức lừa đảo tuyển CTV chốt đơn ảo. Vài đơn đầu tiên số tiền nhỏ chúng sẽ hoàn tiền thật để tạo niềm tin. Đến đơn số tiền lớn hơn, chúng sẽ lấy lý do 'lỗi hệ thống', 'sai cú pháp' để bắt bạn nạp thêm tiền rồi chiếm đoạt toàn bộ.",
+      "points_of_fake": [
+        "Yêu cầu người làm phải bỏ tiền túi nạp trước để làm nhiệm vụ",
+        "Hứa hẹn việc nhẹ lương cao dành cho học sinh",
+        "Mô hình hoàn tiền hoa hồng bất hợp lý"
+      ]
+    },
+    {
+      "id": "case_03",
+      "stage": "sinh_vien",
+      "difficulty": "normal",
+      "title": "Tuyển dụng việc làm thêm - Nhận việc tận nhà",
+      "intro_scene": "Bạn thấy bài đăng tuyển sinh viên đánh máy văn bản tại nhà, lương 50.000đ/trang. Khi nhắn tin xin việc, quản lý yêu cầu bạn chuyển khoản trước 150.000đ làm 'phí thế chân hồ sơ và cấp mã nhận việc'.",
+      "final_conclusion": "FALSE",
+      "script_after_case": "Các công ty tuyển dụng uy tín không bao giờ thu bất kỳ khoản phí cọc, phí thế chân hay phí tài liệu nào từ ứng viên. Ngay khi bạn chuyển tiền xong, đối phương sẽ chặn toàn bộ liên lạc.",
+      "points_of_fake": [
+        "Yêu cầu đóng phí cọc / phí thế chân trước khi nhận việc",
+        "Mức lương đánh máy quá cao so với mặt bằng chung",
+        "Không có địa chỉ văn phòng hay hợp đồng làm việc rõ ràng"
+      ]
+    },
+    {
+      "id": "case_04",
+      "stage": "nguoi_di_lam",
+      "difficulty": "normal",
+      "title": "Giả danh Cảnh sát giao thông báo phạt nguội",
+      "intro_scene": "Bạn nhận được cuộc gọi từ số lạ tự xưng là cán bộ Cục Cảnh sát giao thông, thông báo xe của bạn có biên bản phạt nguội 5.000.000đ chưa nộp và dọa sẽ khóa tài khoản ngân hàng nếu không bấm phím 9 để nộp phạt trực tuyến.",
+      "final_conclusion": "FALSE",
+      "script_after_case": "Cơ quan công an và CSGT không gửi thông báo phạt nguội hay yêu cầu nộp tiền phạt qua cuộc gọi điện thoại/nhắn tin. Mọi biên bản vi phạm giao thông đều được gửi bằng văn bản giấy về địa chỉ thường trú hoặc tra cứu trực tiếp trên Cổng dịch vụ công quốc gia.",
+      "points_of_fake": [
+        "Gọi điện thoại thông báo phạt nguội và yêu cầu nộp tiền ngay",
+        "Đe dọa khóa tài khoản ngân hàng",
+        "Hướng dẫn chuyển khoản vào tài khoản cá nhân"
+      ]
+    },
+    {
+      "id": "case_05",
+      "stage": "nguoi_cao_tuoi",
+      "difficulty": "normal",
+      "title": "Giả danh bác sĩ bệnh viện cấp cứu người thân",
+      "intro_scene": "Điện thoại đổ chuông, một giọng nói hốt hoảng tự xưng là bác sĩ bệnh viện Chợ Rẫy báo tin con/cháu của bạn bị tai nạn giao thông cấp cứu nguy kịch, yêu cầu bạn chuyển gấp 30.000.000đ vào tài khoản viện phí để tiến hành mổ khẩn cấp.",
+      "final_conclusion": "FALSE",
+      "script_after_case": "Đây là chiêu trò đánh vào tâm lý hoảng loạn của người cao tuổi. Bệnh viện luôn ưu tiên cấp cứu người bệnh trước và không bao giờ gọi điện yêu cầu người nhà chuyển tiền khẩn cấp vào tài khoản cá nhân của bác sĩ.",
+      "points_of_fake": [
+        "Tạo kịch bản khẩn cấp làm nạn nhân hoảng loạn không kịp suy nghĩ",
+        "Yêu cầu chuyển tiền ngay vào tài khoản cá nhân thay vì nộp tại viện",
+        "Không cho thời gian liên lạc verify lại với người thân"
+      ]
+    }
+  ]
+}

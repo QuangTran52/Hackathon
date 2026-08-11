@@ -1,0 +1,1388 @@
+/* public/style.css — màn chơi chính
+   Mọi màu và khoảng cách đi qua biến ở :root, không viết mã màu ở nơi khác. */
+
+:root {
+  /* ---- Nền tảng (Design Spec mục 11) ---- */
+  --surface-page:    #F1F3F2;
+  --surface-card:    #FFFFFF;
+  --border:          #DCDFDD;
+  --text-primary:    #1A1F1D;
+  --text-secondary:  #5B6360;
+  --text-muted:      #A8AEAB;
+  --accent:          #0B5C4E;
+  --accent-soft:     #E4EFEB;
+
+  /* ---- Chức năng ---- */
+  --flag:            #FFD166;
+  /* Bản nhạt của vệt bút, chỉ dùng làm nền dòng trong ô bằng chứng.
+     Vệt bôi trong nội dung vẫn dùng --flag đậm để nó là điểm nhấn duy nhất. */
+  --flag-soft:       #FFF6E0;
+  --danger:          #B3261E;
+  --danger-soft:     #FBEAE8;
+  --safe:            #1E7A4C;
+  --safe-soft:       #E6F3EC;
+  --bar-mind:        #D9694A;
+  --bar-mind-track:  #EFE4E0;
+  --bar-logic:       #3E6FB0;
+  --bar-logic-track: #E1E8F1;
+  --mascot:          #8B7BC7;
+  --mascot-soft:     #F4F2FA;
+  --mascot-text:     #4B4173;
+
+  /* Nút giả trong thư. Xanh dương trung tính, cố ý không trùng màu chức năng
+     nào và không mượn màu của tổ chức có thật. */
+  --email-cta:       #2C6BBF;
+
+  /* ---- Chữ ---- */
+  --font-display: "Bricolage Grotesque", sans-serif;
+  --font-body:    "Be Vietnam Pro", sans-serif;
+  --font-mono:    "JetBrains Mono", monospace;
+
+  /* ---- Bo góc ---- */
+  --radius-chat:  4px;
+  --radius-btn:   12px;
+  --radius-card:  16px;
+
+  /* ---- Khoảng cách ---- */
+  --sp-1: 4px;  --sp-2: 8px;  --sp-3: 12px;
+  --sp-4: 16px; --sp-6: 24px; --sp-8: 32px; --sp-12: 48px;
+
+  /* ---- Kích thước thành phần (Design Spec mục 4) ---- */
+  --h-nut:          56px;
+  --h-nut-lon:      64px;
+  --rong-khu-quyet-dinh: 640px;
+  --h-cham:         48px;
+  --mascot-size:    240px;
+  --mascot-choi:    104px;
+  --h-thanh-chi-so: 6px;
+  --h-chang:        5px;
+  --h-khung-chat:   420px;
+  /* Chiều cao chung của ba cột ở màn chơi. Ở bố cục ba cột, khu chơi lấy đúng
+     phần còn lại của khung nhìn trong khoảng hai mốc này, nên hai nút hành
+     động luôn nằm trong màn hình và nội dung dài cuộn bên trong cột. Biến
+     --h-khu-choi là chiều cao cứng dùng lại cho bố cục xếp dọc. */
+  --h-khu-choi-min: 380px;
+  --h-khu-choi-max: 640px;
+  --h-khu-choi:     clamp(var(--h-khu-choi-min), 62vh, var(--h-khu-choi-max));
+  --rong-dien-thoai-min: 280px;
+  --rong-dien-thoai-max: 340px;
+  --radius-vo-dien-thoai: 22px;
+  --vien: 1px;
+
+  /* Ba cột: 22% sổ tay, 48% nội dung, 30% trợ lý (Design Spec mục 7) */
+  --cot-so-tay: 22fr;
+  --cot-giua:   48fr;
+  --cot-tro-ly: 30fr;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+/* Các khối bên dưới đặt display riêng, phải chặn lại để thuộc tính hidden còn tác dụng */
+[hidden] { display: none !important; }
+
+body {
+  margin: 0;
+  padding: var(--sp-6) var(--sp-4);
+  background: var(--surface-page);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.7;
+  font-weight: 400;
+}
+
+svg { width: 100%; height: 100%; display: block; }
+
+/* Màn chơi gói gọn trong một khung nhìn: thanh trên, thanh chặng và hai nút
+   hành động giữ nguyên chỗ, khu ba cột co giãn theo phần còn lại. Nội dung dài
+   cuộn bên trong cột chứ không kéo dài trang và đẩy nút xuống dưới màn hình. */
+.man-choi {
+  max-width: 1280px;
+  margin: 0 auto;
+  height: calc(100vh - var(--sp-6) * 2);
+  height: calc(100dvh - var(--sp-6) * 2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+
+.nhan-nho {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+/* ============ HÀNG TRÊN ============ */
+
+.thanh-tren {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  flex-wrap: wrap;
+}
+
+.chip-giai-doan {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-4);
+  border-radius: var(--radius-card);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.chip-giai-doan__icon { width: 18px; height: 18px; flex: none; }
+
+.nhom-chi-so {
+  display: flex;
+  gap: var(--sp-6);
+  flex-wrap: wrap;
+}
+
+.chi-so {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: 14px;
+}
+
+.chi-so__icon { width: 18px; height: 18px; flex: none; }
+.chi-so__nhan { color: var(--text-secondary); }
+
+.chi-so__ranh {
+  width: 96px;
+  height: var(--h-thanh-chi-so);
+  border-radius: var(--h-thanh-chi-so);
+  overflow: hidden;
+}
+
+.chi-so__thanh {
+  display: block;
+  height: 100%;
+  width: 100%;
+  border-radius: var(--h-thanh-chi-so);
+  transition: width 220ms ease;
+}
+
+.chi-so__so {
+  min-width: 28px;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: right;
+}
+
+/* Ấm cho tinh thần, lạnh cho lý trí — quy ước có nghĩa, không đổi chỗ */
+.chi-so--tinh-than .chi-so__icon  { color: var(--bar-mind); }
+.chi-so--tinh-than .chi-so__ranh  { background: var(--bar-mind-track); }
+.chi-so--tinh-than .chi-so__thanh { background: var(--bar-mind); }
+
+.chi-so--ly-tri .chi-so__icon  { color: var(--bar-logic); }
+.chi-so--ly-tri .chi-so__ranh  { background: var(--bar-logic-track); }
+.chi-so--ly-tri .chi-so__thanh { background: var(--bar-logic); }
+
+/* ============ THANH TIẾN TRÌNH ============ */
+
+.tien-trinh {
+  display: flex;
+  gap: var(--sp-1);
+}
+
+.chang {
+  flex: 1;
+  height: var(--h-chang);
+  border-radius: var(--h-chang);
+}
+
+/* Bốn trạng thái, bốn hình dạng khác hẳn nhau. Chặng chưa tới phải là màu
+   viền, không được mượn màu nào có nghĩa. */
+.chang--chua-toi  { background: var(--border); }
+.chang--dung      { background: var(--safe); }
+.chang--sai       { background: var(--danger); }
+
+/* Chặng đang chơi tô một nửa: xanh đặc kín trông y hệt chặng đã đúng, mà nó
+   thì chưa xong. Nửa còn lại giữ màu viền cho thấy phần chưa chốt. */
+.chang--dang-choi {
+  background: linear-gradient(to right, var(--accent) 50%, var(--border) 50%);
+}
+
+/* ============ BA CỘT ============ */
+
+/* Ba cột cao bằng nhau và căn đáy bằng nhau, hai nút hành động nằm dưới cả ba.
+   Chiều cao là phần khung nhìn còn lại, kẹp giữa hai mốc: dưới mốc nhỏ nhất
+   thì thà cho cả trang cuộn còn hơn bóp khung chat đến mức không đọc được. */
+.khu-choi {
+  display: grid;
+  grid-template-columns: var(--cot-so-tay) var(--cot-giua) var(--cot-tro-ly);
+  gap: var(--sp-4);
+  align-items: stretch;
+  flex: 1;
+  min-height: var(--h-khu-choi-min);
+  max-height: var(--h-khu-choi-max);
+}
+
+.cot {
+  min-width: 0;
+  /* Cột là ô lưới đã bị khoá chiều cao, phải cho phép co lại thì khung con mới
+     biết chỗ của mình mà cuộn bên trong */
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+
+/* Sổ tay là cột duy nhất không có khung con tự cuộn: bối cảnh dài hay nhặt
+   được nhiều bằng chứng thì cuộn ngay ở cột */
+.cot--so-tay { overflow-y: auto; }
+
+/* Mascot ghim ở đáy, nên hai thẻ phải nở ra lấp chỗ trống ở giữa cột, thay vì
+   dồn hết lên đầu. Bằng chứng lấy phần lớn hơn vì nó là ô dài dần lên trong
+   lúc chơi; nội dung tràn thì cuộn trong lòng thẻ, không đẩy mascot đi. */
+.cot--so-tay > .the {
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.the-boi-canh { flex: 2 1 auto; }
+.the-bang-chung { flex: 3 1 auto; }
+
+/* Cột giữa là lớp chat, cột hai bên là lớp vỏ — khác nhau đúng ba điểm:
+   bo góc, nền, mật độ chữ. Không thêm khác biệt thứ tư. */
+.cot--giua { justify-content: flex-start; }
+
+.the {
+  background: var(--surface-card);
+  border: var(--vien) solid var(--border);
+  border-radius: var(--radius-card);
+  padding: var(--sp-6);
+}
+
+.the-boi-canh__anh {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  max-height: 110px;
+  margin-bottom: var(--sp-4);
+  border-radius: var(--radius-chat);
+  background: var(--surface-page);
+  overflow: hidden;
+}
+
+.the-boi-canh__anh img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.the-boi-canh__chu {
+  margin: var(--sp-1) 0 0;
+  font-size: 17px;
+}
+
+/* ---- Ô bằng chứng đã đánh dấu ---- */
+
+/* Đây là thứ biến việc bôi vàng thành cảm giác thu thập bằng chứng, và là
+   thứ người chơi mang sang màn quyết định. Phải cập nhật ngay khi bấm cụm. */
+.the-bang-chung { padding: var(--sp-4) var(--sp-6); }
+
+.the-bang-chung__dau {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  list-style: none;
+  cursor: pointer;
+}
+
+.the-bang-chung__dau::-webkit-details-marker { display: none; }
+
+.the-bang-chung__dem {
+  min-width: var(--sp-6);
+  padding: 0 var(--sp-2);
+  border-radius: var(--radius-card);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Trên màn rộng ô luôn mở, cái mũi tên gợi ý đóng mở chỉ gây nhiễu */
+.the-bang-chung[data-khoa-mo="1"] .the-bang-chung__dau { cursor: default; }
+
+.ds-bang-chung {
+  margin: var(--sp-3) 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+/* Mỗi cụm một dòng nền vàng nhạt, viền trái vàng — nhìn ra ngay là mẩu
+   bằng chứng vừa nhặt, không lẫn với chữ thường của thẻ */
+.ds-bang-chung li {
+  padding: var(--sp-2) var(--sp-3);
+  border-left: var(--sp-1) solid var(--flag);
+  border-radius: 0 var(--radius-chat) var(--radius-chat) 0;
+  background: var(--flag-soft);
+  font-size: 14px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.the-bang-chung__goi-y {
+  margin: var(--sp-3) 0 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+/* ---- Mascot ở đáy cột trái ---- */
+
+.khu-mascot {
+  margin-top: auto;
+  display: flex;
+  align-items: flex-end;
+  gap: var(--sp-4);
+}
+
+/* Trên màn chơi mascot rộng ~104px (Design Spec mục 4) — cột trái chỉ 22%
+   nên to hơn là bóp chết bong bóng thoại bên cạnh */
+.mascot {
+  width: var(--mascot-choi);
+  height: auto;
+  aspect-ratio: 1;
+  flex: none;
+  object-fit: contain;
+  order: -1;
+}
+
+/* Màn bài học rộng cả trang nên mascot ở đó giữ cỡ lớn */
+.khu-mascot--cuoi .mascot { width: var(--mascot-size); }
+
+/* Bong bóng chếch bên phải mascot, mũi nhọn chỉ ngược về phía nó */
+.bong-thoai {
+  position: relative;
+  flex: 1;
+  min-height: 60px;
+  margin-bottom: var(--sp-6);
+  padding: var(--sp-3) var(--sp-4);
+  border-radius: var(--radius-card);
+  background: var(--mascot-soft);
+  color: var(--mascot-text);
+}
+
+.bong-thoai[data-rong="1"] { visibility: hidden; }
+
+.bong-thoai::before {
+  content: "";
+  position: absolute;
+  left: calc(var(--sp-2) * -1);
+  bottom: var(--sp-4);
+  width: 0;
+  height: 0;
+  border-top: var(--sp-2) solid transparent;
+  border-bottom: var(--sp-2) solid transparent;
+  border-right: var(--sp-2) solid var(--mascot-soft);
+}
+
+.bong-thoai p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ============ KHUNG ĐIỆN THOẠI ============ */
+
+/* Khung lấy hết chỗ còn lại của cột giữa: có ghi chú kênh ở dưới thì khung
+   ngắn lại chứ không đẩy ghi chú ra khỏi cột */
+.dien-thoai {
+  width: clamp(var(--rong-dien-thoai-min), 100%, var(--rong-dien-thoai-max));
+  margin: 0 auto;
+  flex: 1;
+  min-height: 0;
+  padding: var(--sp-2);
+  border-radius: var(--radius-vo-dien-thoai);
+  background: var(--border);
+}
+
+.dien-thoai__ruot {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-card);
+  background: var(--surface-card);
+  overflow: hidden;
+}
+
+.lien-he {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  border-bottom: var(--vien) solid var(--border);
+}
+
+.lien-he__avatar {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--surface-page);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  overflow: hidden;
+}
+
+.lien-he__avatar img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: none;
+}
+
+.lien-he__avatar.co-anh img { display: block; }
+
+.lien-he__icon-nguoi {
+  width: 20px;
+  height: 20px;
+  color: var(--text-secondary);
+}
+
+.lien-he__chu {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Tên người gửi là dữ kiện đầu tiên người chơi soi, cắt cụt nó là giấu mất
+   chỗ đáng ngờ. Cho xuống tối đa hai dòng, chữ nhỏ hơn một nấc để tên dài
+   vẫn đọc hết mà đầu khung không cao thêm. */
+.lien-he__ten {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Tên từ ba dòng trở lên thì hạ cỡ chữ thay vì cắt tiếp */
+.lien-he__ten--dai { font-size: 13px; }
+
+.lien-he__trang-thai {
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--text-secondary);
+}
+
+.lien-he__menu { width: 18px; height: 18px; flex: none; color: var(--text-muted); }
+
+/* ---- Vùng tin nhắn ---- */
+
+.vung-tin {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--sp-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.tin {
+  max-width: 82%;
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--radius-chat);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* Mono chỉ dùng cho mã OTP, số tài khoản, số điện thoại và tên miền */
+.ky-thuat { font-family: var(--font-mono); }
+
+.tin--npc {
+  align-self: flex-start;
+  background: var(--surface-page);
+}
+
+.tin--nguoi-choi {
+  align-self: flex-end;
+  background: var(--accent-soft);
+}
+
+/* Chỉ báo đang soạn tin */
+.tin--dang-soan { display: flex; gap: var(--sp-1); align-items: center; padding: var(--sp-3); }
+
+.tin--dang-soan i {
+  width: var(--sp-1);
+  height: var(--sp-1);
+  border-radius: 50%;
+  background: var(--text-muted);
+  animation: nhap-nhay 1s infinite;
+}
+
+.tin--dang-soan i:nth-child(2) { animation-delay: 0.15s; }
+.tin--dang-soan i:nth-child(3) { animation-delay: 0.3s; }
+
+/* Câu trấn an chỉ hiện khi chờ lâu, nên để nhạt hơn lời thoại thật — nó là
+   trạng thái hệ thống, không phải tin nhắn của nhân vật */
+.tin--dang-soan__chu {
+  margin-left: var(--sp-1);
+  font-size: 13px;
+  font-style: italic;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+
+@keyframes nhap-nhay {
+  0%, 60%, 100% { opacity: 0.25; }
+  30%           { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tin--dang-soan i { animation: none; opacity: 0.6; }
+  .chi-so__thanh { transition: none; }
+}
+
+.dem-luot {
+  margin: 0;
+  padding: 0 var(--sp-4) var(--sp-2);
+  text-align: center;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+/* ---- Ô nhập tin ---- */
+
+.o-nhap {
+  display: flex;
+  gap: var(--sp-2);
+  padding: var(--sp-3) var(--sp-4);
+  border-top: var(--vien) solid var(--border);
+}
+
+.o-nhap input {
+  flex: 1;
+  min-width: 0;
+  padding: var(--sp-2) var(--sp-3);
+  border: var(--vien) solid var(--border);
+  border-radius: var(--radius-btn);
+  background: var(--surface-card);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 15px;
+}
+
+.o-nhap input::placeholder { color: var(--text-muted); }
+.o-nhap input:disabled { background: var(--surface-page); color: var(--text-muted); }
+
+.nut-gui {
+  width: var(--h-cham);
+  height: var(--h-cham);
+  flex: none;
+  padding: var(--sp-3);
+  border: none;
+  border-radius: var(--radius-btn);
+  background: var(--accent);
+  color: var(--surface-card);
+  cursor: pointer;
+}
+
+.nut-gui:disabled { background: var(--border); color: var(--text-muted); cursor: not-allowed; }
+
+/* ============ KHUNG HỘP THƯ ============ */
+
+/* Cùng cấu tạo hai lớp như khung điện thoại: vỏ thuộc lớp vỏ, ruột bắt buộc
+   trắng và xám nhạt. Ruột có màu là người chơi nhận ra ngay đây là game. */
+.thu {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  padding: var(--sp-2);
+  border-radius: var(--radius-vo-dien-thoai);
+  background: var(--border);
+}
+
+.thu__ruot {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding: var(--sp-4);
+  border-radius: var(--radius-card);
+  background: var(--surface-card);
+  overflow-y: auto;
+}
+
+.thu__ten {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+/* Địa chỉ người gửi là dấu hiệu đỏ đắt nhất của tình huống email, nên nó
+   phải đánh dấu được như mọi cụm khác — người chơi cần học thói quen đọc
+   tên miền chứ không chỉ đọc tên hiển thị */
+.thu__dia-chi {
+  margin: var(--sp-1) 0 0;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.thu__hang-toi {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  padding-bottom: var(--sp-3);
+  border-bottom: var(--vien) solid var(--border);
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.thu__toi { min-width: 0; overflow-wrap: anywhere; }
+.thu__gio { flex: none; }
+
+.thu__tieu-de {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 20px;
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+.thu__than {
+  font-size: 15px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* ---- Thanh dung lượng giả trong thư ---- */
+
+.thu__dung-luong { display: flex; align-items: center; gap: var(--sp-3); }
+
+.thu__ranh {
+  flex: 1;
+  height: var(--h-thanh-chi-so);
+  border-radius: var(--h-thanh-chi-so);
+  background: var(--surface-page);
+  overflow: hidden;
+}
+
+.thu__thanh {
+  display: block;
+  height: 100%;
+  border-radius: var(--h-thanh-chi-so);
+  background: var(--text-secondary);
+}
+
+/* Trên 90% thì đổi sang màu cảnh báo, đúng thủ thuật thư thật hay dùng */
+.thu__thanh--gap { background: var(--danger); }
+
+.thu__phan-tram { margin: 0; flex: none; font-size: 14px; color: var(--text-secondary); }
+
+.thu__ma {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--text-secondary);
+  overflow-wrap: anywhere;
+}
+
+/* ---- Nút giả ---- */
+
+/* Trông như nút thật nhưng không dẫn đi đâu. Không dùng thuộc tính disabled
+   vì nút mờ đi thì mất hết cảm giác thật, và người chơi cũng không bấm thử. */
+.thu__nut {
+  align-self: flex-start;
+  min-height: var(--h-cham);
+  max-width: 100%;
+  padding: var(--sp-3) var(--sp-6);
+  border: none;
+  border-radius: var(--radius-btn);
+  background: var(--email-cta);
+  color: var(--surface-card);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.4;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+/* Nhắc nhở nhẹ, không phải báo lỗi nên giữ giọng bình thường */
+.thu__nhac {
+  margin: 0;
+  padding: var(--sp-3);
+  border-radius: var(--radius-chat);
+  background: var(--surface-page);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.thu__chan {
+  margin: auto 0 0;
+  padding-top: var(--sp-3);
+  border-top: var(--vien) solid var(--border);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+/* Kênh chưa dựng riêng, nói thẳng thay vì giả vờ đã xong */
+.ghi-chu-kenh {
+  margin: 0;
+  padding: var(--sp-3) var(--sp-4);
+  border: var(--vien) dashed var(--border);
+  border-radius: var(--radius-btn);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+/* ============ CỘT PHẢI — TRỢ LÝ AN TOÀN ============ */
+
+/* Khung riêng, luôn có ở mọi kênh. Với email không có ai để đối thoại nhưng
+   người chơi vẫn có chỗ để hỏi, nên vòng lặp học không bị gãy. */
+.tro-ly {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  border: var(--vien) solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface-card);
+  overflow: hidden;
+}
+
+.tro-ly__dau {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  border-bottom: var(--vien) solid var(--border);
+  background: var(--mascot-soft);
+}
+
+.tro-ly__avatar {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  object-fit: contain;
+}
+
+.tro-ly__chu { display: flex; flex-direction: column; min-width: 0; }
+
+.tro-ly__ten {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--mascot-text);
+}
+
+/* Bộ đếm của trợ lý nằm ngay đây, tách hẳn khỏi dòng đếm lượt nhắn NPC
+   trong khung điện thoại — hai con số đo hai việc khác nhau */
+.tro-ly__dem { font-size: 14px; line-height: 1.4; color: var(--mascot-text); }
+
+.tro-ly__vung {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--sp-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.tin-tro-ly {
+  max-width: 88%;
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--radius-card);
+  font-size: 15px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.tin-tro-ly--tro-ly {
+  align-self: flex-start;
+  background: var(--mascot-soft);
+  color: var(--mascot-text);
+}
+
+.tin-tro-ly--nguoi-choi {
+  align-self: flex-end;
+  background: var(--accent-soft);
+  color: var(--text-primary);
+}
+
+/* ============ Ô LÝ DO ============ */
+
+.o-ly-do {
+  background: var(--surface-card);
+  border: var(--vien) solid var(--border);
+  border-radius: var(--radius-card);
+  padding: var(--sp-4) var(--sp-6);
+}
+
+.o-ly-do textarea {
+  width: 100%;
+  margin-top: var(--sp-2);
+  padding: var(--sp-3);
+  border: var(--vien) solid var(--border);
+  border-radius: var(--radius-btn);
+  background: var(--surface-card);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.55;
+  resize: vertical;
+}
+
+.o-ly-do textarea::placeholder { color: var(--text-muted); }
+
+.o-ly-do__nut {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--sp-2);
+  margin-top: var(--sp-3);
+}
+
+/* ============ CỤM ĐÁNH DẤU TRONG TIN NHẮN ============ */
+
+/* Lúc chưa bấm phải trông y hệt chữ thường, không gợi ý vị trí dấu hiệu.
+   display inline để cụm chảy theo dòng chữ đúng như văn bản thường. */
+.cum {
+  cursor: pointer;
+  /* Cụm bị ngắt dòng thì mỗi đoạn vẫn có đệm và bo góc riêng */
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* Vệt bút dạ quang: chữ giữ nguyên màu, không in đậm, không viền.
+   Đệm ngang bù lại bằng margin âm để vệt loe ra ngoài chữ mà không
+   đẩy các chữ bên cạnh, đúng như tô bằng bút thật. */
+.cum--danh-dau {
+  padding: 1px 3px;
+  margin: 0 -3px;
+  border-radius: 2px;
+  /* Một màu duy nhất, dùng dạng lớp phủ để chạy được hiệu ứng lan ngang */
+  background-image: linear-gradient(var(--flag), var(--flag));
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  animation: to-vet 200ms ease-out;
+}
+
+@keyframes to-vet {
+  from { background-size: 0 100%; }
+  to   { background-size: 100% 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cum--danh-dau { animation: none; }
+}
+
+/* ============ MÀN PHỤ ============ */
+
+.man {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+
+.tieu-de-man {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 28px;
+  line-height: 1.3;
+  font-weight: 600;
+}
+
+.tieu-de-phu {
+  margin: 0 0 var(--sp-3);
+  font-family: var(--font-display);
+  font-size: 20px;
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+.chu-thuong { margin: 0; font-size: 17px; }
+
+.chu-thich {
+  margin: var(--sp-3) 0 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.nut--rong { width: 100%; }
+
+.ghi-chu-nut {
+  margin: 0;
+  text-align: center;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+/* ---- Banner kết quả ---- */
+
+.banner {
+  padding: var(--sp-6);
+  border-radius: var(--radius-card);
+}
+
+.banner--dung { background: var(--safe-soft); }
+.banner--sai  { background: var(--danger-soft); }
+
+.banner__tieu-de {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 28px;
+  line-height: 1.3;
+  font-weight: 600;
+}
+
+.banner--dung .banner__tieu-de { color: var(--safe); }
+.banner--sai  .banner__tieu-de { color: var(--danger); }
+
+.banner__chu { margin: var(--sp-2) 0 0; font-size: 17px; }
+
+/* ---- Tin nhắn gốc dựng lại ở màn bài học ---- */
+
+.tin-goc {
+  margin-top: var(--sp-2);
+  padding: var(--sp-3) var(--sp-4);
+  border-radius: var(--radius-chat);
+  background: var(--surface-page);
+  /* Khai báo tường minh: chỉ .ky-thuat bên trong mới được dùng font mono */
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.9;
+  white-space: pre-wrap;
+}
+
+/* Cụm không được tô thì phải là chữ thường hoàn toàn, không đệm, không lệch */
+/* Bản thu gọn ở màn quyết định: cùng cách dựng, chỉ chặt chẽ hơn về chiều cao */
+.tin-goc--thu-gon {
+  line-height: 1.7;
+  max-height: 40vh;
+  overflow-y: auto;
+}
+
+.cum-goc {
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+.cum-goc--trung,
+.cum-goc--bo-sot {
+  padding: 1px 3px;
+  margin: 0 -3px;
+  border-radius: 2px;
+}
+
+.cum-goc--trung { background: var(--flag); }
+
+/* Dấu hiệu đỏ bị bỏ sót */
+.cum-goc--bo-sot {
+  background: var(--danger-soft);
+  border: var(--vien) dashed var(--danger);
+  /* Viền chiếm 1px mỗi bên nên bù thêm để không đẩy chữ bên cạnh */
+  margin: 0 calc(-3px - var(--vien));
+}
+
+/* ---- Danh sách dấu hiệu ---- */
+
+.ds-dau-hieu { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: var(--sp-3); }
+
+.ds-dau-hieu li {
+  padding-left: var(--sp-4);
+  border-left: var(--sp-1) solid var(--border);
+}
+
+#khoi-nhan-ra .ds-dau-hieu li { border-left-color: var(--safe); }
+#khoi-bo-sot  .ds-dau-hieu li { border-left-color: var(--danger); }
+
+.dau-hieu__ten { margin: 0; font-size: 15px; font-weight: 600; }
+.dau-hieu__why { margin: var(--sp-1) 0 0; font-size: 15px; color: var(--text-secondary); }
+
+/* ---- Bảng điểm ---- */
+
+.bang-diem { width: 100%; border-collapse: collapse; font-size: 15px; }
+
+.bang-diem td {
+  padding: var(--sp-2) 0;
+  border-bottom: var(--vien) solid var(--border);
+  vertical-align: top;
+}
+
+.bang-diem td:last-child { text-align: right; white-space: nowrap; padding-left: var(--sp-4); }
+
+.bang-diem tfoot td {
+  border-bottom: none;
+  border-top: var(--vien) solid var(--border);
+  font-weight: 600;
+}
+
+.diem--cong { color: var(--safe); }
+.diem--tru  { color: var(--danger); }
+.diem--khong { color: var(--text-muted); }
+
+.khu-mascot--cuoi { margin-top: 0; }
+
+/* ============ MÀN HÀNH TRÌNH VÀ MÀN KẾT ============ */
+
+.ds-giai-doan {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--sp-4);
+  align-items: start;
+}
+
+.the-giai-doan {
+  background: var(--surface-card);
+  border: var(--vien) solid var(--border);
+  border-radius: var(--radius-card);
+  padding: var(--sp-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+/* Giai đoạn đang chơi có viền đậm hơn */
+.the-giai-doan--dang-choi { border-color: var(--accent); }
+
+.the-giai-doan__dau {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.the-giai-doan__dau .icon { width: 18px; height: 18px; flex: none; color: var(--accent); }
+
+.chang-hang {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  width: 100%;
+  padding: var(--sp-2);
+  border: none;
+  border-radius: var(--radius-btn);
+  background: var(--surface-page);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: left;
+  color: var(--text-primary);
+}
+
+.chang-hang[data-bam="1"] { cursor: pointer; }
+.chang-hang--dang-choi { background: var(--accent-soft); font-weight: 600; }
+.chang-hang--chua-mo { color: var(--text-muted); }
+
+.chang-hang__icon { width: 18px; height: 18px; flex: none; }
+.chang-hang--dung .chang-hang__icon { color: var(--safe); }
+.chang-hang--sai .chang-hang__icon { color: var(--danger); }
+.chang-hang--dang-choi .chang-hang__icon { color: var(--accent); }
+.chang-hang--chua-mo .chang-hang__icon { color: var(--text-muted); }
+
+.chang-hang__so {
+  width: var(--sp-6);
+  flex: none;
+  color: var(--text-secondary);
+}
+
+.chang-hang__ten { flex: 1; min-width: 0; }
+
+.the-giai-doan__trong { margin: 0; font-size: 14px; color: var(--text-muted); }
+
+/* ---- Tổng kết ở màn kết ---- */
+
+.tom-tat {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--sp-4);
+  text-align: center;
+}
+
+.tom-tat__o { display: flex; flex-direction: column; gap: var(--sp-1); }
+
+.tom-tat__so {
+  font-family: var(--font-display);
+  font-size: 28px;
+  line-height: 1.3;
+  font-weight: 600;
+}
+
+.tom-tat__so--tinh-than { color: var(--bar-mind); }
+.tom-tat__so--ly-tri { color: var(--bar-logic); }
+
+/* ============ OVERLAY KIỂM CHỨNG ============ */
+
+.lop-phu {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sp-4);
+  background: var(--surface-page);
+  overflow-y: auto;
+}
+
+.hop-thoai {
+  width: min(560px, 100%);
+  max-height: 100%;
+  overflow-y: auto;
+  padding: var(--sp-6);
+  border: var(--vien) solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface-card);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.hop-thoai__dau {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--sp-3);
+}
+
+.hop-thoai__dau .tieu-de-phu { margin: 0; }
+
+.hop-thoai__dong {
+  width: var(--h-cham);
+  height: var(--h-cham);
+  flex: none;
+  padding: var(--sp-3);
+  border: none;
+  background: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+/* Hai lối ra của overlay xác nhận, chia đều để không bên nào nặng hơn */
+.hop-thoai__hai-nut {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-3);
+}
+
+/* Đây là thông tin về cơ chế, không phải lỗi, nên giữ giọng bình thường */
+.chu-canh-bao {
+  margin: 0;
+  padding: var(--sp-3) var(--sp-4);
+  border-radius: var(--radius-btn);
+  background: var(--surface-page);
+  color: var(--text-primary);
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.ds-nhac {
+  margin: 0;
+  padding-left: var(--sp-6);
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.ds-kiem-chung { display: flex; flex-direction: column; gap: var(--sp-2); }
+
+.lua-chon {
+  min-height: var(--h-cham);
+  padding: var(--sp-3) var(--sp-4);
+  border: var(--vien) solid var(--border);
+  border-radius: var(--radius-btn);
+  background: var(--surface-card);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.55;
+  text-align: left;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.lua-chon:disabled { color: var(--text-muted); cursor: not-allowed; }
+
+.ket-kiem-chung {
+  padding: var(--sp-4);
+  border-radius: var(--radius-btn);
+  background: var(--accent-soft);
+}
+
+.ket-kiem-chung .nhan-nho { margin-bottom: var(--sp-1); }
+
+/* ============ BA NÚT HÀNH ĐỘNG ============ */
+
+/* Bước 1: kiểm chứng khoảng 40%, sẵn sàng quyết định khoảng 60% */
+.nhom-nut {
+  display: grid;
+  grid-template-columns: 2fr 3fr;
+  gap: var(--sp-3);
+}
+
+.nut {
+  min-height: var(--h-nut);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  padding: 0 var(--sp-4);
+  border-radius: var(--radius-btn);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.2;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.nut svg { width: 20px; height: 20px; flex: none; }
+
+/* Hai nút viền có sức nặng thị giác ngang nhau */
+.nut--vien {
+  background: var(--surface-card);
+  color: var(--text-primary);
+  border: var(--vien) solid var(--border);
+}
+
+/* Nút chính là Kiểm chứng — không bao giờ tô đậm Làm theo */
+.nut--chinh {
+  background: var(--accent);
+  color: var(--surface-card);
+  border: var(--vien) solid var(--accent);
+}
+
+.nut--nho { min-height: var(--h-cham); font-size: 15px; }
+.nut--cao { min-height: var(--h-nut-lon); }
+
+/* Bước 3: hai nút lớn cân nhau, căn giữa màn */
+.khu-quyet-dinh {
+  width: 100%;
+  max-width: var(--rong-khu-quyet-dinh);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-3);
+}
+
+.nut:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ============ BÁO LỖI ============ */
+
+.bao-loi {
+  position: fixed;
+  left: 50%;
+  bottom: var(--sp-6);
+  transform: translateX(-50%);
+  width: min(560px, calc(100% - var(--sp-8)));
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  border: var(--vien) solid var(--danger);
+  border-radius: var(--radius-card);
+  background: var(--danger-soft);
+  color: var(--text-primary);
+}
+
+.bao-loi p { margin: 0; flex: 1; font-size: 15px; line-height: 1.55; }
+
+.bao-loi__dong {
+  width: var(--sp-6);
+  height: var(--sp-6);
+  flex: none;
+  padding: var(--sp-1);
+  border: none;
+  background: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+/* ============ MÀN HÌNH VỪA ============ */
+
+/* Chưa đủ chỗ cho ba cột nhưng vẫn còn rộng: sổ tay xuống dưới, hai cột
+   quan trọng nhất giữ nguyên hàng ngang */
+@media (max-width: 1080px) {
+  /* Sổ tay nằm hàng riêng nên khu chơi không còn khoá được vào một khung nhìn.
+     Quay lại chiều cao cứng cho hai khung còn lại và cho cả trang cuộn. */
+  .man-choi { height: auto; }
+  .khu-choi {
+    grid-template-columns: var(--cot-giua) var(--cot-tro-ly);
+    flex: none;
+    min-height: 0;
+    max-height: none;
+  }
+  .cot--so-tay {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    flex-direction: row;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    overflow-y: visible;
+  }
+  .cot--so-tay > * { flex: 1 1 260px; }
+  .khu-mascot { margin-top: 0; }
+
+  .dien-thoai, .thu, .tro-ly { height: var(--h-khu-choi); flex: none; }
+}
+
+/* ============ MÀN HÌNH HẸP ============ */
+
+/* Ba cột xếp dọc đúng thứ tự đọc: bối cảnh, nội dung tình huống, trợ lý */
+@media (max-width: 720px) {
+  body { padding: var(--sp-4) var(--sp-3); }
+
+  .khu-choi { grid-template-columns: 1fr; }
+  .cot--so-tay { grid-column: auto; grid-row: auto; flex-direction: column; }
+  .cot--so-tay > * { flex: none; }
+
+  .the { padding: var(--sp-4); }
+  .the-bang-chung { padding: var(--sp-3) var(--sp-4); }
+
+  /* Mascot xuống cuối cột, dưới cả trợ lý thì lạc chỗ, nên giữ trong sổ tay */
+  .khu-mascot--cuoi .mascot { width: 140px; }
+
+  .dien-thoai { width: 100%; max-width: var(--rong-dien-thoai-max); }
+  .nhom-nut { grid-template-columns: 1fr; }
+  .ds-giai-doan { grid-template-columns: 1fr; }
+  .tom-tat { grid-template-columns: 1fr; }
+}
