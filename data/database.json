@@ -883,6 +883,12 @@
               "attachments": [],
               "spans": [
                 {
+                  "id": "sp_00",
+                  "kind": "red_flag",
+                  "text": "Kết nối kém, hình ảnh chập chờn",
+                  "why": "Hình mờ và tiếng rè là cách kẻ gian giấu khuôn mặt giả, deepfake ngoài đời cũng hay đứng hình đúng như vậy"
+                },
+                {
                   "id": "sp_01",
                   "kind": "red_flag",
                   "text": "mẹ đừng gọi cho bố nhé",

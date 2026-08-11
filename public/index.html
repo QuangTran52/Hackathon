@@ -92,8 +92,11 @@
     <!-- ---------- CỘT GIỮA — NỘI DUNG TÌNH HUỐNG ---------- -->
     <section class="cot cot--giua" id="cot-giua">
 
-      <!-- Khung điện thoại: dùng cho chat, và tạm dùng cho call/video_call -->
-      <div class="dien-thoai" id="khung-dien-thoai">
+      <!-- Khung điện thoại. Dùng cho chat, và dùng lại nguyên cho call/video_call
+           ở trạng thái đang trong cuộc gọi — chỉ đổi da sang nền tối qua
+           data-kenh. Dùng lại thay vì dựng khung thứ ba để bộ đếm lượt và ô
+           nhập chỉ tồn tại đúng một bản. -->
+      <div class="dien-thoai" id="khung-dien-thoai" data-kenh="chat">
         <div class="dien-thoai__ruot">
 
           <div class="lien-he">
@@ -115,6 +118,13 @@
                 <circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/>
               </svg>
             </span>
+          </div>
+
+          <!-- Chỉ hiện ở kênh call/video_call. Cúp máy rồi thì đây là lối
+               quay lại: ngoài đời kẻ gian gọi lại ngay, nên không có ngõ cụt. -->
+          <div class="thanh-goi" id="thanh-cuoc-goi" hidden>
+            <span class="thanh-goi__chu" id="thanh-goi-chu"></span>
+            <button type="button" class="thanh-goi__nut" id="nut-nghe-lai" hidden>Nghe lại</button>
           </div>
 
           <div class="vung-tin" id="vung-tin" aria-live="polite"></div>
@@ -169,8 +179,6 @@
         </div>
       </article>
 
-      <!-- Kênh chưa dựng riêng thì nói thẳng, không giả vờ như đã xong -->
-      <p class="ghi-chu-kenh" id="ghi-chu-kenh" hidden></p>
     </section>
 
     <!-- ---------- CỘT PHẢI — TRỢ LÝ AN TOÀN ---------- -->
@@ -390,6 +398,57 @@
 </div>
 
 <!-- ============ OVERLAY KIỂM CHỨNG ============ -->
+<!-- ============ MÀN PHỦ CUỘC GỌI ============ -->
+<!-- Design Spec mục 9. Phủ toàn màn hình và nền tối — đây là ngoại lệ duy nhất
+     với quy tắc giao diện sáng, vì cuộc gọi thật chiếm lấy màn hình và tạo áp
+     lực, mà áp lực chính là thứ tình huống này dạy người chơi nhận ra.
+     Không làm video thật: ảnh tĩnh, nhiễu nhẹ, đúng như deepfake ngoài đời. -->
+<div class="lop-goi" id="lop-cuoc-goi" hidden tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="goi-ten">
+  <div class="lop-goi__trong">
+    <p class="lop-goi__nhan" id="goi-nhan">Cuộc gọi đến</p>
+
+    <span class="lop-goi__mat" id="goi-mat">
+      <img id="goi-anh" alt="">
+      <span class="lop-goi__chu-tat" id="goi-chu-tat"></span>
+      <span class="lop-goi__nhieu" aria-hidden="true"></span>
+    </span>
+
+    <h2 class="lop-goi__ten" id="goi-ten"></h2>
+    <!-- Dòng trạng thái đi qua veVungBamDuoc nên nếu tình huống có cụm khớp
+         chuỗi này thì nó đánh dấu được, đúng như Design Spec mục 8 và 9 -->
+    <p class="lop-goi__trang-thai" id="goi-trang-thai"></p>
+
+    <div class="lop-goi__nut">
+      <button type="button" class="nut-tron nut-tron--tu-choi" id="nut-tu-choi">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 2 2 22"/><path d="M16.9 5.1A15.9 15.9 0 0 1 22 8v3.5a1 1 0 0 1-1 1h-2.6a1 1 0 0 1-1-.8l-.4-2M7.5 7.6A15.9 15.9 0 0 0 2 8v3.5a1 1 0 0 0 1 1h2.6a1 1 0 0 0 1-.8l.4-2"/>
+        </svg>
+        Từ chối
+      </button>
+
+      <button type="button" class="nut-tron nut-tron--nghe" id="nut-nghe">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/>
+        </svg>
+        Nghe
+      </button>
+    </div>
+
+    <!-- Tách hẳn khỏi hai nút trên vì đây KHÔNG phải lựa chọn thứ ba của cuộc
+         gọi, mà là cách xử lý đúng — bản của nút Kiểm chứng trong bối cảnh
+         cuộc gọi. Design Spec mục 9. -->
+    <div class="lop-goi__dung">
+      <button type="button" class="nut nut--vien" id="nut-goi-lai">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/>
+        </svg>
+        Gọi lại bằng số đã lưu
+      </button>
+      <p class="lop-goi__giai-thich">Cúp máy rồi tự gọi lại bằng số trong danh bạ. Đây là cách xác minh mà người đang gọi không can thiệp được.</p>
+    </div>
+  </div>
+</div>
+
 <div class="lop-phu" id="lop-kiem-chung" hidden role="dialog" aria-modal="true" aria-labelledby="tieu-de-kiem-chung">
   <div class="hop-thoai">
     <div class="hop-thoai__dau">

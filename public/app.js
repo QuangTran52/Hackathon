@@ -62,7 +62,21 @@ const o = {
 
   cotGiua: el('cot-giua'),
   khungDienThoai: el('khung-dien-thoai'),
-  ghiChuKenh: el('ghi-chu-kenh'),
+
+  thanhCuocGoi: el('thanh-cuoc-goi'),
+  thanhGoiChu: el('thanh-goi-chu'),
+  nutNgheLai: el('nut-nghe-lai'),
+
+  lopCuocGoi: el('lop-cuoc-goi'),
+  goiNhan: el('goi-nhan'),
+  goiMat: el('goi-mat'),
+  goiAnh: el('goi-anh'),
+  goiChuTat: el('goi-chu-tat'),
+  goiTen: el('goi-ten'),
+  goiTrangThai: el('goi-trang-thai'),
+  nutTuChoi: el('nut-tu-choi'),
+  nutNghe: el('nut-nghe'),
+  nutGoiLai: el('nut-goi-lai'),
 
   khungThu: el('khung-thu'),
   thuTenNguoiGui: el('thu-ten-nguoi-gui'),
@@ -182,6 +196,11 @@ const trangThai = {
   thuongKiemChung: 0, // sức khoẻ tinh thần được cộng nhờ kiểm chứng trong case này
   // Kênh email không có ai để nhắn lại, ô nhập cột giữa ẩn hẳn
   coONhapNPC: false,
+  // Kênh cuộc gọi: chưa nghe máy thì chưa biết họ định nói gì, nên chưa có
+  // nội dung để đọc và chưa nói lại được
+  kenh: 'chat',
+  daNgheMay: false,
+  duLieuCase: null,
   dangCho: false,
   dangHoiTroLy: false,
   daChotQuyetDinh: false,
@@ -374,10 +393,10 @@ function veVungBamDuoc(khung, noiDung, spans, tuyChon = {}) {
 }
 
 // Tin nhắn mở đầu: các cụm là nút bấm được, lúc chưa bấm trông y như chữ thường
-function themTinMoDau(noiDung, spans) {
+function themTinMoDau(noiDung, spans, tuyChon = {}) {
   const tin = document.createElement('p');
   tin.className = 'tin tin--npc';
-  veVungBamDuoc(tin, noiDung, spans);
+  veVungBamDuoc(tin, noiDung, spans, tuyChon);
   o.vungTin.appendChild(tin);
   return tin;
 }
@@ -428,26 +447,31 @@ function veDemLuot() {
   // Ô nhập hẹp nên chỉ lấy phần tên trước dấu gạch, tránh bị cắt cụt
   const tenNPC = tenNgan(c?.npc?.display_name) || 'người gửi';
 
-  // Kênh không có ai để nhắn lại thì ẩn hẳn ô nhập, không để ô xám giữ chỗ
-  if (!trangThai.coONhapNPC) {
+  // Kênh không có ai để nhắn lại thì ẩn hẳn ô nhập, không để ô xám giữ chỗ.
+  // Cuộc gọi chưa nghe máy cũng vậy: chưa có ai ở đầu dây để nói.
+  if (!coTheNhanTin()) {
     o.oNhap.hidden = true;
     o.demLuot.hidden = true;
     return;
   }
 
+  // Đang gọi thì là nói, không phải nhắn. Gọi đúng tên việc người chơi đang làm.
+  const laGoi = KENH_GOI.has(trangThai.kenh);
+  const dongTu = laGoi ? 'nói' : 'nhắn';
+
   const n = trangThai.luotChatConLai;
   o.oNhap.hidden = false;
   o.demLuot.hidden = false;
   o.demLuot.textContent = n > 0
-    ? `Còn ${n} lượt nhắn`
-    : 'Đã hết lượt nhắn, hãy chốt quyết định';
+    ? `Còn ${n} lượt ${dongTu}`
+    : `Đã hết lượt ${dongTu}, hãy chốt quyết định`;
 
   o.nhapTin.disabled = n <= 0 || trangThai.daChotQuyetDinh;
   o.nutGui.disabled = o.nhapTin.disabled;
 
-  // Nhãn ghi rõ nhắn cho ai, để không lẫn với ô "Hỏi trợ lý" ở cột phải
-  const nhan = `Nhắn cho ${tenNPC}`;
-  o.nhapTin.placeholder = n > 0 ? nhan : 'Đã hết lượt nhắn';
+  // Nhãn ghi rõ đang nói với ai, để không lẫn với ô "Hỏi trợ lý" ở cột phải
+  const nhan = laGoi ? `Nói với ${tenNPC}` : `Nhắn cho ${tenNPC}`;
+  o.nhapTin.placeholder = n > 0 ? nhan : `Đã hết lượt ${dongTu}`;
   o.nhapTin.setAttribute('aria-label', nhan);
 }
 
@@ -463,6 +487,9 @@ function veDemLuotTroLy() {
 function veNutKiemChung() {
   const con = trangThai.luotKiemChungConLai;
   o.nutKiemChung.disabled = con <= 0 || trangThai.dangCho || trangThai.daChotQuyetDinh;
+  // "Gọi lại bằng số đã lưu" trên màn phủ cuộc gọi chính là nút kiểm chứng,
+  // nên nó phải hết lượt cùng lúc chứ không được là đường vòng
+  o.nutGoiLai.disabled = o.nutKiemChung.disabled;
   o.ghiChuKiemChung.hidden = con > 0;
   if (con <= 0) {
     o.ghiChuKiemChung.textContent = 'Đã dùng hết lượt kiểm chứng cho tình huống này, bạn vẫn cần chọn làm theo hoặc không làm';
@@ -519,29 +546,52 @@ function veAvatar(npc = {}) {
   o.anhAvatar.src = npc.avatar;
 }
 
-// Kênh chưa dựng khung riêng thì tạm mượn khung điện thoại và nói thẳng ra,
-// thay vì để người chơi tưởng cuộc gọi trông đúng như vậy
-const GHI_CHU_KENH = {
-  call: 'Đây là một cuộc gọi. Màn hình cuộc gọi riêng sẽ được bổ sung ở bước sau, tạm thời nội dung hiện dưới dạng tin nhắn.',
-  video_call: 'Đây là một cuộc gọi video. Màn hình cuộc gọi riêng sẽ được bổ sung ở bước sau, tạm thời nội dung hiện dưới dạng tin nhắn.'
-};
+// Hai kênh này dùng chung màn phủ cuộc gọi và chung khung điện thoại nền tối
+const KENH_GOI = new Set(['call', 'video_call']);
 
 // ---- Cột giữa: khung điện thoại ----
 
-function veKhungDienThoai(duLieu) {
+// hoanNoiDung: kênh cuộc gọi lúc chưa nghe máy. Chưa nhấc máy thì ngoài đời
+// cũng chưa biết người ta định nói gì, nên không đổ sẵn nội dung ra sau lưng
+// màn phủ — nếu đổ sẵn thì người chơi cúp máy xong vẫn đọc được hết, và việc
+// nghe hay không nghe mất sạch ý nghĩa.
+function veKhungDienThoai(duLieu, { hoanNoiDung = false } = {}) {
   const c = duLieu.caseData;
+  const spans = c.spans || [];
+  const daKhop = new Set();
+  const tuyChon = { canhBao: false, daKhop };
 
   const tenHienThi = c.npc?.display_name || '—';
   o.tenLienHe.textContent = tenHienThi;
   // Tên dài như "Phòng tài chính - ĐH Đông Phương" phải đọc được hết, hạ cỡ
   // chữ để nó vừa hai dòng thay vì bị cắt mất phần đuôi
   o.tenLienHe.classList.toggle('lien-he__ten--dai', tenHienThi.length > 24);
-  o.trangThaiLienHe.textContent = c.npc?.status_line || '';
+
+  // Dòng trạng thái đánh dấu được: Design Spec mục 8 xếp nó vào loại dấu hiệu
+  // đỏ, ví dụ "số chưa có trong danh bạ" hay "kết nối kém, hình ảnh chập chờn".
+  // Không có cụm nào khớp thì nó chỉ là chữ thường, y như trước.
+  o.trangThaiLienHe.innerHTML = '';
+  veVungBamDuoc(o.trangThaiLienHe, c.npc?.status_line, spans, tuyChon);
+
   veAvatar(c.npc || {});
 
   o.vungTin.innerHTML = '';
-  if (duLieu.openingMessage) themTinMoDau(duLieu.openingMessage, c.spans);
-  for (const tin of duLieu.lichSuChat || []) themTin(tin.role, tin.content);
+  if (hoanNoiDung) {
+    const cho = document.createElement('p');
+    cho.className = 'tin tin--cho';
+    cho.textContent = 'Chưa nghe máy nên bạn chưa biết người gọi định nói gì.';
+    o.vungTin.appendChild(cho);
+  } else {
+    if (duLieu.openingMessage) themTinMoDau(duLieu.openingMessage, spans, tuyChon);
+    for (const tin of duLieu.lichSuChat || []) themTin(tin.role, tin.content);
+
+    // Dựng xong hết mới biết cụm nào không khớp vùng nào, lúc đó mới đáng kêu
+    for (const s of spans) {
+      if (s.text && !daKhop.has(s.id)) {
+        console.warn(`[app] Cụm "${s.id}" không khớp chuỗi nào trong tin nhắn, kiểm tra lại trường text.`);
+      }
+    }
+  }
 
   o.khungDienThoai.hidden = false;
   o.khungThu.hidden = true;
@@ -609,16 +659,102 @@ function veKhungThu(duLieu) {
 function veCotGiua(duLieu) {
   const c = duLieu.caseData;
   const kenh = c.channel || 'chat';
+  const laGoi = KENH_GOI.has(kenh);
+
+  trangThai.kenh = kenh;
+  trangThai.daNgheMay = false;
 
   if (kenh === 'email') veKhungThu(duLieu);
-  else veKhungDienThoai(duLieu);
+  else veKhungDienThoai(duLieu, { hoanNoiDung: laGoi });
 
-  const ghiChu = GHI_CHU_KENH[kenh];
-  o.ghiChuKenh.textContent = ghiChu || '';
-  o.ghiChuKenh.hidden = !ghiChu;
+  // Khung điện thoại đổi sang da tối khi đang trong cuộc gọi. Dùng lại khung
+  // này thay vì dựng khung thứ ba, để bộ đếm lượt và ô nhập chỉ có đúng một bản.
+  o.khungDienThoai.dataset.kenh = kenh;
 
   // Khung thư không bao giờ có ô nhập. Kênh khác thì chỉ có khi còn lượt nhắn.
   trangThai.coONhapNPC = kenh !== 'email' && (c.max_chat_turns ?? 0) > 0;
+
+  if (laGoi) moLopCuocGoi(duLieu);
+  else dongLopCuocGoi();
+  veThanhCuocGoi();
+}
+
+// ---- Màn phủ cuộc gọi (Design Spec mục 9) ----
+
+// Có ai ở đầu dây bên kia để nói chuyện không. Kênh cuộc gọi mà chưa nghe máy
+// thì chưa có, dù tình huống vẫn còn nguyên lượt nhắn.
+function coTheNhanTin() {
+  if (!trangThai.coONhapNPC) return false;
+  if (KENH_GOI.has(trangThai.kenh) && !trangThai.daNgheMay) return false;
+  return true;
+}
+
+function moLopCuocGoi(duLieu) {
+  const npc = duLieu.caseData.npc || {};
+  const spans = duLieu.caseData.spans || [];
+  const laVideo = trangThai.kenh === 'video_call';
+
+  o.goiNhan.textContent = laVideo ? 'Cuộc gọi video đến' : 'Cuộc gọi đến';
+  o.goiTen.textContent = npc.display_name || 'Số không xác định';
+
+  o.goiTrangThai.innerHTML = '';
+  veVungBamDuoc(o.goiTrangThai, npc.status_line, spans, { canhBao: false });
+
+  // Khuôn mặt mờ. Chưa có ảnh thì rơi về chữ viết tắt chứ không để ô trống.
+  o.goiChuTat.textContent = laSoDienThoai(npc.display_name) ? '' : chuVietTat(npc.display_name);
+  o.goiMat.classList.remove('co-anh');
+  o.goiMat.dataset.video = laVideo ? '1' : '0';
+  if (npc.avatar) {
+    o.goiAnh.onload = () => o.goiMat.classList.add('co-anh');
+    o.goiAnh.onerror = () => o.goiMat.classList.remove('co-anh');
+    o.goiAnh.src = npc.avatar;
+  } else {
+    o.goiAnh.removeAttribute('src');
+  }
+
+  o.lopCuocGoi.hidden = false;
+  // Focus vào khung chứ không vào nút nào: kể cả "Gọi lại bằng số đã lưu" cũng
+  // không được gợi ý sẵn, vì chọn kiểm chứng phải là việc có ý thức
+  o.lopCuocGoi.focus();
+}
+
+const dongLopCuocGoi = () => { o.lopCuocGoi.hidden = true; };
+
+// Thanh trạng thái nằm trong khung điện thoại, chỉ hiện ở kênh cuộc gọi
+function veThanhCuocGoi() {
+  if (!KENH_GOI.has(trangThai.kenh)) {
+    o.thanhCuocGoi.hidden = true;
+    return;
+  }
+  o.thanhCuocGoi.hidden = false;
+  o.thanhGoiChu.textContent = trangThai.daNgheMay
+    ? 'Đang trong cuộc gọi'
+    : 'Bạn đã cúp máy, họ vẫn đang gọi lại';
+  o.nutNgheLai.hidden = trangThai.daNgheMay;
+}
+
+function ngheMay() {
+  if (trangThai.daNgheMay) return;
+  trangThai.daNgheMay = true;
+  dongLopCuocGoi();
+
+  // Giờ mới đổ nội dung ra, kèm lịch sử nói chuyện nếu đã có
+  if (trangThai.duLieuCase) veKhungDienThoai(trangThai.duLieuCase, { hoanNoiDung: false });
+
+  veThanhCuocGoi();
+  veCumDaDanhDau();
+  veBangChung();
+  veDemLuot();
+  noiMascot('Nghe kỹ xem họ đang muốn gì.');
+}
+
+// Cúp máy không phải quyết định cuối, chỉ là dừng nghe. Người chơi vẫn còn
+// trợ lý, còn kiểm chứng, và vẫn phải chốt làm theo hay không làm.
+function tuChoiMay() {
+  dongLopCuocGoi();
+  veThanhCuocGoi();
+  veDemLuot();
+  noiMascot('Chưa nghe thì chưa rõ gì.');
 }
 
 // ---- Cột phải: trợ lý an toàn ----
@@ -665,6 +801,8 @@ function veTroLy(duLieu) {
 function veCase(duLieu) {
   const c = duLieu.caseData;
   trangThai.caseHienTai = c;
+  // Giữ nguyên bản để dựng lại cột giữa lúc người chơi nhấc máy
+  trangThai.duLieuCase = duLieu;
   trangThai.thuTu = duLieu.thuTu;
   trangThai.tongSoCase = duLieu.tongSoCase;
   trangThai.luotChatConLai = duLieu.luotChatConLai;
@@ -930,10 +1068,11 @@ function moXacNhan() {
 
   // Kênh không có ai để nhắn thì nhắc về lượt hỏi trợ lý, chứ nói "đã dùng hết
   // lượt nhắn" ở một tình huống email là nhắc về thứ chưa từng tồn tại
-  if (trangThai.coONhapNPC) {
+  if (coTheNhanTin()) {
+    const dongTu = KENH_GOI.has(trangThai.kenh) ? 'nói' : 'nhắn';
     o.nhacLuotNhan.textContent = nhan > 0
-      ? `Bạn còn ${nhan} lượt nhắn chưa dùng`
-      : 'Bạn đã dùng hết lượt nhắn';
+      ? `Bạn còn ${nhan} lượt ${dongTu} chưa dùng`
+      : `Bạn đã dùng hết lượt ${dongTu}`;
   } else {
     const tl = trangThai.luotTroLyConLai;
     o.nhacLuotNhan.textContent = tl > 0
@@ -962,11 +1101,16 @@ const dongXacNhan = () => { o.lopXacNhan.hidden = true; };
 function vanBanGocCuaCase(c, tinMoDau) {
   const than = tinMoDau || c?.opening_message || '';
   const e = c?.email;
-  if (!e) return than;
+  if (e) {
+    return [e.from_address, e.subject, than, e.ticket_id]
+      .filter(Boolean)
+      .join('\n\n');
+  }
 
-  return [e.from_address, e.subject, than, e.ticket_id]
-    .filter(Boolean)
-    .join('\n\n');
+  // Dòng trạng thái dưới tên người gửi cũng đánh dấu được — "số chưa có trong
+  // danh bạ", "kết nối kém, hình ảnh chập chờn". Vệt bôi phải được mang sang
+  // màn quyết định và màn bài học làm bằng chứng, nên nó đi kèm luôn ở đây.
+  return [c?.npc?.status_line, than].filter(Boolean).join('\n\n');
 }
 
 function moManQuyetDinh() {
@@ -1399,11 +1543,23 @@ o.nutSanSang.addEventListener('click', moXacNhan);
 o.nutQuayLaiHoi.addEventListener('click', dongXacNhan);
 o.nutDuThongTin.addEventListener('click', moManQuyetDinh);
 
+// Màn phủ cuộc gọi
+o.nutNghe.addEventListener('click', ngheMay);
+o.nutTuChoi.addEventListener('click', tuChoiMay);
+o.nutNgheLai.addEventListener('click', () => {
+  if (trangThai.duLieuCase) moLopCuocGoi(trangThai.duLieuCase);
+});
+// Cùng một lượt kiểm chứng với nút ở dưới màn chơi, chỉ khác cách gọi tên cho
+// hợp bối cảnh cuộc gọi. Design Spec mục 9.
+o.nutGoiLai.addEventListener('click', moKiemChung);
+
 // Escape gắn ở tài liệu để đóng được overlay dù con trỏ đang ở đâu
 document.addEventListener('keydown', (su) => {
   if (su.key !== 'Escape') return;
   if (!o.lopXacNhan.hidden) dongXacNhan();
   else if (!o.lopKiemChung.hidden) dongKiemChung();
+  // Thoát khỏi màn cuộc gọi nghĩa là không nhấc máy, đúng như cúp máy
+  else if (!o.lopCuocGoi.hidden) tuChoiMay();
 });
 
 // Bước 3
