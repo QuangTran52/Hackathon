@@ -394,6 +394,22 @@ Lưu tiến trình bằng localStorage, không cần backend.
 
 Nút chỉnh cỡ chữ là điểm cộng rõ ràng về tính bao trùm khi chấm — không được bỏ.
 
+### Màn thua sớm và màn ôn tập
+
+**Thua sớm không phải là kết thúc.** Khi Sức khoẻ tinh thần xuống 30 hoặc thấp hơn, người chơi vào màn thua sớm, và từ đó **phải vào được màn ôn tập** gồm đúng những tình huống đã sai.
+
+Đây là quy tắc bất khả xâm phạm: **không bao giờ bắt chơi lại từ đầu**, ở bất kỳ nhánh kết cục nào. Người bỏ giữa chừng là người chưa học được gì, và bắt chơi lại toàn bộ chính là thứ khiến người ta bỏ.
+
+Áp dụng cho cả hai nhánh:
+
+| Kết cục | Điều kiện | Lối ra |
+|---|---|---|
+| Thua sớm | Sức khoẻ ≤ 30 | Màn ôn tập, gồm các tình huống đã sai |
+| Chưa đạt | Hết lượt nhưng đúng dưới 75% | Màn ôn tập, gồm các tình huống đã sai |
+| Thắng | Đúng từ 75% trở lên | Màn kết |
+
+Vào màn ôn tập thì chỉ số giữ nguyên, không đặt lại. Chỉ chơi lại những tình huống đã sai, dưới biến thể khác nếu chủ đề có sẵn.
+
 ### Màn hành trình
 
 Ba thẻ giai đoạn xếp ngang, mỗi thẻ ba chặng. Trạng thái mỗi chặng: đúng (dấu tích xanh), sai (dấu x đỏ), đang chơi (mũi tên, viền thẻ đậm), chưa mở (ổ khoá xám).
@@ -523,7 +539,9 @@ Icon dùng bộ có sẵn (Lucide hoặc Tabler). Khung chat, nút bấm, thẻ,
 - [ ] Ô bối cảnh nằm trên, mascot nằm dưới đáy cột trái
 - [ ] Mascot là PNG nền trong suốt, không có khung tròn bao quanh
 - [ ] Bong bóng có min-height cố định, bố cục không nhảy khi đổi câu
-- [ ] Ba nút hành động trải hết chiều ngang, nằm dưới cả hai cột
+- [ ] Màn hội thoại có đúng hai nút: Kiểm chứng và Tôi đã sẵn sàng quyết định
+- [ ] Màn quyết định có đúng hai nút: Làm theo và Không làm
+- [ ] Thua sớm vẫn vào được màn ôn tập, không bắt chơi lại từ đầu
 - [ ] Tin nhắn lúc mới vào màn chưa có vệt bôi nào
 - [ ] Ảnh bằng chứng nằm trong bong bóng chat, không ở ô riêng
 - [ ] Không có logo hay màu thật của tổ chức có thật

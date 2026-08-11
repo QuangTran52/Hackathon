@@ -37,9 +37,11 @@ Cách viết nhanh nhất là làm **bản song sinh**: lấy chính tình huố
 
 Cặp song sinh mạnh hơn hẳn về mặt dạy học: người chơi buộc phải học cách **phân biệt** thay vì học cách **nghi ngờ**.
 
-### Quy tắc 2 — Các biến thể trong cùng chủ đề phải cùng mức độ khó
+### Quy tắc 2 — Các biến thể trong cùng chủ đề không chênh quá một bậc độ khó
 
 Vì chúng được rút ngẫu nhiên. Nếu biến thể A dễ mà B khó thì hai người chơi có trải nghiệm chênh nhau, và lúc demo có thể rút trúng bản nhạt nhất.
+
+Không bắt buộc bằng nhau tuyệt đối, vì có chủ đề không thoả được. Ví dụ chủ đề "người thân gặp chuyện gấp": bản lừa đảo là deepfake nên phải ở mức Khó, nhưng bản an toàn ở mức Khó thì người chơi gần như chắc chắn từ chối nhầm — mà bị phạt vì cẩn thận là trải nghiệm rất ức chế. Trường hợp này để scam ở Khó và safe ở Trung bình là hợp lý.
 
 ---
 
@@ -70,15 +72,8 @@ Riêng tình huống **an toàn ở mức Khó thì nên tránh** — người c
 | `type` | `scam` (lừa đảo) hoặc `safe` (an toàn) |
 | `difficulty` | `de`, `trung_binh`, `kho` |
 | `channel` | `chat` (nhắn tin), `call` (gọi thoại), `video_call` (gọi video, dùng cho deepfake) |
-| `harm` | Chỉ tình huống `scam`: `mat_tien` hoặc `lo_thong_tin` |
 | `title` | Tên tình huống, hiển thị ở màn hành trình sau khi đã chơi |
 | `context.text` | 1–2 câu mô tả người chơi đang ở đâu, đang chờ gì |
-
-**`harm` quyết định mức phạt khi người chơi làm theo kẻ gian**: mất tiền trừ nặng hơn (sức khoẻ tinh thần −20, lý trí −15) so với lộ thông tin (−10 và −10). Tình huống `safe` không cần trường này.
-
-Cứ hỏi: nếu người chơi làm đúng như kẻ gian bảo thì **ngay lúc đó** họ mất gì? Chuyển khoản, quét mã QR, đọc mã OTP để chuyển tiền → `mat_tien`. Bấm liên kết rồi đăng nhập, gửi ảnh giấy tờ, khai số căn cước → `lo_thong_tin`. Nếu một tình huống dẫn tới cả hai thì chọn cái xảy ra trước.
-
-Thiếu `harm`, hệ thống tạm suy ra từ `npc.amount` và in cảnh báo ra console. Đừng dựa vào cơ chế đó — nó đoán sai với những vụ lừa lấy tài khoản mà vẫn có số tiền trong tin nhắn.
 
 ### Danh tính nhân vật (`npc`)
 
@@ -167,7 +162,6 @@ BIẾN THỂ SỐ:
 Loại:              scam / safe
 Độ khó:            de / trung_binh / kho
 Kênh:              chat / call / video_call
-Thiệt hại:         mat_tien / lo_thong_tin   (chỉ ghi với loại scam)
 Tên tình huống:
 
 BỐI CẢNH (1-2 câu người chơi đang ở đâu, đang chờ gì):
@@ -236,8 +230,7 @@ GỢI Ý HỖ TRỢ (chọn 1 dấu hiệu đỏ để tô sẵn cho người ch
 ## 6. Danh sách kiểm tra trước khi bàn giao
 
 - [ ] Mỗi chủ đề có ít nhất 1 biến thể loại `safe`
-- [ ] Mỗi tình huống `scam` có `harm` là `mat_tien` hoặc `lo_thong_tin`
-- [ ] Các biến thể trong cùng chủ đề cùng mức độ khó
+- [ ] Các biến thể trong cùng chủ đề không chênh quá một bậc độ khó
 - [ ] Mọi `text` trong `spans` trích chính xác từ `opening_message`
 - [ ] Tình huống `safe` có ít nhất 1 cụm mồi
 - [ ] Số điện thoại, số tài khoản đúng định dạng Việt Nam, không phải dãy đếm

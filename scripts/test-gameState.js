@@ -422,13 +422,51 @@ kiemTra('applyDelta bị bỏ qua sau khi thua', dongBang.boQua, true);
 kiemTra('chỉ số không đổi sau khi thua', [gsB.stats.sucKhoe, gsB.stats.lyTri], [25, 45]);
 kiemTra('không mở được case mới', gsB.openNextCase(), null);
 
-let loiOnTap = false;
+// ---- Thua sớm vẫn phải vào được ôn tập (Design Spec mục 10, màn 9) ----
+//
+// Đây là nhánh dễ hỏng nhất của cả máy trạng thái: sức khoẻ lúc này là 25, tức
+// vẫn dưới ngưỡng thua 30. Nếu ôn tập còn kiểm tra ngưỡng đó thì người chơi
+// thua lại ngay ở case đầu tiên và không bao giờ học lại được gì.
+
+const statsLucThua = { ...gsB.stats };
+const caseSaiB = gsB.danhSachCaseSai().map((c) => c.id);
+kiemTra('ba case bị lừa đều vào danh sách ôn tập', caseSaiB, ['b2_mat_tien', 'b3_mat_tien', 'b4_mat_tien']);
+
+const tienDoOnTapB = gsB.startReviewRun();
+kiemTra('thua sớm VÀO ĐƯỢC ôn tập', tienDoOnTapB.mode, CHE_DO.ON_TAP);
+kiemTra('ôn tập đúng số case đã sai', tienDoOnTapB.tongSoCase, 3);
+kiemTra('ôn tập giữ nguyên chỉ số lúc thua', gsB.stats, statsLucThua);
+kiemTra('vào ôn tập thì gỡ cờ kết thúc', gsB.isGameOver, false);
+kiemTra('mẫu số tính thắng vẫn là lượt chính', gsB.tongSoCaseLuotChinh, 4);
+
+// Sức khoẻ vẫn 25, dưới ngưỡng 30. Chơi đúng một case rồi soi lại: nếu luật
+// thua sớm còn hiệu lực trong ôn tập thì đúng ở đây là chỗ nó bật lên.
+//
+// Có dùng kiểm chứng để sức khoẻ nhích lên 30 — chạm đúng ngưỡng, tức là rơi
+// vào phép so sánh <= của luật thua. Ngưỡng là chỗ dễ sai nhất nên phải chạm.
+choiMotCase(gsB, { decision: QUYET_DINH.KHONG_LAM, reasonLevel: MUC_LY_DO.THUYET_PHUC, danhDau: 'du', kiemChung: 1 });
+kiemTra('sức khoẻ mới chạm đúng ngưỡng thua', gsB.stats.sucKhoe, 30);
+kiemTra('nhưng KHÔNG thua lại giữa màn ôn tập', gsB.isGameOver, false);
+kiemTra('và cũng không sinh ra kết cục mới', gsB.ketCuc, null);
+
+// Chơi nốt hai case còn lại: sửa hết thì phải qua được lượt
+choiMotCase(gsB, { decision: QUYET_DINH.KHONG_LAM, reasonLevel: MUC_LY_DO.THUYET_PHUC, danhDau: 'du' });
+const cuoiOnTapB = choiMotCase(gsB, { decision: QUYET_DINH.KHONG_LAM, reasonLevel: MUC_LY_DO.THUYET_PHUC, danhDau: 'du' });
+kiemTra('sửa hết case sai thì qua được lượt', cuoiOnTapB.ketCuc.loai, KET_CUC.THANG);
+kiemTra('bốn case đều tính là đúng', [gsB.soCaseDung(), gsB.tongSoCaseLuotChinh], [4, 4]);
+
+// Sức khoẻ chỉ hồi qua kiểm chứng và vượt case khó, không hồi nhờ trả lời đúng.
+// Ba case ôn tập đều là trung_binh nên toàn bộ mức tăng đến từ lượt kiểm chứng ở trên.
+kiemTra('sức khoẻ hồi đúng phần thưởng kiểm chứng', gsB.stats.sucKhoe, statsLucThua.sucKhoe + 5);
+
+// Hết case sai thì không còn gì để ôn, đây mới là lý do chính đáng để chặn
+let loiOnTapLai = '';
 try {
   gsB.startReviewRun();
-} catch {
-  loiOnTap = true;
+} catch (e) {
+  loiOnTapLai = e.message;
 }
-kiemTra('thua sớm thì không vào ôn tập', loiOnTap, true);
+kiemTra('không còn case sai thì chặn vào ôn tập', /Không có tình huống nào sai/.test(loiOnTapLai), true);
 
 // ================= LƯỢT C — HỖ TRỢ THÍCH ỨNG =================
 

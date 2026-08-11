@@ -255,8 +255,13 @@ class GameState {
     };
     this.nhatKyChiSo.push(ban);
 
-    // Điều kiện thua sớm, kiểm tra ngay tại đây
-    if (sau.sucKhoe <= NGUONG_THUA_SOM) {
+    // Điều kiện thua sớm, kiểm tra ngay tại đây.
+    //
+    // Màn ôn tập miễn nhiễm với luật này. Người chơi vào ôn tập chính vì sức
+    // khoẻ đã chạm đáy, nên nếu vẫn kiểm tra thì nước sai đầu tiên — hoặc thậm
+    // chí chỉ cần mở case ra — là thua lại ngay, và màn học bị cắt ngang trước
+    // khi dạy được gì. Ôn tập là chỗ học lại, không phải chỗ thua lần nữa.
+    if (sau.sucKhoe <= NGUONG_THUA_SOM && this.run.mode !== CHE_DO.ON_TAP) {
       this.ketThucLuot(KET_CUC.THUA_SOM);
     }
 
@@ -676,11 +681,13 @@ class GameState {
 
   // Vào màn ôn tập: chơi lại đúng những case đã sai, không chơi lại từ đầu.
   // Chỉ số và lịch sử được giữ nguyên.
+  //
+  // Thua sớm cũng vào được, và đây là lối ra QUAN TRỌNG NHẤT của nhánh đó chứ
+  // không phải ngoại lệ: Design Spec mục 10 màn 9 đặt nút ôn tập ngay trên màn
+  // thua sớm. Người vừa bị lừa ba lần là người cần học lại nhất, chặn họ ở đây
+  // thì lối ra duy nhất còn lại là chơi lại từ đầu — đúng thứ game không bao
+  // giờ được bắt người chơi làm.
   startReviewRun() {
-    if (this.ketCuc && this.ketCuc.loai === KET_CUC.THUA_SOM) {
-      throw new Error('Đã thua sớm, không vào màn ôn tập từ trạng thái này.');
-    }
-
     const caseSai = this.danhSachCaseSai();
     if (caseSai.length === 0) {
       throw new Error('Không có tình huống nào sai để ôn tập.');

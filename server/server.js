@@ -391,8 +391,13 @@ app.get('/api/run/summary', (req, res) => {
 
   res.json({
     ...tongKet,
-    // Chưa đạt thì còn màn ôn tập, thua sớm thì dừng hẳn
-    coTheOnTap: Boolean(gameState.ketCuc && gameState.ketCuc.loai === KET_CUC.CHUA_DAT && caseSai.length > 0),
+    // Cả chưa đạt lẫn thua sớm đều vào được ôn tập, miễn là có case để học lại.
+    // Thua sớm mà không mở đường này thì người chơi chỉ còn cách chơi lại từ đầu.
+    coTheOnTap: Boolean(
+      gameState.ketCuc
+      && (gameState.ketCuc.loai === KET_CUC.CHUA_DAT || gameState.ketCuc.loai === KET_CUC.THUA_SOM)
+      && caseSai.length > 0
+    ),
     onTap: caseSai.map((c) => ({
       id: c.id,
       title: c.title,
