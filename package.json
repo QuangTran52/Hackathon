@@ -6,14 +6,13 @@
   "main": "server/server.js",
   "scripts": {
     "start": "node server/server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npm run test:offline && node scripts/test-tro-ly.js",
+    "test:offline": "node scripts/test-casePicker.js && node scripts/test-gameState.js && node scripts/test-han-cho.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@google/genai": "^2.11.0",
-    "@google/generative-ai": "^0.24.1",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",

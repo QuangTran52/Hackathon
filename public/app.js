@@ -227,6 +227,14 @@ function hienLoi(loi) {
 
 const anLoi = () => { o.baoLoi.hidden = true; };
 
+// Cảnh báo của casePicker về nội dung còn thiếu — ví dụ cả lượt không đủ tình
+// huống an toàn. Đây là việc của bên nội dung, không phải lỗi người chơi gây
+// ra, nên in ra console chứ KHÔNG hiện lên màn hình: một khung báo lỗi đỏ ngay
+// lúc vào game vừa phá không khí vừa nói về thứ người chơi không sửa được.
+function canhBaoNoiDung(danhSach = []) {
+  for (const w of danhSach) console.warn('[nội dung]', w);
+}
+
 // ================= ĐIỀU HƯỚNG MÀN =================
 
 const MOI_MAN = ['manChoi', 'manQuyetDinh', 'manBocTach', 'manHanhTrinh', 'manKet'];
@@ -726,6 +734,7 @@ async function batDauLuot() {
       body: { name: 'Người chơi', birthYear: null, gender: '' }
     });
     veChiSo(batDau.stats);
+    canhBaoNoiDung(batDau.warnings);
     trangThai.bocTachTheoChang = new Map();
     trangThai.luotId = batDau.tienDo.luotId;
     trangThai.chang = Array.from({ length: batDau.tienDo.tongSoCase }, () => 'chua_toi');

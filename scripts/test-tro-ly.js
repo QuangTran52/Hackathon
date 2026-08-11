@@ -39,3 +39,5 @@ for (const q of CAU_HOI) {
   if (cb.length) { loi++; console.log(`  ⚠ ${cb.join(' | ')}`); }
 }
 console.log(loi === 0 ? `\n✓ ${CAU_HOI.length}/${CAU_HOI.length} câu đạt` : `\n✗ ${loi}/${CAU_HOI.length} câu bị gắn cờ`);
+// Trả mã thoát để npm test dừng lại khi trợ lý lệch vai, thay vì in rồi đi tiếp
+if (loi > 0) process.exitCode = 1;

@@ -722,6 +722,8 @@
                 }
               ],
               "max_chat_turns": 0,
+              "fallback_replies": [],
+              "fallback_note": "Cố ý để rỗng, không phải quên. Kênh email không có ai để nhắn lại: max_chat_turns bằng 0 nên registerChatTurn() từ chối ngay lượt đầu và server trả 400 trước khi kịp gọi AI, còn giao diện thì ẩn hẳn ô nhập. Không có đường nào chạm tới fallback_replies. Nếu sau này case email cho nhắn lại thì phải viết đủ 3 câu theo hướng dẫn viết tình huống mục 4.",
               "assistant_turns": 3,
               "verification": [
                 {
@@ -804,6 +806,8 @@
                 }
               ],
               "max_chat_turns": 0,
+              "fallback_replies": [],
+              "fallback_note": "Cố ý để rỗng, không phải quên. Kênh email không có ai để nhắn lại: max_chat_turns bằng 0 nên registerChatTurn() từ chối ngay lượt đầu và server trả 400 trước khi kịp gọi AI, còn giao diện thì ẩn hẳn ô nhập. Không có đường nào chạm tới fallback_replies. Nếu sau này case email cho nhắn lại thì phải viết đủ 3 câu theo hướng dẫn viết tình huống mục 4.",
               "assistant_turns": 3,
               "verification": [
                 {
@@ -823,6 +827,13 @@
                   "label": "Hỏi đồng nghiệp ngồi cạnh xem có nhận được thư này không",
                   "result": "Đồng nghiệp cũng nhận được thư giống hệt, gửi tới địa chỉ toàn thể nhân viên.",
                   "is_independent": true
+                },
+                {
+                  "id": "vf_04",
+                  "label": "Trả lời chính thư này để hỏi lại cho chắc",
+                  "result": "Ít phút sau bạn nhận được thư trả lời, lời lẽ lịch sự, khẳng định đợt bảo trì là có thật và mời anh chị cứ yên tâm làm việc.",
+                  "is_independent": false,
+                  "note": "Lần này thư đúng là thật nên trả lời lại cũng ra kết quả đúng. Nhưng kẻ giả mạo cũng trả lời y hệt như vậy — cách này không phân biệt được hai trường hợp nên không phải kiểm chứng."
                 }
               ],
               "correct_action": "Đọc và ghi nhớ khung giờ bảo trì, không cần làm gì thêm. Nếu vẫn muốn chắc chắn thì gọi số nội bộ 172 tự tra trong danh bạ công ty.",
