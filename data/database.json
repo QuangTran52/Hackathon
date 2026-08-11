@@ -824,12 +824,6 @@
                 },
                 {
                   "id": "vf_03",
-                  "label": "Hỏi đồng nghiệp ngồi cạnh xem có nhận được thư này không",
-                  "result": "Đồng nghiệp cũng nhận được thư giống hệt, gửi tới địa chỉ toàn thể nhân viên.",
-                  "is_independent": true
-                },
-                {
-                  "id": "vf_04",
                   "label": "Trả lời chính thư này để hỏi lại cho chắc",
                   "result": "Ít phút sau bạn nhận được thư trả lời, lời lẽ lịch sự, khẳng định đợt bảo trì là có thật và mời anh chị cứ yên tâm làm việc.",
                   "is_independent": false,
@@ -879,7 +873,7 @@
                 "amount": "50.000.000đ",
                 "link": null
               },
-              "opening_message": "Mẹ ơi con đây. Con vừa gây tai nạn ngoài đường Trần Hưng Đạo, bên kia đòi bồi thường 50.000.000đ không thì báo công an. Mẹ chuyển gấp vào số 0912887456 tên LE MINH TUAN giúp con, mẹ đừng gọi cho bố nhé, bố biết là chết con. Số con sắp hết pin rồi.",
+              "opening_message": "Mẹ ơi con đây. Con vừa gây tai nạn ngoài đường Trần Hưng Đạo, bên kia đòi bồi thường 50.000.000đ không thì báo công an. Mẹ chuyển gấp vào số 0912887456 tên LE MINH TUAN giúp con, mẹ đừng gọi cho bố nhé, bố biết là chết con.",
               "attachments": [],
               "spans": [
                 {
@@ -893,12 +887,6 @@
                   "kind": "red_flag",
                   "text": "mẹ đừng gọi cho bố nhé",
                   "why": "Yêu cầu giữ bí mật để cô lập bác khỏi người có thể giúp bác nhận ra sự thật"
-                },
-                {
-                  "id": "sp_02",
-                  "kind": "red_flag",
-                  "text": "Số con sắp hết pin rồi",
-                  "why": "Lý do để chặn việc bác gọi lại kiểm chứng, đây là bước bắt buộc của mọi cuộc gọi giả"
                 },
                 {
                   "id": "sp_03",
@@ -948,8 +936,8 @@
                 }
               ],
               "correct_action": "Cúp máy và gọi lại bằng số đã lưu trong danh bạ. Đây là cách xác minh duy nhất mà kẻ gian không kiểm soát được.",
-              "lesson": "Công nghệ AI hiện nay có thể giả giọng nói và khuôn mặt của người thân chỉ từ vài giây ghi âm hoặc một video trên mạng xã hội. Trong thời đại này, giác quan không còn là bằng chứng. Bằng chứng duy nhất là gọi lại bằng số bác đã biết. Hai dấu hiệu luôn xuất hiện: yêu cầu giữ bí mật với người nhà, và một lý do để bác không gọi lại được.",
-              "support_hint": "sp_02"
+              "lesson": "Công nghệ AI hiện nay có thể giả giọng nói và khuôn mặt của người thân chỉ từ vài giây ghi âm hoặc một video trên mạng xã hội. Trong thời đại này, giác quan không còn là bằng chứng. Bằng chứng duy nhất là gọi lại bằng số bác đã biết. Hình mờ tiếng rè không phải là mạng kém, đó là chỗ khuôn mặt giả dễ lộ nhất. Và nếu bác đòi gọi lại, bên kia sẽ lập tức có một lý do để bác không gọi được — đó cũng là một dấu hiệu.",
+              "support_hint": "sp_00"
             },
             {
               "id": "case_con_goi_that",

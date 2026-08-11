@@ -74,6 +74,14 @@ export const CHI_SO_KHOI_DAU = { sucKhoe: 80, lyTri: 70 };
 // Thua sớm ngay khi sức khoẻ tinh thần chạm ngưỡng này
 const NGUONG_THUA_SOM = 30;
 
+// Mức sức khoẻ tinh thần được kéo lên khi rời màn ôn tập để chơi tiếp phần
+// lượt còn dở. Người chơi vào ôn tập vì đã chạm đáy, nên nếu thả họ về lượt
+// chính với đúng số cũ thì lần đổi chỉ số kế tiếp — kể cả một phần thưởng
+// cộng điểm — vẫn nằm dưới ngưỡng và họ thua lại ngay lập tức.
+// Đặt trên 50 để chịu được trọn một cú mất tiền (-20) mà chưa chạm ngưỡng:
+// đi tiếp phải là đi tiếp thật, không phải được thả ra để thua phát nữa.
+const SUC_KHOE_SAU_ON_TAP = 60;
+
 // Dưới ngưỡng này thì bật hỗ trợ thích ứng, từ ngưỡng cao trở lên thì thôi.
 // Lý trí thấp KHÔNG bao giờ làm tăng độ khó.
 const NGUONG_BAT_HO_TRO = 50;
@@ -196,6 +204,11 @@ class GameState {
       vong: 0
     };
 
+    // Toàn bộ tình huống của lượt chính, giữ nguyên thứ tự rút ban đầu.
+    // run.cases chỉ là phần đang chơi dở — ôn tập hay chơi tiếp đều thay nó —
+    // nên đây mới là chỗ duy nhất biết đủ một lượt gồm những gì.
+    this.casesLuotChinh = [];
+
     // Tổng số case của lượt chính — mẫu số khi tính tỷ lệ thắng.
     // Màn ôn tập không làm thay đổi mẫu số này.
     this.tongSoCaseLuotChinh = 0;
@@ -292,7 +305,11 @@ class GameState {
   // ---------- Vòng đời một lượt chơi ----------
 
   // ketQuaPickRun: kết quả của casePicker.pickRun()
-  startRun(ketQuaPickRun, { mode = CHE_DO.CHINH, giuChiSo = false } = {}) {
+  //
+  // tiepTuc: đang mở lại phần còn dở của chính lượt chính đang chơi, không phải
+  // mở lượt mới. Cờ này giữ nguyên danh sách gốc và mẫu số tính thắng — thiếu
+  // nó thì chơi tiếp 4 case cuối sẽ biến mẫu số từ 7 thành 4.
+  startRun(ketQuaPickRun, { mode = CHE_DO.CHINH, giuChiSo = false, tiepTuc = false } = {}) {
     const { cases, meta } = docKetQuaPickRun(ketQuaPickRun);
     if (cases.length === 0) {
       throw new Error('pickRun() trả về danh sách rỗng, không có tình huống nào để chơi.');
@@ -314,7 +331,8 @@ class GameState {
       id: ++this.soLuotDaMo
     };
 
-    if (mode === CHE_DO.CHINH) {
+    if (mode === CHE_DO.CHINH && !tiepTuc) {
+      this.casesLuotChinh = [...cases];
       this.tongSoCaseLuotChinh = cases.length;
     }
 
@@ -333,7 +351,9 @@ class GameState {
       index: this.run.index,
       tongSoCase: this.run.cases.length,
       tongSoCaseLuotChinh: this.tongSoCaseLuotChinh,
-      conLai: Math.max(0, this.run.cases.length - this.run.index)
+      conLai: Math.max(0, this.run.cases.length - this.run.index),
+      // Case của lượt chính chưa đụng tới lần nào — phần sẽ chơi tiếp sau ôn tập
+      soCaseChuaChoi: this.danhSachCaseChuaChoi().length
     };
   }
 
@@ -605,9 +625,21 @@ class GameState {
     this.run.index += 1;
     this.caseHienTai = null;
 
-    const hetCase = this.run.index >= this.run.cases.length;
-    if (!this.isGameOver && hetCase) {
-      this.danhGiaKetCuc();
+    // Hết case trong run đang chơi chưa chắc đã là hết lượt. Thua sớm giữa
+    // chừng bỏ lại một mớ case chưa ai đụng tới; ôn tập xong mà chốt kết cục
+    // ngay thì mớ đó mất luôn và tỷ lệ không bao giờ với tới 75%. Ôn tập là
+    // trạm hồi phục, không phải cửa ra — nên còn case chưa chơi thì mở thẳng
+    // phần còn lại của lượt chính, tính kết cục sau khi đã chơi đủ.
+    const hetCaseTrongRun = this.run.index >= this.run.cases.length;
+    let chuyenSangChoiTiep = false;
+
+    if (!this.isGameOver && hetCaseTrongRun) {
+      if (this.danhSachCaseChuaChoi().length > 0) {
+        this.startContinueRun();
+        chuyenSangChoiTiep = true;
+      } else {
+        this.danhGiaKetCuc();
+      }
     }
 
     return {
@@ -615,7 +647,11 @@ class GameState {
       stats: { ...this.stats },
       isGameOver: this.isGameOver,
       ketCuc: this.ketCuc,
-      hetCase,
+      // Chỉ true khi thật sự không còn gì để chơi, vì giao diện lấy nó làm
+      // tín hiệu chuyển sang màn kết
+      hetCase: hetCaseTrongRun && !chuyenSangChoiTiep,
+      chuyenSangChoiTiep,
+      hoiPhucSauOnTap: chuyenSangChoiTiep ? (this.run.hoiPhucSauOnTap || 0) : 0,
       tienDo: this.tienDoLuot()
     };
   }
@@ -673,9 +709,15 @@ class GameState {
     return ketQua;
   }
 
+  // Case của lượt chính chưa từng được chốt quyết định lần nào.
+  // Giữ nguyên thứ tự rút ban đầu để người chơi đi tiếp đúng mạch câu chuyện.
+  danhSachCaseChuaChoi() {
+    return this.casesLuotChinh.filter((c) => !(c.id in this.ketQuaTheoCase));
+  }
+
   timTinhHuong(caseId) {
-    return this.run.cases.find((c) => c.id === caseId)
-      || this.run.casesGoc?.find?.((c) => c.id === caseId)
+    return this.casesLuotChinh.find((c) => c.id === caseId)
+      || this.run.cases.find((c) => c.id === caseId)
       || null;
   }
 
@@ -693,10 +735,30 @@ class GameState {
       throw new Error('Không có tình huống nào sai để ôn tập.');
     }
 
-    // Giữ lại danh sách gốc để còn tra cứu tình huống ở các vòng sau
-    const goc = this.run.casesGoc || this.run.cases;
-    const tienDo = this.startRun(caseSai, { mode: CHE_DO.ON_TAP, giuChiSo: true });
-    this.run.casesGoc = goc;
+    return this.startRun(caseSai, { mode: CHE_DO.ON_TAP, giuChiSo: true });
+  }
+
+  // Chơi tiếp phần lượt chính còn dang dở. Gọi ngay khi ôn tập vừa hết case,
+  // nên người chơi đi thẳng từ tình huống ôn tập cuối sang tình huống mới mà
+  // không phải qua màn kết — thua sớm không được phép cắt cụt một lượt chơi.
+  //
+  // Chỉ số và lịch sử giữ nguyên, mẫu số tính thắng vẫn là cả lượt chính.
+  startContinueRun() {
+    const conLai = this.danhSachCaseChuaChoi();
+    if (conLai.length === 0) {
+      throw new Error('Không còn tình huống nào chưa chơi trong lượt này.');
+    }
+
+    // Hồi sức trước khi đổi chế độ, tức là lúc luật thua sớm còn đang tắt.
+    // Chỉ kéo lên, không bao giờ kéo xuống: ai giữ được sức khoẻ cao hơn 60
+    // suốt màn ôn tập thì giữ nguyên phần hơn đó.
+    const thieu = Math.max(0, SUC_KHOE_SAU_ON_TAP - this.stats.sucKhoe);
+    const hoiPhuc = thieu > 0
+      ? this.applyDelta({ sucKhoe: thieu }, 'Hồi phục sau màn ôn tập để chơi tiếp').apDung.sucKhoe
+      : 0;
+
+    const tienDo = this.startRun(conLai, { mode: CHE_DO.CHINH, giuChiSo: true, tiepTuc: true });
+    this.run.hoiPhucSauOnTap = hoiPhuc;
     return tienDo;
   }
 
@@ -715,6 +777,9 @@ class GameState {
       tyLe: this.tyLeDung(),
       nguongThang: TY_LE_THANG,
       caseSai: this.danhSachCaseSai().map((c) => ({ id: c.id, title: c.title })),
+      // Thua sớm bỏ dở lượt: số này cho màn kết nói được rằng ôn tập xong vẫn
+      // còn tình huống để chơi, chứ không phải hết lượt tại đây
+      soCaseChuaChoi: this.danhSachCaseChuaChoi().length,
       // Số lần dùng kiểm chứng, dùng để khen ở màn tổng kết
       soLanKiemChung: this.history.filter((h) => h.daKiemChung).length,
       history: this.history.map((h) => ({ ...h })),

@@ -7,6 +7,7 @@
 //   Lượt B — sức khoẻ tinh thần tụt xuống ngưỡng và thua sớm giữa chừng
 //   Lượt C — hỗ trợ thích ứng khi lý trí xuống dưới 50
 //   Lượt D — điểm lý do bị giảm nửa khi quyết định sai, và trường harm
+//   Lượt F — thua sớm giữa chừng, ôn tập, rồi chơi nốt phần lượt còn dở
 //   Lượt E — nhận thẳng kết quả casePicker.pickRun()
 
 import fs from 'fs';
@@ -562,6 +563,82 @@ gsD.startRun([
   kiemTra('đúng thì lý do vẫn được đủ 10', [kq.quyetDinhDung, kq.diem.lyDo], [true, { lyTri: 10 }]);
   kiemTra('cả 20 điểm thưởng vào thật, không bị trần cắt', [tongYeuCau(kq.diem), gsD.stats.lyTri], [kq.tongThayDoi, 72]);
 }
+
+// ================= LƯỢT F — THUA SỚM GIỮA CHỪNG RỒI CHƠI NỐT LƯỢT =================
+
+tieuDe('LƯỢT F — thua sớm ở case 3/7, ôn tập 2 case sai, chơi tiếp case 4 đến 7');
+
+// Nhánh này từng là ngõ cụt: thua sớm giữa chừng thì bốn case cuối không ai
+// chơi nữa, ôn tập xong là chốt kết cục luôn trên mẫu số 7. Đúng nhiều nhất
+// được 3/7 = 43%, không đời nào với tới 75%, nên người chơi vĩnh viễn không
+// qua nổi lượt. Ôn tập là trạm hồi phục giữa đường, không phải cửa ra.
+
+const gsF = new GameState();
+const luotF = [
+  taoTinhHuong({ id: 'f1_an_toan', type: 'safe', difficulty: 'de', soDauHieuDo: 0, hoTro: false }),
+  taoTinhHuong({ id: 'f2_mat_tien', type: 'scam', difficulty: 'trung_binh', soDauHieuDo: 2, coTien: true }),
+  taoTinhHuong({ id: 'f3_mat_tien', type: 'scam', difficulty: 'trung_binh', soDauHieuDo: 2, coTien: true }),
+  taoTinhHuong({ id: 'f4_lo_tin', type: 'scam', difficulty: 'trung_binh', soDauHieuDo: 2 }),
+  taoTinhHuong({ id: 'f5_an_toan', type: 'safe', difficulty: 'de', soDauHieuDo: 0, hoTro: false }),
+  taoTinhHuong({ id: 'f6_mat_tien', type: 'scam', difficulty: 'trung_binh', soDauHieuDo: 2, coTien: true }),
+  taoTinhHuong({ id: 'f7_an_toan', type: 'safe', difficulty: 'de', soDauHieuDo: 0, hoTro: false })
+];
+gsF.startRun(luotF);
+
+// Kéo sức khoẻ xuống 60 để hai cú mất tiền là chạm ngưỡng ngay ở case 3,
+// đúng cảnh người chơi đang mệt sẵn thì dính liên tiếp hai vố.
+gsF.applyDelta({ sucKhoe: -20 }, 'giả lập người chơi đã mệt sẵn');
+chiSo(gsF, '(đã kéo sức khoẻ xuống 60)');
+
+choiMotCase(gsF, { decision: QUYET_DINH.LAM_THEO, reasonLevel: MUC_LY_DO.KHONG_DAT });        // case 1 đúng
+choiMotCase(gsF, { decision: QUYET_DINH.LAM_THEO, reasonLevel: MUC_LY_DO.KHONG_DAT });        // case 2 sai
+const cuoiF3 = choiMotCase(gsF, { decision: QUYET_DINH.LAM_THEO, reasonLevel: MUC_LY_DO.KHONG_DAT }); // case 3 sai
+
+kiemTra('thua sớm đúng ở case 3', cuoiF3.ketCuc.loai, KET_CUC.THUA_SOM);
+kiemTra('chỉ số lúc thua', [gsF.stats.sucKhoe, gsF.stats.lyTri], [20, 50]);
+kiemTra('mới đúng 1 trên mẫu số 7', [gsF.soCaseDung(), gsF.tongSoCaseLuotChinh], [1, 7]);
+kiemTra('còn 4 case chưa ai chơi', gsF.danhSachCaseChuaChoi().map((c) => c.id), ['f4_lo_tin', 'f5_an_toan', 'f6_mat_tien', 'f7_an_toan']);
+kiemTra('tổng kết cũng báo còn 4 case chưa chơi', gsF.getSummary().soCaseChuaChoi, 4);
+
+// ---- Ôn tập đúng hai case đã sai ----
+const tienDoOnTapF = gsF.startReviewRun();
+kiemTra('vào được ôn tập', tienDoOnTapF.mode, CHE_DO.ON_TAP);
+kiemTra('ôn tập đúng 2 case sai', tienDoOnTapF.tongSoCase, 2);
+
+choiMotCase(gsF, { decision: QUYET_DINH.KHONG_LAM, reasonLevel: MUC_LY_DO.KHONG_DAT, danhDau: 'mot_phan', kiemChung: 1 });
+kiemTra('sức khoẻ 25 vẫn dưới ngưỡng mà không thua lại', [gsF.stats.sucKhoe, gsF.isGameOver], [25, false]);
+
+const cuoiOnTapF = choiMotCase(gsF, { decision: QUYET_DINH.KHONG_LAM, reasonLevel: MUC_LY_DO.KHONG_DAT, danhDau: 'mot_phan' });
+
+// ---- Đây là chỗ nhánh này từng chết ----
+kiemTra('hết ôn tập KHÔNG phải hết lượt', cuoiOnTapF.hetCase, false);
+kiemTra('máy chủ tự mở phần lượt còn dở', cuoiOnTapF.chuyenSangChoiTiep, true);
+kiemTra('chưa chốt kết cục vội', [cuoiOnTapF.ketCuc, gsF.isGameOver], [null, false]);
+kiemTra('quay về chế độ chính', gsF.run.mode, CHE_DO.CHINH);
+kiemTra('chơi tiếp đúng 4 case chưa chơi', cuoiOnTapF.tienDo.tongSoCase, 4);
+kiemTra('mẫu số tính thắng vẫn là cả lượt', gsF.tongSoCaseLuotChinh, 7);
+
+// Ra khỏi ôn tập với 25 sức khoẻ thì nước đổi chỉ số kế tiếp — kể cả một phần
+// thưởng — vẫn nằm dưới ngưỡng 30 và người chơi thua lại tức khắc. Rời trạm
+// hồi phục phải là hồi phục thật.
+kiemTra('hồi sức khi rời màn ôn tập', [cuoiOnTapF.hoiPhucSauOnTap, gsF.stats.sucKhoe], [35, 60]);
+kiemTra('lý trí không bị đụng tới', gsF.stats.lyTri, 74);
+
+// ---- Chơi nốt case 4 đến 7 ----
+choiMotCase(gsF, { decision: QUYET_DINH.KHONG_LAM, reasonLevel: MUC_LY_DO.KHONG_DAT, danhDau: 'mot_phan', kiemChung: 1 }); // case 4 đúng
+choiMotCase(gsF, { decision: QUYET_DINH.LAM_THEO, reasonLevel: MUC_LY_DO.KHONG_DAT });                                     // case 5 đúng
+
+const cuoiF6 = choiMotCase(gsF, { decision: QUYET_DINH.LAM_THEO, reasonLevel: MUC_LY_DO.KHONG_DAT });                      // case 6 sai
+kiemTra('luật thua sớm có hiệu lực trở lại ở lượt chính', [gsF.stats.sucKhoe, cuoiF6.isGameOver], [45, false]);
+
+const cuoiF = choiMotCase(gsF, { decision: QUYET_DINH.LAM_THEO, reasonLevel: MUC_LY_DO.KHONG_DAT });                       // case 7 đúng
+
+kiemTra('chơi hết 7 case mới chốt kết cục', cuoiF.hetCase, true);
+kiemTra('kết cục tính trên đủ 7 case', [cuoiF.ketCuc.soCaseDung, cuoiF.ketCuc.tongSoCase], [6, 7]);
+kiemTra('6/7 vượt ngưỡng 75% nên qua lượt', cuoiF.ketCuc.loai, KET_CUC.THANG);
+kiemTra('chỉ còn đúng case vừa sai chưa gỡ', gsF.danhSachCaseSai().map((c) => c.id), ['f6_mat_tien']);
+kiemTra('không còn case nào chưa chơi', gsF.danhSachCaseChuaChoi().length, 0);
+kiemTra('lịch sử đủ 9 bản ghi (3 + 2 ôn tập + 4 chơi tiếp)', gsF.history.length, 9);
 
 // ================= LƯỢT E — KHỚP VỚI casePicker.pickRun() =================
 

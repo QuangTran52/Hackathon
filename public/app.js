@@ -822,6 +822,10 @@ function veCase(duLieu) {
   // lượt sau có đúng bằng số tình huống thì màu đúng/sai của lượt trước ở lại,
   // và người chơi thấy chặng chưa tới đã xanh như đã làm đúng.
   if (trangThai.luotId !== duLieu.luotId || trangThai.chang.length !== duLieu.tongSoCase) {
+    // Bóc tách lưu theo số thứ tự chặng, mà mỗi lượt lại đánh số lại từ 1. Giữ
+    // lại của lượt trước là bấm chặng 1 ở màn kết ra bài học của tình huống
+    // khác hẳn. Đổi lượt thì bỏ hết, kể cả khi chỉ là chơi tiếp sau ôn tập.
+    if (trangThai.luotId !== duLieu.luotId) trangThai.bocTachTheoChang = new Map();
     trangThai.luotId = duLieu.luotId;
     trangThai.chang = Array.from({ length: duLieu.tongSoCase }, () => 'chua_toi');
   }
@@ -1347,6 +1351,14 @@ function veBocTach(ketQua, { xemLai = false } = {}) {
     o.chuMascotBaiHoc.textContent = 'Tình huống này thật ra hợp lệ. Cẩn thận là tốt, chỉ cần thêm một bước kiểm chứng là bạn yên tâm làm việc.';
   }
 
+  // Vừa hết màn ôn tập mà lượt chính còn tình huống chưa chơi: máy chủ đã mở
+  // thẳng phần còn lại, nói rõ để người chơi không tưởng là sắp xem kết quả
+  if (!xemLai && ketQua.chuyenSangChoiTiep) {
+    o.chuMascotBaiHoc.textContent = ketQua.hoiPhucSauOnTap > 0
+      ? `Ôn xong rồi, tinh thần bạn hồi lại ${ketQua.hoiPhucSauOnTap} điểm. Giờ mình chơi tiếp phần còn dở của lượt này nhé.`
+      : 'Ôn xong rồi. Giờ mình chơi tiếp phần còn dở của lượt này nhé.';
+  }
+
   o.nutChoiTiep.textContent = xemLai
     ? 'Quay lại màn kết'
     : (ketQua.hetCase || ketQua.isGameOver ? 'Xem kết quả lượt chơi' : 'Chơi tiếp');
@@ -1453,10 +1465,18 @@ async function veManKet() {
     const tk = await goiApi('/api/run/summary');
     const loai = tk.ketCuc?.loai;
 
+    const conDangDo = (tk.soCaseChuaChoi || 0) > 0;
+
     o.tieuDeKet.textContent = NHAN_KET_CUC[loai] || 'Hết tình huống trong lượt';
-    o.chuKet.textContent = loai === 'thua_som'
-      ? 'Sức khoẻ tinh thần đã xuống tới ngưỡng dừng. Màn ôn tập sẽ giúp bạn xem lại những chỗ đã sai.'
-      : `Cần đúng ${Math.round((tk.nguongThang || 0.75) * 100)}% số tình huống để qua lượt.`;
+    if (loai === 'thua_som') {
+      // Thua sớm là chỗ dễ tưởng đã hết game nhất. Nói thẳng rằng lượt còn dở
+      // và ôn tập là đường đi tiếp, không phải màn chia tay.
+      o.chuKet.textContent = conDangDo
+        ? `Sức khoẻ tinh thần đã xuống tới ngưỡng dừng. Ôn lại những chỗ đã sai xong, bạn chơi tiếp ${tk.soCaseChuaChoi} tình huống còn lại của lượt này.`
+        : 'Sức khoẻ tinh thần đã xuống tới ngưỡng dừng. Màn ôn tập sẽ giúp bạn xem lại những chỗ đã sai.';
+    } else {
+      o.chuKet.textContent = `Cần đúng ${Math.round((tk.nguongThang || 0.75) * 100)}% số tình huống để qua lượt.`;
+    }
 
     o.ketSoDung.textContent = `${tk.soCaseDung}/${tk.tongSoCase}`;
     o.ketSucKhoe.textContent = tk.stats.sucKhoe;
@@ -1466,6 +1486,7 @@ async function veManKet() {
     await veHanhTrinh(o.dsGiaiDoanKet, { choBam: true });
 
     o.nutOnTap.hidden = !tk.coTheOnTap;
+    o.nutOnTap.textContent = conDangDo ? 'Ôn tập rồi chơi tiếp' : 'Vào màn ôn tập';
     hienMan('manKet');
   } catch (loi) {
     hienLoi(loi);

@@ -52,6 +52,16 @@ Mọi nhánh kết cục, kể cả thua sớm, đều phải vào được màn
 tình huống đã sai. Màn ôn tập miễn nhiễm với luật thua sớm — người chơi vào đó
 chính vì sức khoẻ đã dưới ngưỡng. Design Spec mục 10.
 
+Ôn tập là trạm hồi phục giữa đường, không phải cửa ra. Thua sớm giữa chừng bỏ
+lại một mớ tình huống chưa ai chơi; ôn xong phải chơi nốt mớ đó rồi mới tính
+kết cục, và tính trên đủ cả lượt. Chốt kết cục ngay sau ôn tập là khoá người
+chơi ở dưới ngưỡng thắng vĩnh viễn: thua ở case 3 của 7 thì đúng nhiều nhất
+được 3/7, không đời nào với tới 75%. Rời ôn tập cũng phải được kéo sức khoẻ
+lên trên ngưỡng thua, nếu không thì nước đổi chỉ số kế tiếp — kể cả một phần
+thưởng cộng điểm — vẫn nằm dưới ngưỡng và họ thua lại tức khắc.
+`casesLuotChinh` là chỗ duy nhất nhớ đủ một lượt gồm những gì, vì `run.cases`
+bị ôn tập và chơi tiếp thay liên tục.
+
 **3. Không bao giờ tô đậm "Làm theo" hơn "Không làm".**
 Nút nổi bật nhất là nút hệ thống gợi ý bấm, và hệ thống không được gợi ý người
 chơi làm theo kẻ lừa đảo. Hai nút trong overlay xác nhận cũng phải cân nhau về

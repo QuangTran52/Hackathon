@@ -330,6 +330,10 @@ app.post('/api/case/decision', async_(async (req, res) => {
     bocTach: duLieuBocTach(caseData, ketQua),
     tienDo: ketQua.tienDo,
     hetCase: ketQua.hetCase,
+    // Vừa ôn xong mà lượt chính còn tình huống chưa chơi thì gameState đã mở
+    // thẳng phần còn lại, giao diện chỉ cần nói cho người chơi biết
+    chuyenSangChoiTiep: ketQua.chuyenSangChoiTiep,
+    hoiPhucSauOnTap: ketQua.hoiPhucSauOnTap,
     isGameOver: gameState.isGameOver,
     ketCuc: ketQua.ketCuc
   });
