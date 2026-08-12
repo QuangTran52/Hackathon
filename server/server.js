@@ -11,6 +11,8 @@
 //   GET  /api/run/outline        bản đồ hành trình, trạng thái từng chặng
 //   GET  /api/run/summary        trạng thái kết thúc và dữ liệu màn ôn tập
 //   POST /api/run/review         vào màn ôn tập, chơi lại đúng những tình huống đã sai
+//   GET  /api/run/state          ảnh chụp tiến trình để giao diện lưu vào localStorage
+//   POST /api/run/restore        dựng lại lượt chơi dở từ bản lưu ở máy người chơi
 
 import 'dotenv/config';
 import express from 'express';
@@ -20,7 +22,7 @@ import { fileURLToPath } from 'url';
 import fs from 'fs';
 
 import gameState, { QUYET_DINH, KET_CUC } from './gameState.js';
-import { pickRun, pickDemoRun } from './casePicker.js';
+import { pickRun, pickDemoRun, pickCaseIds } from './casePicker.js';
 import { taoLoiThoaiNPC, chamDiemLyDo, hoiTroLyAnToan, coKhoaAI } from './groqService.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -128,13 +130,26 @@ function duLieuBocTach(caseData, banGhi) {
 // ================= ROUTE =================
 
 // 1. Bắt đầu lượt chơi mới
+//
+// demoCaseIds: chế độ demo, chạy đúng danh sách tình huống đó theo đúng thứ tự
+// và bỏ qua casePicker. Dùng khi quay video để mỗi lần chạy ra cùng một lượt.
 app.post('/api/run/start', (req, res) => {
-  const { name = '', birthYear = null, gender = '', seed = null, demo = false } = req.body || {};
+  const { name = '', birthYear = null, gender = '', seed = null, demo = false, demoCaseIds = null } = req.body || {};
 
-  const ketQuaPick = demo ? pickDemoRun(database) : pickRun(database, { seed });
+  const dsDemo = Array.isArray(demoCaseIds) ? demoCaseIds.filter(Boolean) : [];
+
+  let ketQuaPick;
+  if (dsDemo.length > 0) ketQuaPick = pickCaseIds(database, dsDemo);
+  else if (demo) ketQuaPick = pickDemoRun(database);
+  else ketQuaPick = pickRun(database, { seed });
+
   if (ketQuaPick.cases.length === 0) {
-    return res.status(500).json({
-      error: 'Chưa có tình huống nào trong database.json để chơi.',
+    // Danh sách demo sai id là lỗi của người gõ tham số, nói rõ id nào hỏng
+    // thay vì đổ cho database rỗng
+    return res.status(dsDemo.length > 0 ? 400 : 500).json({
+      error: dsDemo.length > 0
+        ? `Không tìm thấy tình huống nào trong danh sách demo: ${dsDemo.join(', ')}.`
+        : 'Chưa có tình huống nào trong database.json để chơi.',
       warnings: ketQuaPick.warnings
     });
   }
@@ -424,6 +439,52 @@ app.post('/api/run/review', (req, res) => {
     res.json({ tienDo, stats: gameState.stats });
   } catch (error) {
     res.status(409).json({ error: error.message, ketCuc: gameState.ketCuc });
+  }
+});
+
+// 11. Ảnh chụp tiến trình để giao diện cất vào localStorage
+app.get('/api/run/state', (req, res) => {
+  if (gameState.run.cases.length === 0) return chuaBatDau(res);
+  res.json({ tienDo: gameState.xuatTienDo() });
+});
+
+// 12. Khôi phục lượt chơi dở từ bản lưu ở máy người chơi
+//
+// Máy chủ giữ trạng thái trong bộ nhớ nên tải lại trang giữa chừng thì lượt
+// vẫn còn — nhưng khởi động lại máy chủ là mất sạch. Route này làm nút "Tiếp
+// tục" đúng nghĩa: bản lưu ở máy người chơi mới là nguồn, máy chủ dựng lại
+// theo nó. Trong bản lưu chỉ có id, nội dung tình huống luôn lấy từ database.
+app.post('/api/run/restore', (req, res) => {
+  const ban = req.body?.tienDo;
+  if (!ban || !ban.run) {
+    return res.status(400).json({ error: 'Thiếu "tienDo" trong bản lưu.' });
+  }
+
+  const dsRun = pickCaseIds(database, ban.run.caseIds || []);
+  const dsChinh = pickCaseIds(database, ban.caseIdsLuotChinh || []);
+
+  // Thiếu dù một tình huống là bản lưu không dựng lại đúng được nữa: chỉ số và
+  // tỷ lệ thắng đều tính trên đủ danh sách. Thà báo hỏng để giao diện xoá bản
+  // lưu và mời chơi mới, còn hơn cho chơi tiếp một lượt đã khuyết.
+  const thieu = [...new Set([...dsRun.thieu, ...dsChinh.thieu])];
+  if (thieu.length > 0 || dsRun.cases.length === 0) {
+    return res.status(409).json({
+      error: 'Bản lưu không khớp với dữ liệu tình huống hiện tại nên không khôi phục được.',
+      thieu
+    });
+  }
+
+  try {
+    const tienDo = gameState.napTienDo(ban, {
+      cases: dsRun.cases,
+      casesLuotChinh: dsChinh.cases
+    });
+    // Hội thoại không nằm trong bản lưu, nên phải xoá phiên cũ của máy chủ để
+    // tình huống mở lại không thừa lời thoại của lượt trước
+    xoaMoiPhien();
+    res.json({ tienDo, stats: gameState.stats, coKhoaAI: coKhoaAI() });
+  } catch (error) {
+    res.status(409).json({ error: error.message });
   }
 });
 

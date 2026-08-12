@@ -186,6 +186,69 @@ export function pickDemoRun(db) {
   return pickRun(db, { seed: "demo-unesco-2026", minSafe: 2 });
 }
 
+// ─────────────────────────────────────────────
+// Tra tình huống theo id
+// ─────────────────────────────────────────────
+// Biến thể trong database chỉ mang id của chính nó, còn tên giai đoạn và tên
+// chủ đề nằm ở hai cấp trên. Bảng tra này gắn lại đúng những trường mà pickRun
+// gắn, để một tình huống lấy theo id không khác gì tình huống được rút bình
+// thường — thiếu chúng thì chip giai đoạn và màn hành trình mất chỗ dựa.
+function chiMucBienThe(db) {
+  const bang = new Map();
+  for (const stage of db.stages || []) {
+    for (const topic of stage.topics || []) {
+      for (const variant of topic.variants || []) {
+        if (!variant.id || bang.has(variant.id)) continue;
+        bang.set(variant.id, {
+          stageId: stage.id,
+          stageName: stage.name,
+          stageIcon: stage.icon,
+          topicId: topic.id,
+          topicName: topic.name,
+          ...variant,
+        });
+      }
+    }
+  }
+  return bang;
+}
+
+/**
+ * Lấy đúng danh sách tình huống theo id, giữ nguyên thứ tự được yêu cầu.
+ *
+ * Dùng cho hai việc: chế độ demo (danh sách cố định qua tham số URL, để quay
+ * video ra đúng cùng một lượt mỗi lần) và khôi phục tiến trình đã lưu ở máy
+ * người chơi. Cả hai đều cần đúng thứ tự đó chứ không phải một lượt rút mới,
+ * nên ở đây KHÔNG ép hạn ngạch safe — người gọi đã biết mình muốn gì.
+ *
+ * @returns {{ cases: Array, warnings: string[], seed: null, thieu: string[] }}
+ */
+export function pickCaseIds(db, ids = []) {
+  const bang = chiMucBienThe(db);
+  const cases = [];
+  const thieu = [];
+  const warnings = [];
+
+  for (const id of ids) {
+    const tinhHuong = bang.get(id);
+    if (!tinhHuong) {
+      thieu.push(id);
+      continue;
+    }
+    cases.push(tinhHuong);
+  }
+
+  if (thieu.length) {
+    warnings.push(
+      `Không tìm thấy tình huống: ${thieu.join(", ")}. ` +
+      `Kiểm tra lại id trong database.json.`
+    );
+    warnings.forEach(w => console.warn("[casePicker]", w));
+  }
+
+  return { cases, warnings, seed: null, thieu };
+}
+
 /**
  * Thống kê nội dung hiện có. Dùng để kiểm tra tiến độ bên kịch bản.
  */

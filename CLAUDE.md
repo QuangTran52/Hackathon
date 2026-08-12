@@ -25,6 +25,14 @@ npm run test:offline   # chỉ 3 test không tốn token
 `.env` cần `GROQ_API_KEY`. Thiếu khoá thì game vẫn chạy, NPC dùng câu dự phòng
 viết sẵn trong database.
 
+**Chế độ demo** — chạy đúng một danh sách tình huống cố định, dùng khi quay
+video: `http://localhost:3000/?demo=case_a,case_b,case_c`. Có tham số này thì
+casePicker bị bỏ qua, lượt chơi đúng danh sách đó theo đúng thứ tự. Giao diện
+không khác gì lượt thường.
+
+**Xoá tiến trình đã lưu** khi cần thử lại từ menu: xoá hai khoá
+`tinh-tao:tien-do` và `tinh-tao:cai-dat` trong localStorage.
+
 ## Cấu trúc
 
 ```
@@ -103,6 +111,16 @@ là game và mất hết cảm giác bị lừa. Mọi độ giàu thị giác d
 
 ## Trạng thái hiện tại
 
-Còn thiếu so với Design Spec: màn menu, màn kiểm tra đầu vào, màn chuyển giai
-đoạn, chế độ cỡ chữ lớn, âm thanh, lưu tiến trình localStorage. Dữ liệu mới có
-7 chủ đề, spec muốn 9. Ảnh mascot và avatar NPC chưa có, mã đã sẵn chỗ nhận.
+Còn thiếu so với Design Spec: màn kiểm tra đầu vào, màn chuyển giai đoạn, âm
+thanh thật (nút bật tắt đã có và nhớ lựa chọn, chưa phát tiếng nào). Dữ liệu
+mới có 7 chủ đề, spec muốn 9. Ảnh mascot và avatar NPC chưa có, mã đã sẵn chỗ
+nhận.
+
+Tiến trình lưu ở localStorage, chỉ ghi id tình huống chứ không ghi nội dung —
+nội dung luôn lấy lại từ database qua `pickCaseIds()`. Bản lưu chỉ ghi sau mỗi
+quyết định, nên khôi phục xong là mở lại tình huống kế tiếp từ đầu, không dựng
+lại nửa chừng một tình huống đang dở.
+
+Cỡ chữ lớn nhân thang chữ lên 1.15 bằng đúng một biến `--ty-le-chu` ở `:root`.
+Mọi `font-size` trong `style.css` phải đi qua nhóm biến `--co-chu-*`, viết px
+thẳng vào một quy tắc là chỗ đó không phóng to theo và bố cục lệch đi.

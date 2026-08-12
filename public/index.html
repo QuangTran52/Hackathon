@@ -13,7 +13,57 @@
 </head>
 <body>
 
-<div class="man-choi" id="man-choi">
+<!-- ============ MÀN MENU ============ -->
+<!-- Màn đầu tiên khi tải trang. Design Spec mục 10: tiếp tục, chơi mới,
+     cỡ chữ, âm thanh. Nút chỉnh cỡ chữ là điểm cộng về tính bao trùm nên
+     không được bỏ. -->
+<div class="man man-menu" id="man-menu" hidden>
+  <div>
+    <h1 class="menu__ten">Tỉnh táo</h1>
+    <p class="menu__mo-ta">Tập nhận ra tin nhắn, thư và cuộc gọi lừa đảo trước khi gặp ngoài đời</p>
+  </div>
+
+  <img class="mascot menu__mascot" data-mascot src="/assets/mascot/mascot-binh-thuong.png" alt="Người hướng dẫn" width="240" height="240">
+
+  <div class="menu__nut">
+    <!-- Chỉ hiện khi localStorage còn lượt chơi dở -->
+    <button type="button" class="nut nut--cao" id="nut-tiep-tuc" hidden>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 12h14M13 6l6 6-6 6"/>
+      </svg>
+      Tiếp tục
+    </button>
+
+    <button type="button" class="nut nut--cao" id="nut-choi-moi">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 3v18l15-9z"/>
+      </svg>
+      Chơi mới
+    </button>
+  </div>
+
+  <p class="menu__ghi-chu" id="ghi-chu-tiep-tuc" hidden></p>
+
+  <div class="menu__cai-dat">
+    <fieldset class="cai-dat">
+      <legend class="nhan-nho">Cỡ chữ</legend>
+      <div class="cai-dat__chon" id="chon-co-chu">
+        <button type="button" class="chon" data-co-chu="vua" aria-pressed="true">Vừa</button>
+        <button type="button" class="chon" data-co-chu="lon" aria-pressed="false">Lớn</button>
+      </div>
+    </fieldset>
+
+    <fieldset class="cai-dat">
+      <legend class="nhan-nho">Âm thanh</legend>
+      <div class="cai-dat__chon" id="chon-am-thanh">
+        <button type="button" class="chon" data-am-thanh="1" aria-pressed="true">Bật</button>
+        <button type="button" class="chon" data-am-thanh="0" aria-pressed="false">Tắt</button>
+      </div>
+    </fieldset>
+  </div>
+</div>
+
+<div class="man-choi" id="man-choi" hidden>
 
   <!-- ============ HÀNG TRÊN ============ -->
   <header class="thanh-tren">
@@ -471,6 +521,32 @@
     </div>
 
     <button type="button" class="nut nut--chinh nut--rong" id="nut-quay-lai-chat" hidden>Quay lại tin nhắn</button>
+  </div>
+</div>
+
+<!-- ============ OVERLAY XÁC NHẬN CHƠI MỚI ============ -->
+<!-- Chỉ mở khi đang có lượt chơi dở, vì chơi mới sẽ xoá tiến trình đã lưu -->
+<div class="lop-phu" id="lop-choi-moi" hidden tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="tieu-de-choi-moi">
+  <div class="hop-thoai">
+    <h2 class="tieu-de-phu" id="tieu-de-choi-moi">Bắt đầu lượt mới?</h2>
+
+    <p class="chu-canh-bao">Bạn đang có một lượt chơi dở. Bắt đầu lượt mới sẽ xoá tiến trình đó và không lấy lại được.</p>
+
+    <div class="hop-thoai__hai-nut">
+      <button type="button" class="nut nut--vien" id="nut-huy-choi-moi">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 12H5M11 18l-6-6 6-6"/>
+        </svg>
+        Quay lại
+      </button>
+
+      <button type="button" class="nut nut--vien" id="nut-xac-nhan-choi-moi">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 3v18l15-9z"/>
+        </svg>
+        Xoá và chơi mới
+      </button>
+    </div>
   </div>
 </div>
 

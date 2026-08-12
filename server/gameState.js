@@ -762,6 +762,87 @@ class GameState {
     return tienDo;
   }
 
+  // ---------- Lưu và khôi phục tiến trình ----------
+
+  // Ảnh chụp đủ để dựng lại lượt chơi ở lần mở trang sau. Chỉ ghi id tình
+  // huống chứ không ghi cả nội dung: nội dung sống trong database.json, chép
+  // thêm một bản nữa vào máy người chơi là tự tạo ra bản sao sẽ lệch đi ngay
+  // lần đầu bên nội dung sửa tình huống.
+  //
+  // caseHienTai cố tình không có trong này. Tiến trình chỉ lưu sau mỗi quyết
+  // định, tức đúng lúc không có tình huống nào đang mở, nên khôi phục xong là
+  // mở lại tình huống kế tiếp từ đầu chứ không phải dựng lại nửa chừng.
+  xuatTienDo() {
+    return {
+      soLuotDaMo: this.soLuotDaMo,
+      userProfile: { ...this.userProfile },
+      stats: { ...this.stats },
+      run: {
+        mode: this.run.mode,
+        caseIds: this.run.cases.map((c) => c.id),
+        index: this.run.index,
+        vong: this.run.vong,
+        id: this.run.id ?? null,
+        hoiPhucSauOnTap: this.run.hoiPhucSauOnTap || 0
+      },
+      caseIdsLuotChinh: this.casesLuotChinh.map((c) => c.id),
+      tongSoCaseLuotChinh: this.tongSoCaseLuotChinh,
+      ketQuaTheoCase: { ...this.ketQuaTheoCase },
+      history: this.history.map((h) => ({ ...h })),
+      nhatKyChiSo: this.nhatKyChiSo.map((n) => ({ ...n })),
+      ketCuc: this.ketCuc ? { ...this.ketCuc } : null,
+      isGameOver: this.isGameOver
+    };
+  }
+
+  // Dựng lại đúng trạng thái của xuatTienDo(). Hai danh sách tình huống do
+  // bên gọi tra sẵn từ database theo id, gameState không đọc database.
+  //
+  // soLuotDaMo phải nhảy qua mã lượt cũ, nếu không thì lượt mở sau khi khôi
+  // phục sẽ trùng mã với lượt vừa khôi phục và giao diện tưởng vẫn là một lượt.
+  napTienDo(ban, { cases = [], casesLuotChinh = [] } = {}) {
+    if (!ban || !ban.run) throw new Error('Bản lưu không hợp lệ.');
+    if (cases.length === 0) {
+      throw new Error('Bản lưu không còn tình huống nào tra được trong database.');
+    }
+
+    this.reset();
+
+    this.soLuotDaMo = Math.max(this.soLuotDaMo, ban.soLuotDaMo || 0, ban.run.id || 0);
+    this.userProfile = { ...this.userProfile, ...(ban.userProfile || {}) };
+    this.stats = {
+      sucKhoe: kep(Number(ban.stats?.sucKhoe ?? CHI_SO_KHOI_DAU.sucKhoe)),
+      lyTri: kep(Number(ban.stats?.lyTri ?? CHI_SO_KHOI_DAU.lyTri))
+    };
+
+    this.run = {
+      mode: ban.run.mode === CHE_DO.ON_TAP ? CHE_DO.ON_TAP : CHE_DO.CHINH,
+      cases: [...cases],
+      index: Math.max(0, Math.min(cases.length, Number(ban.run.index) || 0)),
+      meta: {},
+      vong: Number(ban.run.vong) || 1,
+      id: ban.run.id ?? this.soLuotDaMo,
+      hoiPhucSauOnTap: ban.run.hoiPhucSauOnTap || 0
+    };
+
+    this.casesLuotChinh = [...casesLuotChinh];
+    this.tongSoCaseLuotChinh = Number(ban.tongSoCaseLuotChinh) || casesLuotChinh.length;
+
+    this.ketQuaTheoCase = {};
+    for (const [id, dung] of Object.entries(ban.ketQuaTheoCase || {})) {
+      this.ketQuaTheoCase[id] = Boolean(dung);
+    }
+
+    this.history = Array.isArray(ban.history) ? ban.history.map((h) => ({ ...h })) : [];
+    this.nhatKyChiSo = Array.isArray(ban.nhatKyChiSo) ? ban.nhatKyChiSo.map((n) => ({ ...n })) : [];
+
+    this.ketCuc = ban.ketCuc ? { ...ban.ketCuc } : null;
+    this.isGameOver = Boolean(ban.isGameOver);
+    this.caseHienTai = null;
+
+    return this.tienDoLuot();
+  }
+
   // ---------- Tổng kết ----------
 
   getSummary() {

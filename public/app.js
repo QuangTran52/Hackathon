@@ -34,6 +34,16 @@ const svgIcon = (noiDung, lop) =>
   `<svg class="${lop}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${noiDung}</svg>`;
 
 const o = {
+  manMenu: el('man-menu'),
+  nutTiepTuc: el('nut-tiep-tuc'),
+  nutChoiMoi: el('nut-choi-moi'),
+  ghiChuTiepTuc: el('ghi-chu-tiep-tuc'),
+  chonCoChu: el('chon-co-chu'),
+  chonAmThanh: el('chon-am-thanh'),
+  lopChoiMoi: el('lop-choi-moi'),
+  nutHuyChoiMoi: el('nut-huy-choi-moi'),
+  nutXacNhanChoiMoi: el('nut-xac-nhan-choi-moi'),
+
   manChoi: el('man-choi'),
   manQuyetDinh: el('man-quyet-dinh'),
   manBocTach: el('man-boc-tach'),
@@ -256,11 +266,200 @@ function canhBaoNoiDung(danhSach = []) {
 
 // ================= ĐIỀU HƯỚNG MÀN =================
 
-const MOI_MAN = ['manChoi', 'manQuyetDinh', 'manBocTach', 'manHanhTrinh', 'manKet'];
+const MOI_MAN = ['manMenu', 'manChoi', 'manQuyetDinh', 'manBocTach', 'manHanhTrinh', 'manKet'];
 
 function hienMan(ten) {
   for (const m of MOI_MAN) o[m].hidden = m !== ten;
   window.scrollTo(0, 0);
+}
+
+// ================= KHO LƯU Ở MÁY NGƯỜI CHƠI =================
+
+const KHOA_CAI_DAT = 'tinh-tao:cai-dat';
+const KHOA_TIEN_DO = 'tinh-tao:tien-do';
+
+// Đổi số này khi hình dạng bản lưu đổi, bản cũ sẽ bị bỏ qua thay vì dựng hỏng
+const PHIEN_BAN_LUU = 1;
+
+// localStorage có thể ném lỗi: chế độ riêng tư, người dùng chặn lưu trữ, hoặc
+// hết dung lượng. Game vẫn phải chơi được trong mọi trường hợp đó, chỉ là
+// không nhớ gì — nên mọi lần đụng vào kho đều bọc lại.
+function docKho(khoa) {
+  try {
+    const chu = localStorage.getItem(khoa);
+    return chu ? JSON.parse(chu) : null;
+  } catch {
+    return null;
+  }
+}
+
+function ghiKho(khoa, giaTri) {
+  try {
+    localStorage.setItem(khoa, JSON.stringify(giaTri));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function xoaKho(khoa) {
+  try {
+    localStorage.removeItem(khoa);
+  } catch {
+    /* không lưu được thì cũng không xoá được, không có gì để làm thêm */
+  }
+}
+
+// ================= CÀI ĐẶT: CỠ CHỮ VÀ ÂM THANH =================
+
+const caiDat = { coChu: 'vua', amThanh: true, ...(docKho(KHOA_CAI_DAT) || {}) };
+
+function veMotNhomChon(khung, thuoc, giaTri) {
+  for (const nut of khung.querySelectorAll('.chon')) {
+    nut.setAttribute('aria-pressed', nut.dataset[thuoc] === giaTri ? 'true' : 'false');
+  }
+}
+
+// Cỡ chữ lớn nhân cả thang chữ lên 1.15 bằng đúng một biến CSS gốc — không
+// thành phần nào phải biết chế độ này tồn tại. Design Spec mục 3.
+function apDungCaiDat() {
+  document.documentElement.dataset.coChu = caiDat.coChu;
+  veMotNhomChon(o.chonCoChu, 'coChu', caiDat.coChu);
+  veMotNhomChon(o.chonAmThanh, 'amThanh', caiDat.amThanh ? '1' : '0');
+}
+
+function datCaiDat(phan) {
+  Object.assign(caiDat, phan);
+  ghiKho(KHOA_CAI_DAT, caiDat);
+  apDungCaiDat();
+}
+
+// ================= LƯU TIẾN TRÌNH =================
+
+// Bản lưu gồm hai nửa: nửa của máy chủ (chỉ số, danh sách case của lượt, kết
+// quả từng case, chế độ đang chơi) và nửa chỉ giao diện biết (màu từng chặng,
+// bài học đã bóc tách để màn kết xem lại được).
+function docTienDoDaLuu() {
+  const ban = docKho(KHOA_TIEN_DO);
+  if (!ban || ban.phienBan !== PHIEN_BAN_LUU) return null;
+  if (!ban.tienDo?.run?.caseIds?.length) return null;
+  return ban;
+}
+
+const xoaTienDo = () => xoaKho(KHOA_TIEN_DO);
+
+// Gọi sau mỗi quyết định và mỗi lần đổi lượt. Hỏi máy chủ ảnh chụp mới nhất
+// thay vì tự dựng lại từ giao diện: gameState mới là chỗ biết đúng trạng thái.
+async function luuTienDo() {
+  try {
+    const { tienDo } = await goiApi('/api/run/state');
+    ghiKho(KHOA_TIEN_DO, {
+      phienBan: PHIEN_BAN_LUU,
+      luuLuc: Date.now(),
+      tienDo,
+      luotId: trangThai.luotId,
+      chang: [...trangThai.chang],
+      bocTach: [...trangThai.bocTachTheoChang.entries()]
+    });
+  } catch (loi) {
+    // Lưu hỏng thì lượt vẫn chơi bình thường, chỉ là lần sau không có nút
+    // Tiếp tục. Người chơi không sửa được gì nên không hiện báo lỗi đỏ.
+    console.warn('[app] Không lưu được tiến trình:', loi.message);
+  }
+}
+
+// ================= MÀN MENU =================
+
+function moTaBanLuu(ban) {
+  const t = ban.tienDo;
+  const daChoi = Object.keys(t.ketQuaTheoCase || {}).length;
+  const tong = t.tongSoCaseLuotChinh || (t.caseIdsLuotChinh || []).length;
+  if (t.run.mode === 'on_tap') return 'Bạn đang dở màn ôn tập.';
+  if (!tong) return 'Bạn đang có một lượt chơi dở.';
+  return `Bạn đang dở một lượt, đã qua ${daChoi} trong ${tong} tình huống.`;
+}
+
+function datKieuNut(nut, laChinh) {
+  nut.classList.toggle('nut--chinh', laChinh);
+  nut.classList.toggle('nut--vien', !laChinh);
+}
+
+function moManMenu() {
+  const ban = docTienDoDaLuu();
+  const coLuotDo = Boolean(ban);
+
+  o.nutTiepTuc.hidden = !coLuotDo;
+  o.ghiChuTiepTuc.hidden = !coLuotDo;
+  if (coLuotDo) o.ghiChuTiepTuc.textContent = moTaBanLuu(ban);
+
+  // Đang dở thì Tiếp tục là nút chính — đó là việc người chơi đang bỏ giữa
+  // chừng. Không có lượt dở thì Chơi mới là nút duy nhất, và nó là nút chính.
+  datKieuNut(o.nutTiepTuc, coLuotDo);
+  datKieuNut(o.nutChoiMoi, !coLuotDo);
+
+  dongXacNhanChoiMoi();
+  hienMan('manMenu');
+}
+
+const dongXacNhanChoiMoi = () => { o.lopChoiMoi.hidden = true; };
+
+// Chơi mới xoá sạch tiến trình nên phải hỏi lại khi đang có lượt dở
+function bamChoiMoi() {
+  if (docTienDoDaLuu()) {
+    o.lopChoiMoi.hidden = false;
+    o.lopChoiMoi.focus();
+    return;
+  }
+  choiMoi();
+}
+
+async function choiMoi() {
+  dongXacNhanChoiMoi();
+  xoaTienDo();
+  trangThai.bocTachTheoChang = new Map();
+  trangThai.luotId = null;
+  trangThai.chang = [];
+  await batDauLuot();
+}
+
+async function tiepTucLuot() {
+  const ban = docTienDoDaLuu();
+  if (!ban) {
+    moManMenu();
+    return;
+  }
+
+  o.nutTiepTuc.disabled = true;
+  try {
+    anLoi();
+    noiMascot('Đang mở lại lượt chơi dở');
+    await goiApi('/api/run/restore', { body: { tienDo: ban.tienDo } });
+
+    trangThai.luotId = ban.luotId ?? null;
+    trangThai.chang = Array.isArray(ban.chang) ? [...ban.chang] : [];
+    trangThai.bocTachTheoChang = new Map(ban.bocTach || []);
+    veTienTrinh();
+
+    await napCaseHienTai();
+  } catch (loi) {
+    // Bản lưu không dựng lại được thì giữ lại nó cũng vô ích, và để lại nút
+    // Tiếp tục hỏng là mời người chơi bấm vào chỗ không dẫn đi đâu
+    xoaTienDo();
+    hienLoi(loi);
+    moManMenu();
+  } finally {
+    o.nutTiepTuc.disabled = false;
+  }
+}
+
+// Chế độ demo: ?demo=case_a,case_b,case_c chạy đúng danh sách đó theo đúng thứ
+// tự và bỏ qua casePicker, để mỗi lần quay video ra cùng một lượt. Giao diện
+// không đổi gì cả — khác biệt duy nhất là nội dung lượt được chỉ định sẵn.
+function danhSachDemo() {
+  const chu = new URLSearchParams(window.location.search).get('demo');
+  if (!chu) return null;
+  const ds = chu.split(',').map((s) => s.trim()).filter(Boolean);
+  return ds.length > 0 ? ds : null;
 }
 
 // ================= VẼ CHUNG =================
@@ -873,7 +1072,7 @@ async function batDauLuot() {
     anLoi();
     noiMascot('Đang chuẩn bị tình huống');
     const batDau = await goiApi('/api/run/start', {
-      body: { name: 'Người chơi', birthYear: null, gender: '' }
+      body: { name: 'Người chơi', birthYear: null, gender: '', demoCaseIds: danhSachDemo() }
     });
     veChiSo(batDau.stats);
     canhBaoNoiDung(batDau.warnings);
@@ -882,9 +1081,11 @@ async function batDauLuot() {
     trangThai.chang = Array.from({ length: batDau.tienDo.tongSoCase }, () => 'chua_toi');
     veTienTrinh();
     await napCaseHienTai();
+    await luuTienDo();
   } catch (loi) {
     hienLoi(loi);
-    noiMascot('Chưa vào được lượt. Thử tải lại trang.');
+    noiMascot('Chưa vào được lượt. Thử lại từ menu nhé.');
+    moManMenu();
   }
 }
 
@@ -1170,6 +1371,9 @@ async function guiQuyetDinh(quyetDinh, lyDo) {
     ketQua.quyetDinhCuaBan = quyetDinh;
     ketQua.lyDoCuaBan = lyDo || '';
     veBocTach(ketQua);
+    // Lưu sau khi bóc tách chứ không trước: bản lưu phải chứa cả bài học vừa
+    // dựng, để màn kết ở phiên sau vẫn xem lại được từng chặng
+    await luuTienDo();
   } catch (loi) {
     hienLoi(loi);
     // Vẫn ở màn quyết định, cho bấm lại chứ không đẩy về hội thoại
@@ -1505,6 +1709,7 @@ async function vaoManOnTap() {
     trangThai.luotId = null;
     trangThai.chang = [];
     await napCaseHienTai();
+    await luuTienDo();
   } catch (loi) {
     hienLoi(loi);
   } finally {
@@ -1514,6 +1719,24 @@ async function vaoManOnTap() {
 }
 
 // ================= SỰ KIỆN =================
+
+// ---- Màn menu ----
+
+o.nutChoiMoi.addEventListener('click', bamChoiMoi);
+o.nutTiepTuc.addEventListener('click', tiepTucLuot);
+o.nutHuyChoiMoi.addEventListener('click', dongXacNhanChoiMoi);
+o.nutXacNhanChoiMoi.addEventListener('click', choiMoi);
+
+o.chonCoChu.addEventListener('click', (su) => {
+  const nut = su.target.closest('.chon');
+  if (nut) datCaiDat({ coChu: nut.dataset.coChu });
+});
+
+// Chưa có âm thanh thật, nút này mới chỉ nhớ lựa chọn
+o.chonAmThanh.addEventListener('click', (su) => {
+  const nut = su.target.closest('.chon');
+  if (nut) datCaiDat({ amThanh: nut.dataset.amThanh === '1' });
+});
 
 o.oNhap.addEventListener('submit', guiTinNhan);
 o.oNhapTroLy.addEventListener('submit', guiCauHoiTroLy);
@@ -1577,7 +1800,8 @@ o.nutGoiLai.addEventListener('click', moKiemChung);
 // Escape gắn ở tài liệu để đóng được overlay dù con trỏ đang ở đâu
 document.addEventListener('keydown', (su) => {
   if (su.key !== 'Escape') return;
-  if (!o.lopXacNhan.hidden) dongXacNhan();
+  if (!o.lopChoiMoi.hidden) dongXacNhanChoiMoi();
+  else if (!o.lopXacNhan.hidden) dongXacNhan();
   else if (!o.lopKiemChung.hidden) dongKiemChung();
   // Thoát khỏi màn cuộc gọi nghĩa là không nhấc máy, đúng như cúp máy
   else if (!o.lopCuocGoi.hidden) tuChoiMay();
@@ -1635,4 +1859,5 @@ for (const anh of document.querySelectorAll('[data-mascot]')) {
 }
 
 noiMascot('');
-batDauLuot();
+apDungCaiDat();
+moManMenu();
