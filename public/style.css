@@ -67,7 +67,7 @@
   --rong-khu-quyet-dinh: 640px;
   --h-cham:         48px;
   --mascot-size:    240px;
-  --mascot-choi:    180px;
+  --mascot-choi:    150px;
   --h-thanh-chi-so: 6px;
   --h-chang:        5px;
   --h-khung-chat:   420px;
@@ -257,16 +257,18 @@ svg { width: 100%; height: 100%; display: block; }
    được nhiều bằng chứng thì cuộn ngay ở cột */
 .cot--so-tay { overflow-y: auto; }
 
-/* Mascot ghim ở đáy, nên hai thẻ phải nở ra lấp chỗ trống ở giữa cột, thay vì
-   dồn hết lên đầu. Bằng chứng lấy phần lớn hơn vì nó là ô dài dần lên trong
-   lúc chơi; nội dung tràn thì cuộn trong lòng thẻ, không đẩy mascot đi. */
-.cot--so-tay > .the {
-  min-height: 0;
-  overflow-y: auto;
-}
+/* Bối cảnh là thông tin nền của tình huống: đọc hụt một dòng là hiểu sai cả
+   tình huống, nên ô này cao đúng theo nội dung và không bao giờ cuộn, không
+   bao giờ bị co. Thiếu chỗ thì cả cột cuộn — bối cảnh nằm trên đầu cột nên
+   vẫn thấy đủ, thứ bị đẩy khuất là mascot ở đáy. */
+.the-boi-canh { flex: none; }
 
-.the-boi-canh { flex: 2 1 auto; }
-.the-bang-chung { flex: 3 1 auto; }
+/* Bằng chứng cũng cao đúng theo nội dung. Trước đây ô này được phép co lại
+   (flex-shrink), mà cột thì gần như luôn thiếu chỗ, nên nó bị bóp xuống dưới
+   chiều cao nội dung và dựng thanh cuộn ngay cả khi trong ô chưa có gì —
+   người chơi thấy thanh cuộn tưởng mình đã bỏ sót cái gì ở dưới. Thiếu chỗ
+   thì cuộn ở cột, không bóp méo từng ô. */
+.the-bang-chung { flex: none; }
 
 /* Cột giữa là lớp chat, cột hai bên là lớp vỏ — khác nhau đúng ba điểm:
    bo góc, nền, mật độ chữ. Không thêm khác biệt thứ tư. */
@@ -369,9 +371,10 @@ svg { width: 100%; height: 100%; display: block; }
   gap: var(--sp-4);
 }
 
-/* Trên màn chơi mascot rộng 180px (Design Spec mục 4). Dưới cỡ này nét mặt
-   không đọc được, cả năm biểu cảm nhìn giống hệt nhau. Cột trái rộng ~275px
-   nên bong bóng thoại phải xuống dòng, xem .khu-mascot */
+/* Trên màn chơi mascot rộng 150px (Design Spec mục 4). Ở 104px cũ thì nét mặt
+   không đọc được, cả năm biểu cảm nhìn giống hệt nhau; 150px là mức lớn nhất
+   còn chừa đủ chỗ cho ô bối cảnh hiện trọn chữ, mà chữ thì được ưu tiên hơn.
+   Cột trái rộng ~275px nên bong bóng thoại phải xuống dòng, xem .khu-mascot */
 .mascot {
   width: var(--mascot-choi);
   height: auto;
@@ -423,17 +426,22 @@ svg { width: 100%; height: 100%; display: block; }
    viết sau thì thắng. */
 .bong-thoai--tren {
   flex: 1 1 100%;
-  margin-bottom: 0;
   margin-left: var(--sp-8);
+  /* Ảnh mascot có dải trong suốt 6,7% ở mép trên — ở 150px là 10px. Cộng thêm
+     khe lưới 16px thì bong bóng trôi hẳn khỏi nhân vật, nhìn thành một ô độc
+     lập chứ không phải lời ai nói. Kéo ngược lại cho mũi nhọn chạm gần đầu. */
+  margin-bottom: calc(var(--sp-3) * -1);
 }
 
+/* Mũi nhọn 12px chứ không phải 8px: nền bong bóng gần như trùng màu nền trang,
+   mũi nhỏ quá thì không ai thấy và bong bóng lại thành ô rời. */
 .bong-thoai--tren::before {
-  left: var(--sp-12);
-  bottom: calc(var(--sp-2) * -1);
-  border-top: var(--sp-2) solid var(--mascot-soft);
+  left: var(--sp-8);
+  bottom: calc(var(--sp-3) * -1);
+  border-top: var(--sp-3) solid var(--mascot-soft);
   border-bottom: 0;
-  border-left: var(--sp-2) solid transparent;
-  border-right: var(--sp-2) solid transparent;
+  border-left: var(--sp-3) solid transparent;
+  border-right: var(--sp-3) solid transparent;
 }
 
 .bong-thoai p {
