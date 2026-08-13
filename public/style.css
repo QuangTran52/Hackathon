@@ -67,7 +67,7 @@
   --rong-khu-quyet-dinh: 640px;
   --h-cham:         48px;
   --mascot-size:    240px;
-  --mascot-choi:    104px;
+  --mascot-choi:    180px;
   --h-thanh-chi-so: 6px;
   --h-chang:        5px;
   --h-khung-chat:   420px;
@@ -364,12 +364,14 @@ svg { width: 100%; height: 100%; display: block; }
 .khu-mascot {
   margin-top: auto;
   display: flex;
+  flex-wrap: wrap;
   align-items: flex-end;
   gap: var(--sp-4);
 }
 
-/* Trên màn chơi mascot rộng ~104px (Design Spec mục 4) — cột trái chỉ 22%
-   nên to hơn là bóp chết bong bóng thoại bên cạnh */
+/* Trên màn chơi mascot rộng 180px (Design Spec mục 4). Dưới cỡ này nét mặt
+   không đọc được, cả năm biểu cảm nhìn giống hệt nhau. Cột trái rộng ~275px
+   nên bong bóng thoại phải xuống dòng, xem .khu-mascot */
 .mascot {
   width: var(--mascot-choi);
   height: auto;
@@ -378,6 +380,10 @@ svg { width: 100%; height: 100%; display: block; }
   object-fit: contain;
   order: -1;
 }
+
+/* Ở màn chơi bong bóng nằm trên đầu, nên mascot phải trả lại order mặc định
+   để xuống dòng dưới nó — order âm sẽ kéo ngược mascot lên trên bong bóng */
+.mascot--choi { order: 0; }
 
 /* Màn bài học rộng cả trang nên mascot ở đó giữ cỡ lớn */
 .khu-mascot--cuoi .mascot { width: var(--mascot-size); }
@@ -406,6 +412,28 @@ svg { width: 100%; height: 100%; display: block; }
   border-top: var(--sp-2) solid transparent;
   border-bottom: var(--sp-2) solid transparent;
   border-right: var(--sp-2) solid var(--mascot-soft);
+}
+
+/* Mascot 180px đã chiếm gần hết cột trái ~275px, đứng cạnh thì bong bóng chỉ
+   còn ~79px, chữ vỡ thành từng chữ một. Nên ở màn chơi bong bóng xuống dòng,
+   nằm trên đầu nhưng lệch hẳn sang phải, mũi nhọn chỉ xuống phía mascot: vẫn
+   đúng Design Spec mục 8 — chếch bên phải, không đè lên thân, không nằm chính
+   giữa trên đầu. Màn bài học rộng cả trang nên giữ nguyên kiểu đứng cạnh.
+   Phải đặt sau .bong-thoai::before, hai bộ chọn cùng độ ưu tiên nên cái nào
+   viết sau thì thắng. */
+.bong-thoai--tren {
+  flex: 1 1 100%;
+  margin-bottom: 0;
+  margin-left: var(--sp-8);
+}
+
+.bong-thoai--tren::before {
+  left: var(--sp-12);
+  bottom: calc(var(--sp-2) * -1);
+  border-top: var(--sp-2) solid var(--mascot-soft);
+  border-bottom: 0;
+  border-left: var(--sp-2) solid transparent;
+  border-right: var(--sp-2) solid transparent;
 }
 
 .bong-thoai p {
@@ -1023,11 +1051,16 @@ svg { width: 100%; height: 100%; display: block; }
   background: var(--mascot-soft);
 }
 
+/* Cắt tròn bằng border-radius, dùng lại đúng ảnh mascot bình thường chứ không
+   cần tệp avatar riêng. Nền trắng để phần trong suốt của PNG không lộ ra nền
+   tím của thanh tiêu đề, nhìn thành một mảng loang. */
 .tro-ly__avatar {
   width: 40px;
   height: 40px;
   flex: none;
   object-fit: contain;
+  border-radius: 50%;
+  background: var(--surface-card);
 }
 
 .tro-ly__chu { display: flex; flex-direction: column; min-width: 0; }

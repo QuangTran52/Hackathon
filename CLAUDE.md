@@ -113,8 +113,13 @@ là game và mất hết cảm giác bị lừa. Mọi độ giàu thị giác d
 
 Còn thiếu so với Design Spec: màn kiểm tra đầu vào, màn chuyển giai đoạn, âm
 thanh thật (nút bật tắt đã có và nhớ lựa chọn, chưa phát tiếng nào). Dữ liệu
-mới có 7 chủ đề, spec muốn 9. Ảnh mascot và avatar NPC chưa có, mã đã sẵn chỗ
-nhận.
+mới có 7 chủ đề, spec muốn 9. Avatar NPC chưa có, mã đã sẵn chỗ nhận.
+
+Ảnh mascot đã đủ 5 biểu cảm PNG trong `public/assets/mascot/`, ánh xạ ở hằng số
+`MASCOT` đầu `app.js`. Mặt cảnh giác bật khi người chơi đánh dấu **bất kỳ** cụm
+nào, cố tình không phân biệt dấu hiệu đỏ với cụm mồi — phân biệt là mách đáp án
+ngay lúc đang chơi, màn bóc tách hết việc để làm. Avatar tròn của trợ lý dùng
+lại đúng ảnh bình thường, cắt tròn bằng CSS.
 
 Tiến trình lưu ở localStorage, chỉ ghi id tình huống chứ không ghi nội dung —
 nội dung luôn lấy lại từ database qua `pickCaseIds()`. Bản lưu chỉ ghi sau mỗi

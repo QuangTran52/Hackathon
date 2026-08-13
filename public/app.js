@@ -20,6 +20,16 @@ const ICON_GIAI_DOAN = {
   armchair: '<path d="M19 9V6a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v3"/><path d="M3 11a2 2 0 0 1 4 0v3h10v-3a2 2 0 0 1 4 0v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M5 18v2M19 18v2"/>'
 };
 
+// Năm biểu cảm mascot. alt đi kèm để người dùng trình đọc màn hình cũng nghe
+// được nét mặt, thứ mà người nhìn thấy ngay.
+const MASCOT = {
+  binhThuong: { tep: 'mascot-binh-thuong.png', alt: 'Người hướng dẫn, vẻ mặt bình thường' },
+  canhGiac:   { tep: 'mascot-canh-giac.png',   alt: 'Người hướng dẫn, vẻ mặt cảnh giác' },
+  khenNgoi:   { tep: 'mascot-khen-ngoi.png',   alt: 'Người hướng dẫn, vẻ mặt khen ngợi' },
+  thatVong:   { tep: 'mascot-that-vong.png',   alt: 'Người hướng dẫn, vẻ mặt thất vọng' },
+  baoDong:    { tep: 'mascot-bao-dong.png',    alt: 'Người hướng dẫn, vẻ mặt báo động' }
+};
+
 // Icon trạng thái từng chặng ở màn hành trình
 const ICON_CHANG = {
   dung: '<path d="M20 6 9 17l-5-5"/>',
@@ -67,6 +77,7 @@ const o = {
   dsBangChung: el('ds-bang-chung'),
   goiYBangChung: el('goi-y-bang-chung'),
 
+  mascot: el('mascot'),
   bongThoai: el('bong-thoai'),
   chuBongThoai: el('chu-bong-thoai'),
 
@@ -170,6 +181,7 @@ const o = {
   thanBangDiem: el('than-bang-diem'),
   chanBangDiem: el('chan-bang-diem'),
   chuThichLyDo: el('chu-thich-ly-do'),
+  mascotBaiHoc: el('mascot-bai-hoc'),
   chuMascotBaiHoc: el('chu-mascot-bai-hoc'),
   nutChoiTiep: el('nut-choi-tiep'),
 
@@ -489,6 +501,22 @@ function noiMascot(chu) {
   o.bongThoai.dataset.rong = co ? '0' : '1';
 }
 
+// Đổi biểu cảm mascot. Ảnh trang trí (alt rỗng) thì giữ nguyên alt rỗng: ở màn
+// bóc tách đã có băng kết quả nói rõ đúng sai, đọc thêm nét mặt là thừa.
+function datMascot(anh, bieuCam) {
+  const m = MASCOT[bieuCam] || MASCOT.binhThuong;
+  anh.src = `/assets/mascot/${m.tep}`;
+  if (anh.alt) anh.alt = m.alt;
+}
+
+// Mascot ở màn chơi chỉ có hai bộ mặt: đang đọc tình huống, và cảnh giác khi
+// người chơi đã đánh dấu được chỗ đáng ngờ. Cố tình không phân biệt dấu hiệu
+// đỏ với cụm mồi — nét mặt mà đổi theo thì người chơi biết ngay mình bấm đúng
+// hay sai, màn bóc tách hết việc để làm.
+function capNhatMascotChoi() {
+  datMascot(o.mascot, trangThai.spanDaDanhDau.size > 0 ? 'canhGiac' : 'binhThuong');
+}
+
 // Tin nhắn dùng font nội dung, riêng tên miền và các dãy số nhạy cảm bọc lại
 // bằng font kỹ thuật để người chơi nhận ra ngay đâu là thông tin cần soi
 function veNoiDungTin(khung, noiDung) {
@@ -638,6 +666,7 @@ function batTatCum(spanId) {
   else trangThai.spanDaDanhDau.add(spanId);
   veCumDaDanhDau();
   veBangChung();
+  capNhatMascotChoi();
 }
 
 // Bộ đếm lượt nhắn NPC, nằm trong khung điện thoại
@@ -1045,6 +1074,10 @@ function veCase(duLieu) {
   veChiSo(duLieu.stats);
   veDemLuot();
   veNutKiemChung();
+
+  // Vào tình huống mới thì mặt mascot phải trở lại bình thường, kể cả khi
+  // tình huống trước vừa kết ở mặt thất vọng
+  capNhatMascotChoi();
 
   // Bong bóng chỉ cao 2 dòng và cột trái hẹp, nên lời mascot phải thật ngắn
   noiMascot(duLieu.hoTro?.bat
@@ -1546,6 +1579,14 @@ function veBocTach(ketQua, { xemLai = false } = {}) {
 
   veBangDiem(ketQua);
 
+  // Nét mặt mascot khớp với việc vừa xảy ra. Thua sớm và bị lừa mất tiền là
+  // hai chuyện nặng nhất trong game nên đè lên mọi trạng thái khác.
+  if (ketQua.isGameOver || ketQua.thietHai === 'mat_tien') {
+    datMascot(o.mascotBaiHoc, 'baoDong');
+  } else {
+    datMascot(o.mascotBaiHoc, ketQua.quyetDinhDung ? 'khenNgoi' : 'thatVong');
+  }
+
   // Lời mascot khớp với việc vừa xảy ra, không mắng người chơi
   if (ketQua.quyetDinhDung) {
     o.chuMascotBaiHoc.textContent = 'Tốt lắm. Giữ đúng cách làm này ở tình huống sau nhé.';
@@ -1844,19 +1885,6 @@ o.nutChoiTiep.addEventListener('click', () => {
 o.nutTiepChang.addEventListener('click', napCaseHienTai);
 o.nutOnTap.addEventListener('click', vaoManOnTap);
 o.nutDongLoi.addEventListener('click', anLoi);
-
-// Chưa có ảnh mascot thật thì dùng bản SVG giữ chỗ
-function thayMascotGiuCho(anh) {
-  if (anh.dataset.daThayThe) return;
-  anh.dataset.daThayThe = '1';
-  anh.src = '/assets/mascot/mascot-binh-thuong.svg';
-}
-
-for (const anh of document.querySelectorAll('[data-mascot]')) {
-  anh.addEventListener('error', () => thayMascotGiuCho(anh));
-  // Ảnh có thể lỗi xong trước khi tệp này chạy, nên kiểm tra lại một lần nữa
-  if (anh.complete && anh.naturalWidth === 0) thayMascotGiuCho(anh);
-}
 
 noiMascot('');
 apDungCaiDat();

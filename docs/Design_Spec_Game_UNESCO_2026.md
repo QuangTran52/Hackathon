@@ -105,8 +105,8 @@ Hệ khoảng cách bội số của 4: **4 · 8 · 12 · 16 · 24 · 32 · 48**
 | Hai nút ở màn hội thoại | cao 56px, trải ngang toàn chiều rộng |
 | Hai nút ở màn quyết định | cao 64px, căn giữa, rộng tối đa 640px |
 | Vùng chạm tối thiểu | 48 × 48px |
-| Mascot trên màn chơi | rộng ~104px, đáy cột trái, PNG nền trong suốt |
-| Bong bóng thoại mascot | min-height 60px, tối đa 2 dòng |
+| Mascot trên màn chơi | rộng 180px, đáy cột trái, PNG nền trong suốt |
+| Bong bóng thoại mascot | min-height 60px, tối đa 2 dòng, nằm trên đầu mascot |
 | Khung điện thoại | rộng 280–340px, vỏ bo 22px, đệm vỏ 8px |
 | Ruột điện thoại | bo 16px, nền trắng |
 | Bong bóng chat | bo 4px |
@@ -323,9 +323,11 @@ Khung hộp thư không có ô nhập tin.
 
 Cột trái xếp từ trên xuống: **ô bối cảnh** ở trên cùng, **mascot** ở đáy cột. Thứ tự này khớp với thứ tự đọc tự nhiên — hiểu bối cảnh trước, nghe mascot dặn sau, rồi mới vào chat.
 
-Mascot là ảnh PNG nền trong suốt hoặc SVG, rộng khoảng 104px, đặt trực tiếp lên nền, **không có khung tròn hay nền bao quanh**. Như vậy hình dáng được tự do, không bị đường tròn cắt cụt.
+Mascot là ảnh PNG nền trong suốt hoặc SVG, rộng 180px, đặt trực tiếp lên nền, **không có khung tròn hay nền bao quanh**. Như vậy hình dáng được tự do, không bị đường tròn cắt cụt. Nhỏ hơn cỡ này thì nét mặt không đọc được và năm biểu cảm nhìn giống hệt nhau — đó là lý do bỏ cỡ 104px cũ.
 
-Bong bóng thoại đặt **chếch bên phải mascot**, ngang tầm đầu, có mũi nhọn chỉ về phía mascot. Không đè lên thân, không nằm chính giữa trên đầu.
+Bong bóng thoại **không đứng cạnh mascot được nữa**: cột trái chỉ rộng khoảng 275px, trừ mascot đi thì phần còn lại quá hẹp để đọc. Bong bóng xuống dòng, nằm **trên đầu mascot nhưng lệch hẳn sang phải**, mũi nhọn chỉ xuống phía đầu. Vẫn giữ nguyên ba điều cũ: chếch sang phải, không đè lên thân, không nằm chính giữa trên đầu.
+
+Riêng mascot ở màn bóc tách bài học rộng cả trang nên vẫn giữ cỡ 240px và bong bóng đứng bên phải như cũ.
 
 Ba ràng buộc kỹ thuật để bố cục không nhảy:
 
@@ -438,13 +440,22 @@ Nếu có thời gian, thêm hoạt ảnh khi mở chặng mới: ổ khoá chuy
 
 ### Mascot
 
-Năm biểu cảm, cùng một tư thế, chỉ đổi mặt và tay:
+Năm biểu cảm, cùng một tư thế, chỉ đổi mặt và tay. Đã bàn giao, nằm trong
+`public/assets/mascot/`, mỗi biểu cảm gắn với đúng một lúc trong game:
 
-1. Bình thường
-2. Cảnh giác
-3. Khen ngợi
-4. Thất vọng
-5. Đang suy nghĩ
+| Tệp | Hiện khi |
+|---|---|
+| `mascot-binh-thuong.png` | mặc định, lúc đang đọc tình huống |
+| `mascot-canh-giac.png` | người chơi đã đánh dấu chỗ đáng ngờ |
+| `mascot-khen-ngoi.png` | quyết định đúng, ở màn bóc tách |
+| `mascot-that-vong.png` | quyết định sai, ở màn bóc tách |
+| `mascot-bao-dong.png` | thua sớm, hoặc bị lừa mất tiền |
+
+Mặt cảnh giác bật lên khi người chơi đánh dấu **bất kỳ** cụm nào, không phân
+biệt dấu hiệu đỏ với cụm mồi. Phân biệt là mách đáp án ngay lúc đang chơi.
+
+Avatar tròn ở tiêu đề khung trợ lý dùng lại `mascot-binh-thuong.png`, cắt tròn
+bằng `border-radius`, không có tệp riêng.
 
 **Yêu cầu kỹ thuật:**
 - Xuất SVG nếu vẽ vector, hoặc PNG nền trong suốt ở 180px, 360px, 720px
@@ -535,7 +546,7 @@ Icon dùng bộ có sẵn (Lucide hoặc Tabler). Khung chat, nút bấm, thẻ,
 - [ ] Hai ô nhập ghi rõ "Nhắn cho ai" và "Hỏi trợ lý", hai bộ đếm tách riêng
 - [ ] Địa chỉ email người gửi đánh dấu được
 - [ ] Ô bằng chứng cập nhật ngay khi người chơi đánh dấu
-- [ ] Bong bóng thoại chếch bên phải mascot, không đè lên thân
+- [ ] Bong bóng thoại nằm trên đầu mascot, lệch sang phải, không đè lên thân
 - [ ] Ô bối cảnh nằm trên, mascot nằm dưới đáy cột trái
 - [ ] Mascot là PNG nền trong suốt, không có khung tròn bao quanh
 - [ ] Bong bóng có min-height cố định, bố cục không nhảy khi đổi câu
