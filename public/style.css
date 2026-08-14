@@ -156,6 +156,43 @@ svg { width: 100%; height: 100%; display: block; }
 
 .chip-giai-doan__icon { width: 18px; height: 18px; flex: none; }
 
+/* Nhóm trái của hàng trên. Có nhóm riêng thì hai thanh chỉ số bên phải không
+   phải xê dịch khi thêm bớt thứ gì bên trái. */
+.thanh-tren__trai {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  min-width: 0;
+}
+
+.nguoi-choi {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  min-width: 0;
+}
+
+/* Nền trắng vì ảnh tròn là PNG có nền trong suốt, để lộ nền trang thì rìa
+   ảnh trông như bị khoét */
+.nguoi-choi__avatar {
+  width: 32px;
+  height: 32px;
+  flex: none;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--surface-card);
+}
+
+.nguoi-choi__ten {
+  font-size: var(--co-chu-14);
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .nhom-chi-so {
   display: flex;
   gap: var(--sp-6);
@@ -1663,6 +1700,128 @@ svg { width: 100%; height: 100%; display: block; }
   background: none;
   color: var(--text-secondary);
   cursor: pointer;
+}
+
+/* ============ MÀN NHẬP TÊN VÀ CHỌN NHÂN VẬT ============ */
+
+/* Cùng dáng với màn menu: thoáng, căn giữa, ít thông tin. Rộng hơn một chút
+   vì phải chứa hai nhân vật toàn thân nằm cạnh nhau. */
+.man-nhap-ten {
+  max-width: 640px;
+  min-height: calc(100dvh - var(--sp-6) * 2);
+  justify-content: center;
+  align-items: center;
+  gap: var(--sp-6);
+  text-align: center;
+}
+
+.nhap-ten {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--sp-3);
+}
+
+.nhap-ten__nhan {
+  margin: 0;
+  font-size: var(--co-chu-14);
+  line-height: 1.5;
+  color: var(--text-secondary);
+  text-align: left;
+}
+
+.nhap-ten__nhan--giua { margin-top: var(--sp-3); text-align: center; }
+
+.nhap-ten__o {
+  width: 100%;
+  min-height: var(--h-nut);
+  padding: var(--sp-3) var(--sp-4);
+  border: var(--vien) solid var(--border);
+  border-radius: var(--radius-btn);
+  background: var(--surface-card);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: var(--co-chu-17);
+  line-height: 1.5;
+}
+
+.nhap-ten__o:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+  border-color: var(--accent);
+}
+
+.nhap-ten__goi-y {
+  margin: 0;
+  font-size: var(--co-chu-14);
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+/* ---- Hai nhân vật đặt cạnh nhau ---- */
+
+.nhan-vat {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-3);
+}
+
+.nhan-vat__the {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-3);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface-card);
+  cursor: pointer;
+  /* Phóng to nhẹ lúc được chọn, nên đổi cả khung lẫn viền cùng một nhịp */
+  transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+
+/* Radio thật vẫn nằm trong luồng bàn phím, chỉ không chiếm chỗ nhìn thấy.
+   Không dùng display:none vì như thế bàn phím không tới được nữa. */
+.nhan-vat__radio {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.nhan-vat__anh {
+  width: 100%;
+  height: auto;
+  max-height: 280px;
+  object-fit: contain;
+}
+
+.nhan-vat__ten {
+  font-size: var(--co-chu-15);
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.nhan-vat__the:hover { border-color: var(--accent-soft); }
+
+/* Trạng thái được chọn: viền đậm màu nhấn, quầng sáng quanh khung và phóng
+   to nhẹ. Ba dấu hiệu cùng lúc để không phụ thuộc riêng vào màu. */
+.nhan-vat__the:has(.nhan-vat__radio:checked) {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-soft);
+  transform: scale(1.03);
+}
+
+.nhan-vat__the:has(.nhan-vat__radio:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nhan-vat__the { transition: none; }
+  .nhan-vat__the:has(.nhan-vat__radio:checked) { transform: none; }
 }
 
 /* ============ MÀN MENU ============ */

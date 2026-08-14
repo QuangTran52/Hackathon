@@ -30,8 +30,9 @@ video: `http://localhost:3000/?demo=case_a,case_b,case_c`. Có tham số này th
 casePicker bị bỏ qua, lượt chơi đúng danh sách đó theo đúng thứ tự. Giao diện
 không khác gì lượt thường.
 
-**Xoá tiến trình đã lưu** khi cần thử lại từ menu: xoá hai khoá
-`tinh-tao:tien-do` và `tinh-tao:cai-dat` trong localStorage.
+**Xoá tiến trình đã lưu** khi cần thử lại từ menu: xoá ba khoá
+`tinh-tao:tien-do`, `tinh-tao:cai-dat` và `tinh-tao:nguoi-choi` trong
+localStorage. Xoá khoá cuối là màn nhập tên hiện lại từ đầu.
 
 ## Cấu trúc
 

@@ -44,6 +44,16 @@ const svgIcon = (noiDung, lop) =>
   `<svg class="${lop}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${noiDung}</svg>`;
 
 const o = {
+  manNhapTen: el('man-nhap-ten'),
+  formNhapTen: el('form-nhap-ten'),
+  oTenNguoiChoi: el('o-ten-nguoi-choi'),
+  nhomNhanVat: el('nhom-nhan-vat'),
+  nutBatDau: el('nut-bat-dau'),
+  goiYNhapTen: el('goi-y-nhap-ten'),
+  huyHieuNguoiChoi: el('huy-hieu-nguoi-choi'),
+  avatarNguoiChoi: el('avatar-nguoi-choi'),
+  tenNguoiChoi: el('ten-nguoi-choi'),
+
   manMenu: el('man-menu'),
   nutTiepTuc: el('nut-tiep-tuc'),
   nutChoiMoi: el('nut-choi-moi'),
@@ -278,7 +288,7 @@ function canhBaoNoiDung(danhSach = []) {
 
 // ================= ĐIỀU HƯỚNG MÀN =================
 
-const MOI_MAN = ['manMenu', 'manChoi', 'manQuyetDinh', 'manBocTach', 'manHanhTrinh', 'manKet'];
+const MOI_MAN = ['manNhapTen', 'manMenu', 'manChoi', 'manQuyetDinh', 'manBocTach', 'manHanhTrinh', 'manKet'];
 
 function hienMan(ten) {
   for (const m of MOI_MAN) o[m].hidden = m !== ten;
@@ -289,6 +299,7 @@ function hienMan(ten) {
 
 const KHOA_CAI_DAT = 'tinh-tao:cai-dat';
 const KHOA_TIEN_DO = 'tinh-tao:tien-do';
+const KHOA_NGUOI_CHOI = 'tinh-tao:nguoi-choi';
 
 // Đổi số này khi hình dạng bản lưu đổi, bản cũ sẽ bị bỏ qua thay vì dựng hỏng
 const PHIEN_BAN_LUU = 1;
@@ -344,6 +355,78 @@ function datCaiDat(phan) {
   Object.assign(caiDat, phan);
   ghiKho(KHOA_CAI_DAT, caiDat);
   apDungCaiDat();
+}
+
+// ================= NGƯỜI CHƠI: TÊN VÀ NHÂN VẬT =================
+
+// Bốn tệp ảnh rời nhau, mỗi vai trò một tệp. Ảnh tròn KHÔNG phải ảnh toàn thân
+// cắt tròn: cắt tròn một ảnh đứng cả người thì chỉ còn thấy phần bụng.
+const NHAN_VAT = {
+  nam: {
+    ten: 'Nam',
+    toanThan: '/assets/avatar/nhan-vat-nam-toan-than.png',
+    tron: '/assets/avatar/nhan-vat-nam-avatar-tron.png'
+  },
+  nu: {
+    ten: 'Nữ',
+    toanThan: '/assets/avatar/nhan-vat-nu-toan-than.png',
+    tron: '/assets/avatar/nhan-vat-nu-avatar-tron.png'
+  }
+};
+
+// Giới tính đã chọn chỉ dùng để hiển thị. Không gửi lên máy chủ, không vào
+// prompt NPC, không đổi cách xưng hô — lời thoại của kẻ gian viết sẵn trong
+// database và phải giống nhau với mọi người chơi.
+function docNguoiChoi() {
+  const ban = docKho(KHOA_NGUOI_CHOI);
+  if (!ban?.ten || !NHAN_VAT[ban.gioiTinh]) return null;
+  return ban;
+}
+
+let nguoiChoi = docNguoiChoi();
+
+// Huy hiệu ở hàng trên. Chưa có người chơi thì ẩn hẳn chứ không để khung rỗng.
+function veHuyHieuNguoiChoi() {
+  const co = Boolean(nguoiChoi);
+  o.huyHieuNguoiChoi.hidden = !co;
+  if (!co) return;
+
+  o.tenNguoiChoi.textContent = nguoiChoi.ten;
+  o.avatarNguoiChoi.src = NHAN_VAT[nguoiChoi.gioiTinh].tron;
+  o.avatarNguoiChoi.alt = `Nhân vật ${NHAN_VAT[nguoiChoi.gioiTinh].ten} của ${nguoiChoi.ten}`;
+}
+
+// Nút Bắt đầu chỉ mở khi đã có cả tên lẫn nhân vật. Câu gợi ý dưới nút nói rõ
+// còn thiếu gì, thay vì để người chơi bấm vào nút chết mà không hiểu vì sao.
+function capNhatNutBatDau() {
+  const ten = o.oTenNguoiChoi.value.trim();
+  const daChon = o.nhomNhanVat.querySelector('.nhan-vat__radio:checked');
+
+  o.nutBatDau.disabled = !ten || !daChon;
+
+  if (!ten && !daChon) o.goiYNhapTen.textContent = 'Nhập tên và chọn một nhân vật để bắt đầu';
+  else if (!ten) o.goiYNhapTen.textContent = 'Còn thiếu tên của bạn';
+  else if (!daChon) o.goiYNhapTen.textContent = 'Chọn một nhân vật để bắt đầu';
+  else o.goiYNhapTen.textContent = '';
+}
+
+function moManNhapTen() {
+  o.oTenNguoiChoi.value = '';
+  for (const r of o.nhomNhanVat.querySelectorAll('.nhan-vat__radio')) r.checked = false;
+  capNhatNutBatDau();
+  hienMan('manNhapTen');
+  o.oTenNguoiChoi.focus();
+}
+
+function luuNguoiChoi() {
+  const ten = o.oTenNguoiChoi.value.trim();
+  const gioiTinh = o.nhomNhanVat.querySelector('.nhan-vat__radio:checked')?.value;
+  if (!ten || !NHAN_VAT[gioiTinh]) return;
+
+  nguoiChoi = { ten, gioiTinh };
+  ghiKho(KHOA_NGUOI_CHOI, nguoiChoi);
+  veHuyHieuNguoiChoi();
+  moManMenu();
 }
 
 // ================= LƯU TIẾN TRÌNH =================
@@ -1950,6 +2033,20 @@ o.nutTiepChang.addEventListener('click', napCaseHienTai);
 o.nutOnTap.addEventListener('click', vaoManOnTap);
 o.nutDongLoi.addEventListener('click', anLoi);
 
+// Ô tên và nhóm nhân vật cùng mở khoá một nút, nên nghe chung một hàm
+o.oTenNguoiChoi.addEventListener('input', capNhatNutBatDau);
+o.nhomNhanVat.addEventListener('change', capNhatNutBatDau);
+
+o.formNhapTen.addEventListener('submit', (su) => {
+  su.preventDefault();
+  luuNguoiChoi();
+});
+
 noiMascot('');
 apDungCaiDat();
-moManMenu();
+veHuyHieuNguoiChoi();
+
+// Màn nhập tên diễn ra đúng một lần. Đã có tên và nhân vật trong máy thì vào
+// thẳng menu như trước, không hỏi lại.
+if (nguoiChoi) moManMenu();
+else moManNhapTen();

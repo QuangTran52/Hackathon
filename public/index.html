@@ -13,6 +13,51 @@
 </head>
 <body>
 
+<!-- ============ MÀN NHẬP TÊN VÀ CHỌN NHÂN VẬT ============ -->
+<!-- Chỉ hiện đúng một lần, khi máy chưa có tên và nhân vật đã chọn. Chọn xong
+     là vào thẳng menu, những lần vào game sau đi thẳng menu như cũ. -->
+<div class="man man-nhap-ten" id="man-nhap-ten" hidden>
+  <div>
+    <h1 class="menu__ten">Tỉnh táo</h1>
+    <p class="menu__mo-ta">Trước khi bắt đầu, cho mình biết bạn là ai nhé</p>
+  </div>
+
+  <form class="nhap-ten" id="form-nhap-ten">
+    <label class="nhap-ten__nhan" for="o-ten-nguoi-choi">Tên của bạn</label>
+    <input class="nhap-ten__o" id="o-ten-nguoi-choi" type="text" maxlength="20"
+           autocomplete="off" placeholder="Ví dụ: Minh Anh" required>
+
+    <p class="nhap-ten__nhan nhap-ten__nhan--giua" id="nhan-chon-nhan-vat">Chọn nhân vật</p>
+
+    <!-- Bấm thẳng vào hình để chọn. Dùng radio thật nằm dưới nên bàn phím và
+         trình đọc màn hình vẫn đi qua được như một nhóm lựa chọn bình thường. -->
+    <div class="nhan-vat" role="radiogroup" aria-labelledby="nhan-chon-nhan-vat" id="nhom-nhan-vat">
+      <label class="nhan-vat__the">
+        <input class="nhan-vat__radio" type="radio" name="gioi-tinh" value="nam">
+        <img class="nhan-vat__anh" src="/assets/avatar/nhan-vat-nam-toan-than.png"
+             alt="Nhân vật nam" width="200" height="280">
+        <span class="nhan-vat__ten">Nam</span>
+      </label>
+
+      <label class="nhan-vat__the">
+        <input class="nhan-vat__radio" type="radio" name="gioi-tinh" value="nu">
+        <img class="nhan-vat__anh" src="/assets/avatar/nhan-vat-nu-toan-than.png"
+             alt="Nhân vật nữ" width="200" height="280">
+        <span class="nhan-vat__ten">Nữ</span>
+      </label>
+    </div>
+
+    <button type="submit" class="nut nut--cao nut--chinh" id="nut-bat-dau" disabled>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 12h14M13 6l6 6-6 6"/>
+      </svg>
+      Bắt đầu
+    </button>
+
+    <p class="nhap-ten__goi-y" id="goi-y-nhap-ten">Nhập tên và chọn một nhân vật để bắt đầu</p>
+  </form>
+</div>
+
 <!-- ============ MÀN MENU ============ -->
 <!-- Màn đầu tiên khi tải trang. Design Spec mục 10: tiếp tục, chơi mới,
      cỡ chữ, âm thanh. Nút chỉnh cỡ chữ là điểm cộng về tính bao trùm nên
@@ -67,13 +112,23 @@
 
   <!-- ============ HÀNG TRÊN ============ -->
   <header class="thanh-tren">
-    <div class="chip-giai-doan">
-      <span class="chip-giai-doan__icon" id="icon-giai-doan">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
-        </svg>
-      </span>
-      <span id="ten-giai-doan">Đang tải</span>
+    <!-- Nhóm trái: chip giai đoạn và huy hiệu người chơi. Bọc lại thành một
+         nhóm để hai thanh chỉ số bên phải giữ nguyên chỗ cũ. -->
+    <div class="thanh-tren__trai">
+      <div class="chip-giai-doan">
+        <span class="chip-giai-doan__icon" id="icon-giai-doan">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+          </svg>
+        </span>
+        <span id="ten-giai-doan">Đang tải</span>
+      </div>
+
+      <!-- Ảnh tròn riêng, không phải ảnh toàn thân cắt tròn -->
+      <div class="nguoi-choi" id="huy-hieu-nguoi-choi" hidden>
+        <img class="nguoi-choi__avatar" id="avatar-nguoi-choi" src="" alt="" width="32" height="32">
+        <span class="nguoi-choi__ten" id="ten-nguoi-choi"></span>
+      </div>
     </div>
 
     <div class="nhom-chi-so">
