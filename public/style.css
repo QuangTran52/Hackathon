@@ -1120,9 +1120,8 @@ svg { width: 100%; height: 100%; display: block; }
   background: var(--mascot-soft);
 }
 
-/* Cắt tròn bằng border-radius, dùng lại đúng ảnh mascot bình thường chứ không
-   cần tệp avatar riêng. Nền trắng để phần trong suốt của PNG không lộ ra nền
-   tím của thanh tiêu đề, nhìn thành một mảng loang. */
+/* Cắt tròn bằng border-radius. Nền trắng để phần trong suốt của PNG không lộ
+   ra nền tím của thanh tiêu đề, nhìn thành một mảng loang. */
 .tro-ly__avatar {
   width: 40px;
   height: 40px;
