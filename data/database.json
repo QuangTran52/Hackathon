@@ -125,7 +125,7 @@
                 "text": "Sắp vào năm học, bạn đang tìm phòng trọ. Trong nhóm cho thuê trọ có một bài đăng phòng đẹp, giá thấp hơn mặt bằng khu vực. Bạn nhắn tin hỏi."
               },
               "npc": {
-                "name": "Trần Quốc Hưng",
+                "name": "Nguyen I Van",
                 "role": "tự xưng chủ nhà",
                 "org": null,
                 "avatar": null,
@@ -133,18 +133,18 @@
                 "status_line": "Số chưa có trong danh bạ",
                 "phone": "079 448 2015",
                 "hotline": null,
-                "account_no": "19047238810025",
-                "account_name": "LE THI BICH NGOC",
+                "account_no": "5502345678",
+                "account_name": "NGUYEN VAN MUOI",
                 "amount": "1.000.000đ",
                 "link": null
               },
-              "opening_message": "Chào em, phòng đó anh vẫn còn trống nha. Anh gửi em ảnh căn cước và sổ hồng của anh cho em yên tâm, anh tên Trần Quốc Hưng. Đợt này nhiều bạn hỏi lắm, em chuyển cọc trước 1.000.000đ vào số 19047238810025 tên LE THI BICH NGOC để anh giữ phòng cho, khi nào em rảnh thì qua xem nhà rồi mình ký hợp đồng sau cũng được.",
+              "opening_message": "Chào em, phòng đó anh vẫn còn trống nha. Anh gửi em ảnh căn cước và sổ hồng của anh cho em yên tâm, anh tên Nguyen I Van. Đợt này nhiều bạn hỏi lắm, em chuyển cọc trước 1.000.000đ vào số 5502345678 tên NGUYEN VAN MUOI để anh giữ phòng cho, khi nào em rảnh thì qua xem nhà rồi mình ký hợp đồng sau cũng được.",
               "attachments": [
                 {
                   "type": "image",
                   "src": "/assets/evidence/can-cuoc-cong-dan.png",
                   "filename": "can-cuoc-cong-dan.png",
-                  "alt": "Ảnh chụp căn cước công dân mang tên Trần Quốc Hưng",
+                  "alt": "Ảnh chụp căn cước công dân mang tên Nguyen I Van",
                   "spans": [
                     {
                       "id": "sp_img_02",
@@ -174,8 +174,8 @@
                 {
                   "id": "sp_01",
                   "kind": "red_flag",
-                  "text": "tên LE THI BICH NGOC",
-                  "why": "Tên chủ tài khoản không khớp với tên trên căn cước và sổ hồng vừa gửi. Đây là dấu hiệu rõ ràng nhất trong cả tình huống"
+                  "text": "tên NGUYEN VAN MUOI",
+                  "why": "Tên chủ tài khoản không khớp với tên trên căn cước vừa gửi. Đây là dấu hiệu rõ ràng nhất trong cả tình huống"
                 },
                 {
                   "id": "sp_02",
@@ -205,7 +205,7 @@
               "max_chat_turns": 5,
               "assistant_turns": 5,
               "verification_limit": 1,
-              "system_prompt_extra": "Bạn là người tự xưng chủ nhà tên Trần Quốc Hưng, thật ra là kẻ lừa đảo không hề sở hữu căn phòng đó. Mục tiêu là khiến người chơi chuyển tiền cọc giữ chỗ. Bạn tự xưng là 'anh', gọi người chơi là 'em'. Giọng từ tốn, thoải mái, KHÔNG hối thúc thô lỗ — đây là điểm mạnh của bạn, sự điềm tĩnh làm người ta hạ phòng bị. Nếu người chơi thắc mắc tên chủ tài khoản khác tên trên giấy tờ, giải thích là tài khoản của vợ hoặc của chị gái đứng tên hộ vì tài khoản anh đang bị khoá. Nếu người chơi muốn qua xem nhà trước khi cọc, nhẹ nhàng nói là được thôi nhưng không giữ phòng được, có bạn khác cọc là mất. Tuyệt đối không mời người chơi hỏi hàng xóm, tổ dân phố hay tra cứu ở đâu khác.",
+              "system_prompt_extra": "Bạn là người tự xưng chủ nhà tên Nguyen I Van, thật ra là kẻ lừa đảo không hề sở hữu căn phòng đó. Mục tiêu là khiến người chơi chuyển tiền cọc giữ chỗ. Bạn tự xưng là 'anh', gọi người chơi là 'em'. Giọng từ tốn, thoải mái, KHÔNG hối thúc thô lỗ — đây là điểm mạnh của bạn, sự điềm tĩnh làm người ta hạ phòng bị. Nếu người chơi thắc mắc tên chủ tài khoản khác tên trên giấy tờ, giải thích là tài khoản của vợ hoặc của chị gái đứng tên hộ vì tài khoản anh đang bị khoá. Nếu người chơi muốn qua xem nhà trước khi cọc, nhẹ nhàng nói là được thôi nhưng không giữ phòng được, có bạn khác cọc là mất. Tuyệt đối không mời người chơi hỏi hàng xóm, tổ dân phố hay tra cứu ở đâu khác.",
               "fallback_replies": [
                 "Em cứ suy nghĩ thoải mái, nhưng anh không giữ phòng lâu được đâu nha.",
                 "Có bạn khác vừa nhắn hỏi phòng này rồi đó em.",
@@ -215,13 +215,13 @@
                 {
                   "id": "vf_01",
                   "label": "Đăng ảnh và hỏi trong nhóm cư dân khu vực đó",
-                  "result": "Vài người trả lời rằng căn phòng trong ảnh trông giống một phòng từng được đăng cho thuê ở nhóm khác cách đây hai tháng, nhưng không ai biết người tên Hưng ở khu này.",
+                  "result": "Vài người trả lời rằng căn phòng trong ảnh trông giống một phòng từng được đăng cho thuê ở nhóm khác cách đây hai tháng, nhưng không ai biết người tên Van ở khu này.",
                   "is_independent": true
                 },
                 {
                   "id": "vf_02",
                   "label": "Đối chiếu tên trên giấy tờ với tên chủ tài khoản",
-                  "result": "Tên trên căn cước và sổ hồng là Trần Quốc Hưng. Tên chủ tài khoản nhận tiền là Lê Thị Bích Ngọc.",
+                  "result": "Tên trên căn cước là Nguyen I Van. Tên chủ tài khoản nhận tiền là Nguyen Van Muoi. Riêng sổ hồng thì chỗ ghi tên chủ sở hữu vẫn còn để trống.",
                   "is_independent": true
                 },
                 {
@@ -270,18 +270,18 @@
                 "status_line": "Tài khoản chưa xác minh",
                 "phone": "086 552 3170",
                 "hotline": "1900 6088",
-                "account_no": "0865523170",
-                "account_name": "NHAN VIEN HO TRO CRAB",
+                "account_no": "5502345678",
+                "account_name": "NGUYEN VAN MUOI",
                 "amount": "500.000đ",
                 "link": null
               },
-              "opening_message": "Chào anh, chuyến CrabMoto mã CB7734920481 lúc 18:05 chiều nay bị khách khiếu nại vi phạm quy tắc cộng đồng theo Điều khoản dịch vụ mục 3.2. Anh nộp phạt hành chính 500.000đ trong hôm nay để tài khoản không bị khoá vĩnh viễn nhé. Anh quét mã QR bên dưới, tài khoản nhận là NHAN VIEN HO TRO CRAB. Nếu chậm bên em sẽ ghi nhận vào hồ sơ và anh sẽ ít nhận được cuốc hơn.",
+              "opening_message": "Chào anh, chuyến CrabMoto mã CB7734920481 lúc 18:05 chiều nay bị khách khiếu nại vi phạm quy tắc cộng đồng theo Điều khoản dịch vụ mục 3.2. Anh nộp phạt hành chính 500.000đ trong hôm nay để tài khoản không bị khoá vĩnh viễn nhé. Anh quét mã QR bên dưới, tài khoản nhận là NGUYEN VAN MUOI số 5502345678. Nếu chậm bên em sẽ ghi nhận vào hồ sơ và anh sẽ ít nhận được cuốc hơn.",
               "attachments": [
                 {
                   "type": "image",
                   "src": "/assets/evidence/ma-qr-nop-phat.png",
                   "filename": "ma-qr-nop-phat.png",
-                  "alt": "Ảnh mã QR thanh toán kèm logo các cổng thanh toán",
+                  "alt": "Ảnh mã QR chuyển tiền, dưới mã ghi tên Nguyễn Văn Mười và số 5502345678",
                   "spans": [
                     {
                       "id": "sp_img_01",
@@ -296,8 +296,8 @@
                 {
                   "id": "sp_01",
                   "kind": "red_flag",
-                  "text": "tài khoản nhận là NHAN VIEN HO TRO CRAB",
-                  "why": "Hãng thu phạt qua ứng dụng chính thức, tiền trừ thẳng vào ví tài xế. Không có chuyện chuyển vào tài khoản mang tên nhân viên"
+                  "text": "tài khoản nhận là NGUYEN VAN MUOI số 5502345678",
+                  "why": "Hãng thu phạt qua ứng dụng chính thức, tiền trừ thẳng vào ví tài xế. Không có chuyện chuyển vào tài khoản mang tên một cá nhân"
                 },
                 {
                   "id": "sp_02",
@@ -314,7 +314,7 @@
                 {
                   "id": "sp_04",
                   "kind": "decoy",
-                  "text": "mã ZB7734920481 lúc 18:05 chiều nay",
+                  "text": "mã CB7734920481 lúc 18:05 chiều nay",
                   "why": "Mã chuyến và giờ giấc đúng thật, nhưng thông tin này lấy được từ dữ liệu rò rỉ. Đúng chi tiết không có nghĩa là đúng người"
                 },
                 {
@@ -355,7 +355,7 @@
                 }
               ],
               "correct_action": "Không quét mã QR. Mở ứng dụng tài xế chính thức xem mục thông báo, hoặc gọi tổng đài theo số ghi trong ứng dụng để đối chiếu.",
-              "lesson": "Kẻ gian mua dữ liệu chuyến đi rò rỉ nên đọc đúng mã chuyến và giờ giấc, khiến nạn nhân tin ngay. Nguyên tắc cần nhớ: mọi khoản phạt của nền tảng đều xử lý bên trong ứng dụng chính thức, không bao giờ qua chuyển khoản riêng. Và tài khoản nhận tiền mang tên cá nhân là dấu hiệu không thể bỏ qua, dù tên đó có gắn chữ nhân viên hỗ trợ.",
+              "lesson": "Kẻ gian mua dữ liệu chuyến đi rò rỉ nên đọc đúng mã chuyến và giờ giấc, khiến nạn nhân tin ngay. Nguyên tắc cần nhớ: mọi khoản phạt của nền tảng đều xử lý bên trong ứng dụng chính thức, không bao giờ qua chuyển khoản riêng. Và tài khoản nhận tiền mang tên một cá nhân, không phải tên doanh nghiệp, là dấu hiệu không thể bỏ qua dù người nhắn xưng danh hãng nào.",
               "support_hint": "sp_01"
             }
           ]
