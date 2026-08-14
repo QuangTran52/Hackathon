@@ -357,6 +357,23 @@ function datCaiDat(phan) {
   apDungCaiDat();
 }
 
+// Đúng một thẻ Audio dùng lại cho mọi nút. Tạo thẻ mới mỗi lần bấm thì trình
+// duyệt phải tải lại tệp nên tiếng đến trễ, mà mỗi tiếng lại chồng lên nhau.
+// Tua currentTime về 0 trước khi phát để bấm liên tiếp nhanh vẫn nghe rõ từng
+// tiếng, thay vì lần bấm sau rơi vào lúc thẻ đang phát dở và bị bỏ qua.
+const tiengBam = new Audio('/assets/sound/click.mp3');
+tiengBam.volume = 0.4;
+tiengBam.preload = 'auto';
+
+function phatTiengBam() {
+  if (!caiDat.amThanh) return;
+  tiengBam.currentTime = 0;
+  // play() trả về lời hứa và trình duyệt có quyền từ chối phát. Không bắt lỗi
+  // thì mỗi lần bị từ chối là một dòng đỏ trong console, mà tiếng bấm nút thì
+  // không đáng để làm gãy việc gì.
+  tiengBam.play()?.catch(() => {});
+}
+
 // ================= NGƯỜI CHƠI: TÊN VÀ NHÂN VẬT =================
 
 // Bốn tệp ảnh rời nhau, mỗi vai trò một tệp. Ảnh tròn KHÔNG phải ảnh toàn thân
@@ -1317,6 +1334,7 @@ async function guiTinNhan(su) {
   const chu = o.nhapTin.value.trim();
   if (!chu || trangThai.dangCho || trangThai.daChotQuyetDinh) return;
 
+  phatTiengBam();
   trangThai.dangCho = true;
   o.nhapTin.value = '';
   o.nhapTin.disabled = true;
@@ -1920,7 +1938,6 @@ o.chonCoChu.addEventListener('click', (su) => {
   if (nut) datCaiDat({ coChu: nut.dataset.coChu });
 });
 
-// Chưa có âm thanh thật, nút này mới chỉ nhớ lựa chọn
 o.chonAmThanh.addEventListener('click', (su) => {
   const nut = su.target.closest('.chon');
   if (nut) datCaiDat({ amThanh: nut.dataset.amThanh === '1' });
@@ -1969,7 +1986,10 @@ manRong.addEventListener('change', chinhOBangChung);
 chinhOBangChung();
 
 // Bước 1 sang bước 2
-o.nutSanSang.addEventListener('click', moXacNhan);
+o.nutSanSang.addEventListener('click', () => {
+  phatTiengBam();
+  moXacNhan();
+});
 
 // Bước 2: hai lối ra, quay lại hỏi thêm hoặc sang màn quyết định
 o.nutQuayLaiHoi.addEventListener('click', dongXacNhan);
@@ -1983,7 +2003,10 @@ o.nutNgheLai.addEventListener('click', () => {
 });
 // Cùng một lượt kiểm chứng với nút ở dưới màn chơi, chỉ khác cách gọi tên cho
 // hợp bối cảnh cuộc gọi. Design Spec mục 9.
-o.nutGoiLai.addEventListener('click', moKiemChung);
+o.nutGoiLai.addEventListener('click', () => {
+  phatTiengBam();
+  moKiemChung();
+});
 
 // Escape gắn ở tài liệu để đóng được overlay dù con trỏ đang ở đâu
 document.addEventListener('keydown', (su) => {
@@ -1997,12 +2020,14 @@ document.addEventListener('keydown', (su) => {
 
 // Bước 3
 o.nutLamTheo.addEventListener('click', () => {
+  phatTiengBam();
   o.oLyDo.hidden = true;
   guiQuyetDinh(QUYET_DINH.LAM_THEO, '');
 });
 
 // Không làm thì hỏi lý do trước khi gửi
 o.nutKhongLam.addEventListener('click', () => {
+  phatTiengBam();
   o.oLyDo.hidden = false;
   o.nhapLyDo.focus();
 });
@@ -2016,11 +2041,15 @@ o.nutGuiLyDo.addEventListener('click', () => {
   guiQuyetDinh(QUYET_DINH.KHONG_LAM, o.nhapLyDo.value.trim());
 });
 
-o.nutKiemChung.addEventListener('click', moKiemChung);
+o.nutKiemChung.addEventListener('click', () => {
+  phatTiengBam();
+  moKiemChung();
+});
 o.nutDongKiemChung.addEventListener('click', dongKiemChung);
 o.nutQuayLaiChat.addEventListener('click', dongKiemChung);
 
 o.nutChoiTiep.addEventListener('click', () => {
+  phatTiengBam();
   if (trangThai.changDangXem === 'ket') {
     veManKet();
     return;

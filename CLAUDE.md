@@ -112,9 +112,12 @@ là game và mất hết cảm giác bị lừa. Mọi độ giàu thị giác d
 
 ## Trạng thái hiện tại
 
-Còn thiếu so với Design Spec: màn kiểm tra đầu vào, màn chuyển giai đoạn, âm
-thanh thật (nút bật tắt đã có và nhớ lựa chọn, chưa phát tiếng nào). Dữ liệu
-mới có 7 chủ đề, spec muốn 9. Avatar NPC chưa có, mã đã sẵn chỗ nhận.
+Còn thiếu so với Design Spec: màn kiểm tra đầu vào, màn chuyển giai đoạn. Dữ
+liệu mới có 7 chủ đề, spec muốn 9. Avatar NPC chưa có, mã đã sẵn chỗ nhận.
+
+Âm thanh mới có đúng một tiếng bấm nút, `public/assets/sound/click.mp3`, phát
+qua `phatTiengBam()` ở `app.js`. Một thẻ Audio duy nhất dùng lại cho mọi nút,
+tua về 0 trước mỗi lần phát; nút Tắt ở menu chặn ngay trong hàm này.
 
 Ảnh mascot đã đủ 5 biểu cảm PNG trong `public/assets/mascot/`, ánh xạ ở hằng số
 `MASCOT` đầu `app.js`. Mặt cảnh giác bật khi người chơi đánh dấu **bất kỳ** cụm
