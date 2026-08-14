@@ -133,12 +133,12 @@
                 "status_line": "Số chưa có trong danh bạ",
                 "phone": "079 448 2015",
                 "hotline": null,
-                "account_no": "5502345678",
-                "account_name": "NGUYEN VAN MUOI",
+                "account_no": "0384729516",
+                "account_name": "PHAM VAN DUC",
                 "amount": "1.000.000đ",
                 "link": null
               },
-              "opening_message": "Chào em, phòng đó anh vẫn còn trống nha. Anh gửi em ảnh căn cước và sổ hồng của anh cho em yên tâm, anh tên Nguyen I Van. Đợt này nhiều bạn hỏi lắm, em chuyển cọc trước 1.000.000đ vào số 5502345678 tên NGUYEN VAN MUOI để anh giữ phòng cho, khi nào em rảnh thì qua xem nhà rồi mình ký hợp đồng sau cũng được.",
+              "opening_message": "Chào em, phòng đó anh vẫn còn trống nha. Anh gửi em ảnh căn cước và sổ hồng của anh cho em yên tâm, anh tên Nguyen I Van. Đợt này nhiều bạn hỏi lắm, em chuyển cọc trước 1.000.000đ vào số 0384729516 tên PHAM VAN DUC để anh giữ phòng cho, khi nào em rảnh thì qua xem nhà rồi mình ký hợp đồng sau cũng được.",
               "attachments": [
                 {
                   "type": "image",
@@ -174,7 +174,7 @@
                 {
                   "id": "sp_01",
                   "kind": "red_flag",
-                  "text": "tên NGUYEN VAN MUOI",
+                  "text": "tên PHAM VAN DUC",
                   "why": "Tên chủ tài khoản không khớp với tên trên căn cước vừa gửi. Đây là dấu hiệu rõ ràng nhất trong cả tình huống"
                 },
                 {
@@ -221,7 +221,7 @@
                 {
                   "id": "vf_02",
                   "label": "Đối chiếu tên trên giấy tờ với tên chủ tài khoản",
-                  "result": "Tên trên căn cước là Nguyen I Van. Tên chủ tài khoản nhận tiền là Nguyen Van Muoi. Riêng sổ hồng thì chỗ ghi tên chủ sở hữu vẫn còn để trống.",
+                  "result": "Tên trên căn cước là Nguyen I Van. Tên chủ tài khoản nhận tiền là Pham Van Duc. Riêng sổ hồng thì chỗ ghi tên chủ sở hữu vẫn còn để trống.",
                   "is_independent": true
                 },
                 {
