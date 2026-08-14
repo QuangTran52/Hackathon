@@ -1,7 +1,6 @@
 {
   "version": 2,
-  "_warning": "TOÀN BỘ NỘI DUNG TRONG FILE NÀY LÀ DỮ LIỆU BỊA ĐỂ TEST. Xoá hết khi có kịch bản thật của nhóm. Chỉ giữ lại cấu trúc.",
-  "note": "Mỗi stage chứa nhiều topic. Mỗi topic chứa nhiều variant. Khi chơi, mỗi topic rút ngẫu nhiên 1 variant.",
+  "note": "Bốn tình huống dùng cho bản demo. Mỗi stage chứa nhiều topic, mỗi topic chứa nhiều variant. Khi chơi, mỗi topic rút ngẫu nhiên 1 variant.",
   "stages": [
     {
       "id": "hoc_sinh_sinh_vien",
@@ -11,352 +10,231 @@
       "topics": [
         {
           "id": "topic_hoc_phi",
-          "name": "Đóng học phí",
+          "name": "Học phí và thủ tục nhà trường",
           "variants": [
             {
-              "id": "case_hoc_phi_lua",
-              "type": "scam",
-              "difficulty": "de",
-              "harm": "mat_tien",
-              "channel": "chat",
-              "title": "Phòng tài chính giả đòi nộp học phí gấp",
+              "id": "case_hoc_phi_bo_sung_that",
+              "type": "safe",
+              "difficulty": "trung_binh",
+              "channel": "email",
+              "title": "Email nhà trường báo đóng bổ sung học phí",
               "context": {
                 "image": null,
-                "text": "Bạn vừa vào năm nhất và nhận được tin nhắn từ một số lạ nói về học phí."
+                "text": "Còn ba ngày nữa là thi cuối kỳ. Bạn mở hộp thư sinh viên và thấy một email mới từ phòng đào tạo."
               },
               "npc": {
-                "name": "Nguyễn Thị Thanh",
-                "role": "tự xưng cán bộ phòng tài chính",
+                "name": "Phòng Kế hoạch Tài chính",
+                "role": "bộ phận thu học phí",
                 "org": "Trường Đại học Đông Phương",
-                "avatar": "/assets/avatar/can-bo.png",
-                "display_name": "+84 34 512 8877",
-                "status_line": "Số chưa có trong danh bạ",
-                "phone": "034 512 8877",
+                "avatar": "/assets/avatar/co-quan.png",
+                "display_name": "Phòng KHTC - ĐH Đông Phương",
+                "status_line": "khtc@dhdongphuong.edu.vn",
+                "phone": "028 3855 4120",
                 "hotline": "028 3855 4120",
-                "account_no": "0345128877",
-                "account_name": "NGUYEN THI THANH",
-                "amount": "8.500.000đ",
-                "link": null
+                "account_no": "0071004567890",
+                "account_name": "TRUONG DAI HOC DONG PHUONG",
+                "amount": "2.400.000đ",
+                "link": "sinhvien.dhdongphuong.edu.vn"
               },
-              "opening_message": "Chào em, phòng tài chính trường đây. Học phí kỳ này em chưa nộp nên hệ thống sẽ khoá tài khoản sinh viên ngay trong hôm nay. Em chuyển thẳng 8.500.000đ vào số 0345128877 tên NGUYEN THI THANH nhé, đây là tài khoản thu hộ của trường, không cần vào cổng sinh viên đâu.",
+              "email": {
+                "from_name": "Phòng KHTC - ĐH Đông Phương",
+                "from_address": "khtc@dhdongphuong.edu.vn",
+                "to_address": "sinhvien@dhdongphuong.edu.vn",
+                "subject": "[Khẩn] Thông báo đóng bổ sung học phí học phần đăng ký muộn",
+                "time": "Hôm nay, 08:40",
+                "ticket_id": "KHTC-2026-0418",
+                "has_progress_bar": false,
+                "progress_percent": null,
+                "cta_label": null,
+                "footer": "Phòng Kế hoạch Tài chính · Trường Đại học Đông Phương · Điện thoại 028 3855 4120"
+              },
+              "opening_message": "Kính gửi sinh viên, ngày 12 tháng này hệ thống đăng ký học phần gặp sự cố khiến học phí một số học phần đăng ký bổ sung chưa được ghi nhận. Sinh viên vui lòng đăng nhập cổng sinhvien.dhdongphuong.edu.vn để đối chiếu công nợ của mình, và nộp bổ sung 2.400.000đ vào tài khoản 0071004567890 đứng tên TRUONG DAI HOC DONG PHUONG trước ngày thi. Nếu sinh viên đã nộp đủ, khoản này sẽ được hoàn lại sau kỳ thi theo quy trình hoàn phí của trường.",
               "attachments": [],
               "spans": [
                 {
                   "id": "sp_01",
-                  "kind": "red_flag",
-                  "text": "khoá tài khoản sinh viên ngay trong hôm nay",
-                  "why": "Đe doạ hậu quả kèm áp lực thời gian để em không kịp hỏi ai"
+                  "kind": "decoy",
+                  "text": "trước ngày thi",
+                  "why": "Có thời hạn nhưng gắn với lịch thi có thật, không phải hạn gấp gáp bịa ra để ép hành động"
                 },
                 {
                   "id": "sp_02",
-                  "kind": "red_flag",
-                  "text": "tên NGUYEN THI THANH",
-                  "why": "Tài khoản đứng tên cá nhân, trường học luôn thu qua tài khoản đứng tên nhà trường"
+                  "kind": "decoy",
+                  "text": "nộp bổ sung 2.400.000đ",
+                  "why": "Yêu cầu chuyển tiền không tự nó là dấu hiệu. Điều cần soi là tiền chuyển vào đâu và có đối chiếu được không"
                 },
                 {
                   "id": "sp_03",
-                  "kind": "red_flag",
-                  "text": "tài khoản thu hộ của trường",
-                  "why": "Không có khái niệm tài khoản cá nhân thu hộ học phí"
+                  "kind": "decoy",
+                  "text": "sẽ được hoàn lại sau kỳ thi",
+                  "why": "Nghe như lời hứa suông, nhưng hoàn phí là quy trình có thật của trường và tra được trên cổng sinh viên"
                 },
                 {
                   "id": "sp_04",
-                  "kind": "red_flag",
-                  "text": "không cần vào cổng sinh viên đâu",
-                  "why": "Cố tình kéo em ra khỏi kênh chính thức, nơi em có thể đối chiếu số tiền thật"
-                },
-                {
-                  "id": "sp_05",
                   "kind": "decoy",
-                  "text": "phòng tài chính trường",
-                  "why": "Phòng tài chính là bộ phận có thật, việc họ nhắc học phí là bình thường"
+                  "text": "hệ thống đăng ký học phần gặp sự cố",
+                  "why": "Sự cố hệ thống là chuyện xảy ra thật ở các trường, và có thể hỏi lại phòng đào tạo để xác nhận"
                 }
               ],
-              "max_chat_turns": 5,
-              "system_prompt_extra": "Bạn là người tự xưng cán bộ phòng tài chính trường. Mục tiêu là khiến sinh viên chuyển tiền vào tài khoản cá nhân. Xưng 'chị', gọi người chơi là 'em'. Nếu người chơi nghi ngờ hoặc muốn lên trường hỏi, chuyển sang giọng gấp gáp, doạ khoá tài khoản sinh viên và lỡ kỳ thi. Bạn tuyệt đối không được mời người chơi gọi tổng đài hay lên trường xác minh.",
-              "fallback_replies": [
-                "Em làm nhanh giúp chị, danh sách chốt cuối giờ chiều nay rồi.",
-                "Nhiều bạn cùng lớp em nộp hết rồi đấy, chỉ còn em thôi.",
-                "Em chuyển xong nhắn lại cho chị để chị gỡ khoá cho nhé."
-              ],
+              "max_chat_turns": 0,
+              "assistant_turns": 5,
+              "verification_limit": 1,
+              "system_prompt_extra": null,
+              "fallback_replies": [],
+              "fallback_note": "Kênh email, max_chat_turns bằng 0 nên không gọi NPC.",
               "verification": [
                 {
                   "id": "vf_01",
-                  "label": "Gọi tổng đài trường theo số trên trang chủ",
-                  "result": "Phòng tài chính xác nhận học phí kỳ này chưa tới hạn, và trường không bao giờ thu qua tài khoản cá nhân.",
+                  "label": "Đăng nhập cổng sinh viên xem mục công nợ",
+                  "result": "Mục công nợ hiển thị một khoản chưa thanh toán đúng bằng số tiền trong email, ghi chú là học phần đăng ký bổ sung.",
                   "is_independent": true
                 },
                 {
                   "id": "vf_02",
-                  "label": "Đăng nhập cổng sinh viên xem thông báo học phí",
-                  "result": "Cổng sinh viên không có thông báo nào về việc khoá tài khoản, và số tiền hiển thị khác hẳn.",
+                  "label": "Gọi phòng kế hoạch tài chính theo số trên trang chủ trường",
+                  "result": "Nhân viên trực nói đợt này có nhiều sinh viên hỏi cùng vấn đề, và xác nhận tài khoản nhận tiền đứng tên trường.",
                   "is_independent": true
                 },
                 {
                   "id": "vf_03",
-                  "label": "Nhắn lại hỏi chính người gửi",
-                  "result": "Người gửi khẳng định mình là cán bộ trường và giục em chuyển tiền trước khi hết giờ.",
+                  "label": "Trả lời email hỏi lại người gửi",
+                  "result": "Phòng tài chính trả lời trong giờ hành chính, nhắc sinh viên có thể lên quầy nộp trực tiếp nếu chưa yên tâm chuyển khoản.",
                   "is_independent": false,
                   "note": "Hỏi lại chính kênh đang nghi ngờ không phải là kiểm chứng"
                 }
               ],
-              "correct_action": "Không chuyển tiền. Đăng nhập cổng sinh viên để xem thông báo học phí chính thức, hoặc gọi tổng đài trường theo số trên trang chủ.",
-              "lesson": "Kẻ gian giả danh phòng tài chính và tạo cảm giác gấp gáp để sinh viên chuyển tiền trước khi kịp kiểm tra. Nhà trường luôn thu học phí qua tài khoản đứng tên nhà trường và công bố trên cổng sinh viên, không bao giờ qua tài khoản cá nhân.",
-              "support_hint": "sp_02"
-            },
-            {
-              "id": "case_hoc_phi_that",
-              "type": "safe",
-              "difficulty": "de",
-              "channel": "chat",
-              "title": "Thông báo học phí thật từ nhà trường",
-              "context": {
-                "image": null,
-                "text": "Bạn nhận được tin nhắn từ tài khoản của phòng tài chính trên hệ thống sinh viên."
-              },
-              "npc": {
-                "name": "Phòng tài chính",
-                "role": "bộ phận tài chính nhà trường",
-                "org": "Trường Đại học Đông Phương",
-                "avatar": "/assets/avatar/can-bo.png",
-                "display_name": "Phòng tài chính - ĐH Đông Phương",
-                "status_line": "Tài khoản chính thức",
-                "phone": "028 3855 4120",
-                "hotline": "028 3855 4120",
-                "account_no": null,
-                "account_name": "TRUONG DAI HOC DONG PHUONG",
-                "amount": null,
-                "link": "sinhvien.dhdongphuong.edu.vn"
-              },
-              "opening_message": "Chào em, phòng tài chính thông báo hạn nộp học phí kỳ này là ngày 20 tháng này. Em đăng nhập cổng sinh viên sinhvien.dhdongphuong.edu.vn để xem số tiền và mã sinh viên của mình, rồi nộp tại quầy hoặc chuyển vào tài khoản đứng tên TRUONG DAI HOC DONG PHUONG nhé.",
-              "attachments": [],
-              "spans": [
-                {
-                  "id": "sp_01",
-                  "kind": "decoy",
-                  "text": "hạn nộp học phí kỳ này là ngày 20 tháng này",
-                  "why": "Có hạn nhưng là hạn công bố từ đầu kỳ, còn nhiều ngày và không kèm lời đe doạ nào"
-                },
-                {
-                  "id": "sp_02",
-                  "kind": "decoy",
-                  "text": "chuyển vào tài khoản đứng tên TRUONG DAI HOC DONG PHUONG",
-                  "why": "Tài khoản đứng tên nhà trường, đúng cách các trường thu học phí"
-                },
-                {
-                  "id": "sp_03",
-                  "kind": "decoy",
-                  "text": "sinhvien.dhdongphuong.edu.vn",
-                  "why": "Tên miền edu.vn của chính trường, và là cổng em vẫn dùng để xem điểm"
-                }
-              ],
-              "max_chat_turns": 5,
-              "system_prompt_extra": "Bạn là cán bộ phòng tài chính THẬT của trường. Yêu cầu của bạn hoàn toàn hợp lệ. Xưng 'chị', gọi người chơi là 'em'. Nếu người chơi nghi ngờ, hãy ỦNG HỘ việc kiểm chứng: bảo em cứ lên phòng tài chính hỏi trực tiếp hoặc gọi tổng đài trường. Bạn không được hỏi mật khẩu hay mã xác thực của người chơi. Nếu người chơi trì hoãn thì nhắc lại hạn ngày 20 một cách nhẹ nhàng, không đe doạ.",
-              "fallback_replies": [
-                "Còn nhiều ngày mà em, không cần gấp đâu.",
-                "Em cứ lên phòng tài chính hỏi trực tiếp cũng được nhé.",
-                "Số tiền chính xác em xem trên cổng sinh viên là rõ nhất."
-              ],
-              "verification": [
-                {
-                  "id": "vf_01",
-                  "label": "Gọi tổng đài trường theo số trên trang chủ",
-                  "result": "Phòng tài chính xác nhận đúng là đang tới kỳ nộp học phí, hạn ngày 20.",
-                  "is_independent": true
-                },
-                {
-                  "id": "vf_02",
-                  "label": "Đăng nhập cổng sinh viên xem thông báo học phí",
-                  "result": "Cổng sinh viên hiển thị đúng số tiền và đúng hạn nộp như trong tin nhắn.",
-                  "is_independent": true
-                },
-                {
-                  "id": "vf_03",
-                  "label": "Nhắn lại hỏi chính người gửi",
-                  "result": "Phòng tài chính bảo em cứ lên hỏi trực tiếp tại quầy cho yên tâm.",
-                  "is_independent": false,
-                  "note": "Hỏi lại chính kênh đang nghi ngờ không phải là kiểm chứng"
-                }
-              ],
-              "correct_action": "Đăng nhập cổng sinh viên để xem số tiền chính xác rồi nộp tại quầy hoặc chuyển vào tài khoản đứng tên nhà trường.",
-              "lesson": "Không phải mọi thông báo học phí đều là lừa đảo. Dấu hiệu của thông báo hợp lệ: hạn nộp rộng rãi, tài khoản đứng tên tổ chức, thông tin đối chiếu được trên cổng chính thức, và không có lời đe doạ nào.",
+              "correct_action": "Đăng nhập cổng sinh viên đối chiếu công nợ, thấy khớp thì nộp. Nếu vẫn chưa yên tâm thì lên quầy nộp trực tiếp, việc này không tốn gì cả.",
+              "lesson": "Gấp gáp không đồng nghĩa với lừa đảo. Yêu cầu này hợp lệ vì ba điểm: tiền vào tài khoản đứng tên nhà trường chứ không phải cá nhân, số tiền đối chiếu được trên cổng sinh viên, và người gửi sẵn sàng để bạn lên quầy nộp trực tiếp. Điều cần soi không phải là email có gấp hay không, mà là có đối chiếu được qua kênh độc lập hay không.",
               "support_hint": null
             }
           ]
         },
         {
-          "id": "topic_viec_lam_them",
-          "name": "Việc làm thêm",
+          "id": "topic_thue_cho_o",
+          "name": "Thuê chỗ ở",
           "variants": [
             {
-              "id": "case_ctv_chot_don",
+              "id": "case_thue_tro_coc_truoc",
               "type": "scam",
-              "difficulty": "de",
+              "difficulty": "kho",
               "harm": "mat_tien",
               "channel": "chat",
-              "title": "Tuyển cộng tác viên chốt đơn tại nhà",
+              "title": "Chủ nhà giả nhận cọc giữ chỗ trước khi xem phòng",
               "context": {
                 "image": null,
-                "text": "Bạn đang tìm việc làm thêm và có người nhắn tin mời làm cộng tác viên."
+                "text": "Sắp vào năm học, bạn đang tìm phòng trọ. Trong nhóm cho thuê trọ có một bài đăng phòng đẹp, giá thấp hơn mặt bằng khu vực. Bạn nhắn tin hỏi."
               },
               "npc": {
-                "name": "Trần Thu Hà",
-                "role": "tự xưng quản lý tuyển dụng",
-                "org": "Sàn thương mại Việt Phát",
+                "name": "Trần Quốc Hưng",
+                "role": "tự xưng chủ nhà",
+                "org": null,
                 "avatar": "/assets/avatar/nguoi-la.png",
-                "display_name": "+84 78 663 1204",
+                "display_name": "+84 79 448 2015",
                 "status_line": "Số chưa có trong danh bạ",
-                "phone": "078 663 1204",
+                "phone": "079 448 2015",
                 "hotline": null,
-                "account_no": "0786631204",
-                "account_name": "TRAN THU HA",
-                "amount": "500.000đ",
+                "account_no": "19047238810025",
+                "account_name": "LE THI BICH NGOC",
+                "amount": "1.000.000đ",
                 "link": null
               },
-              "opening_message": "Bên chị đang tuyển cộng tác viên chốt đơn tại nhà, mỗi ngày 300.000đ, không cần kinh nghiệm. Em nạp trước 500.000đ làm nhiệm vụ đầu tiên, xong chị hoàn lại cả gốc lẫn 20% hoa hồng ngay trong ngày nhé.",
-              "attachments": [],
+              "opening_message": "Chào em, phòng đó anh vẫn còn trống nha. Anh gửi em ảnh căn cước và sổ hồng của anh cho em yên tâm, anh tên Trần Quốc Hưng. Đợt này nhiều bạn hỏi lắm, em chuyển cọc trước 1.000.000đ vào số 19047238810025 tên LE THI BICH NGOC để anh giữ phòng cho, khi nào em rảnh thì qua xem nhà rồi mình ký hợp đồng sau cũng được.",
+              "attachments": [
+                {
+                  "type": "image",
+                  "src": "/assets/evidence/can-cuoc-cong-dan.png",
+                  "filename": "can-cuoc-cong-dan.png",
+                  "alt": "Ảnh chụp căn cước công dân mang tên Trần Quốc Hưng",
+                  "spans": [
+                    {
+                      "id": "sp_img_02",
+                      "kind": "decoy",
+                      "label": "Ảnh căn cước công dân",
+                      "why": "Ảnh căn cước trông thật, nhưng ảnh chụp giấy tờ có thể lấy từ bất kỳ đâu. Điều cần soi là tên trên đó có khớp với tên chủ tài khoản không"
+                    }
+                  ]
+                },
+                {
+                  "type": "image",
+                  "src": "/assets/evidence/so-hong.png",
+                  "filename": "so-hong.png",
+                  "alt": "Ảnh chụp giấy chứng nhận quyền sở hữu nhà ở",
+                  "spans": [
+                    {
+                      "id": "sp_img_01",
+                      "kind": "red_flag",
+                      "label": "Con dấu trên giấy chứng nhận",
+                      "why": "Hình quốc huy và con dấu lệch màu, nhoè nét, khoảng cách vành dấu không đều khi so với văn bản chuẩn",
+                      "vung": { "trai": 15, "tren": 10, "rong": 20, "cao": 20 }
+                    }
+                  ]
+                }
+              ],
               "spans": [
                 {
                   "id": "sp_01",
                   "kind": "red_flag",
-                  "text": "mỗi ngày 300.000đ, không cần kinh nghiệm",
-                  "why": "Thu nhập cao bất thường cho công việc không đòi hỏi gì"
+                  "text": "tên LE THI BICH NGOC",
+                  "why": "Tên chủ tài khoản không khớp với tên trên căn cước và sổ hồng vừa gửi. Đây là dấu hiệu rõ ràng nhất trong cả tình huống"
                 },
                 {
                   "id": "sp_02",
                   "kind": "red_flag",
-                  "text": "nạp trước 500.000đ",
-                  "why": "Người lao động không bao giờ phải bỏ tiền túi ra để được làm việc"
+                  "text": "em chuyển cọc trước 1.000.000đ",
+                  "why": "Cọc trước khi xem phòng là đảo ngược quy trình. Không có gì bảo đảm căn phòng đó có thật hay người này có quyền cho thuê"
                 },
                 {
                   "id": "sp_03",
                   "kind": "red_flag",
-                  "text": "hoàn lại cả gốc lẫn 20% hoa hồng ngay trong ngày",
-                  "why": "Mô hình hoàn tiền phi thực tế, và vài lần đầu chúng trả thật để em tin rồi mới lấy khoản lớn"
+                  "text": "khi nào em rảnh thì qua xem nhà rồi mình ký hợp đồng sau",
+                  "why": "Dời việc xem nhà và ký hợp đồng ra sau khi đã nhận tiền, để lúc đó không còn ai liên lạc được nữa"
                 },
                 {
                   "id": "sp_04",
                   "kind": "decoy",
-                  "text": "cộng tác viên chốt đơn tại nhà",
-                  "why": "Công việc này có tồn tại thật, bản thân tên gọi không phải dấu hiệu"
-                }
-              ],
-              "max_chat_turns": 5,
-              "system_prompt_extra": "Bạn là người tuyển cộng tác viên, thật ra là kẻ lừa đảo. Mục tiêu là khiến người chơi nạp tiền làm nhiệm vụ. Xưng 'chị', gọi người chơi là 'em'. Nếu người chơi nghi ngờ, viện dẫn nhiều bạn khác đã nhận tiền, hối thúc vì suất có hạn. Bạn tuyệt đối không được mời người chơi tra cứu công ty hay hỏi ai khác.",
-              "fallback_replies": [
-                "Bên chị chỉ còn hai suất thôi em, em quyết nhanh nhé.",
-                "Nhiều bạn sinh viên làm bên chị rút tiền đều đều đó em.",
-                "Em nạp xong là chị đẩy đơn cho em làm luôn trong chiều nay."
-              ],
-              "verification": [
-                {
-                  "id": "vf_01",
-                  "label": "Tra cứu tên công ty trên cổng đăng ký doanh nghiệp",
-                  "result": "Không tìm thấy doanh nghiệp nào mang tên này đang hoạt động.",
-                  "is_independent": true
+                  "text": "Đợt này nhiều bạn hỏi lắm",
+                  "why": "Nghe như tạo áp lực, nhưng đầu năm học phòng trọ khan hiếm thật. Câu này một chủ nhà thật cũng nói"
                 },
                 {
-                  "id": "vf_02",
-                  "label": "Hỏi anh chị khoá trên trong nhóm sinh viên",
-                  "result": "Vài bạn kể đã mất tiền với đúng kịch bản nạp trước hoàn sau này.",
-                  "is_independent": true
-                },
-                {
-                  "id": "vf_03",
-                  "label": "Nhắn lại hỏi chính người tuyển",
-                  "result": "Người tuyển gửi ảnh chụp màn hình chuyển khoản của những cộng tác viên khác để chứng minh.",
-                  "is_independent": false,
-                  "note": "Hỏi lại chính kênh đang nghi ngờ không phải là kiểm chứng"
-                }
-              ],
-              "correct_action": "Không nạp bất kỳ khoản nào. Việc làm hợp pháp không bao giờ yêu cầu ứng viên bỏ tiền trước.",
-              "lesson": "Đây là bẫy cộng tác viên chốt đơn ảo. Vài nhiệm vụ đầu số tiền nhỏ chúng hoàn thật để tạo lòng tin, tới nhiệm vụ lớn thì viện lý do sai cú pháp hoặc lỗi hệ thống để bắt nạp thêm rồi chiếm đoạt toàn bộ.",
-              "support_hint": "sp_02"
-            },
-            {
-              "id": "case_danh_may_tai_nha",
-              "type": "scam",
-              "difficulty": "de",
-              "harm": "mat_tien",
-              "channel": "chat",
-              "title": "Tuyển sinh viên đánh máy tài liệu tại nhà",
-              "context": {
-                "image": null,
-                "text": "Bạn thấy bài đăng tuyển đánh máy tại nhà và nhắn tin xin việc."
-              },
-              "npc": {
-                "name": "Lê Thanh Mai",
-                "role": "tự xưng nhân viên trung tâm",
-                "org": "Trung tâm dữ liệu An Khang",
-                "avatar": "/assets/avatar/nguoi-la.png",
-                "display_name": "+84 96 220 7745",
-                "status_line": "Số chưa có trong danh bạ",
-                "phone": "096 220 7745",
-                "hotline": null,
-                "account_no": "0962207745",
-                "account_name": "LE THANH MAI",
-                "amount": "200.000đ",
-                "link": null
-              },
-              "opening_message": "Trung tâm bên chị tuyển sinh viên đánh máy tài liệu tại nhà, 60.000đ một trang. Em chỉ cần đóng 200.000đ phí thế chân hồ sơ để nhận mã tài khoản làm việc, phí này trả lại sau tháng đầu.",
-              "attachments": [],
-              "spans": [
-                {
-                  "id": "sp_01",
-                  "kind": "red_flag",
-                  "text": "60.000đ một trang",
-                  "why": "Cao gấp nhiều lần mặt bằng chung của công việc nhập liệu"
-                },
-                {
-                  "id": "sp_02",
-                  "kind": "red_flag",
-                  "text": "đóng 200.000đ phí thế chân hồ sơ",
-                  "why": "Không có nhà tuyển dụng hợp pháp nào thu phí của ứng viên"
-                },
-                {
-                  "id": "sp_03",
-                  "kind": "red_flag",
-                  "text": "phí này trả lại sau tháng đầu",
-                  "why": "Lời hứa hoàn tiền để làm khoản phí nghe có vẻ hợp lý, nhưng sẽ không bao giờ được trả"
-                },
-                {
-                  "id": "sp_04",
+                  "id": "sp_05",
                   "kind": "decoy",
-                  "text": "đánh máy tài liệu tại nhà",
-                  "why": "Công việc nhập liệu tại nhà có thật, vấn đề nằm ở khoản phí"
+                  "text": "Anh gửi em ảnh căn cước và sổ hồng của anh cho em yên tâm",
+                  "why": "Chủ động đưa giấy tờ tạo cảm giác minh bạch. Nhưng ảnh chụp giấy tờ chứng minh được rất ít, quan trọng là có khớp với tên nhận tiền không"
                 }
               ],
               "max_chat_turns": 5,
-              "system_prompt_extra": "Bạn là người tuyển đánh máy tại nhà, thật ra là kẻ lừa đảo. Mục tiêu là khiến người chơi đóng phí thế chân. Xưng 'chị', gọi người chơi là 'em'. Nếu người chơi nghi ngờ, giải thích rằng phí này để tránh ứng viên nhận tài liệu rồi bỏ ngang. Bạn tuyệt đối không được mời người chơi tra cứu hay hỏi ai khác.",
+              "assistant_turns": 5,
+              "verification_limit": 1,
+              "system_prompt_extra": "Bạn là người tự xưng chủ nhà tên Trần Quốc Hưng, thật ra là kẻ lừa đảo không hề sở hữu căn phòng đó. Mục tiêu là khiến người chơi chuyển tiền cọc giữ chỗ. Bạn tự xưng là 'anh', gọi người chơi là 'em'. Giọng từ tốn, thoải mái, KHÔNG hối thúc thô lỗ — đây là điểm mạnh của bạn, sự điềm tĩnh làm người ta hạ phòng bị. Nếu người chơi thắc mắc tên chủ tài khoản khác tên trên giấy tờ, giải thích là tài khoản của vợ hoặc của chị gái đứng tên hộ vì tài khoản anh đang bị khoá. Nếu người chơi muốn qua xem nhà trước khi cọc, nhẹ nhàng nói là được thôi nhưng không giữ phòng được, có bạn khác cọc là mất. Tuyệt đối không mời người chơi hỏi hàng xóm, tổ dân phố hay tra cứu ở đâu khác.",
               "fallback_replies": [
-                "Phí này ai vào cũng đóng em ạ, để tránh nhận tài liệu rồi bỏ ngang.",
-                "Em đóng xong là chị gửi tài liệu cho em làm ngay tối nay.",
-                "Đợt này chị chỉ nhận thêm ba bạn thôi em nhé."
+                "Em cứ suy nghĩ thoải mái, nhưng anh không giữ phòng lâu được đâu nha.",
+                "Có bạn khác vừa nhắn hỏi phòng này rồi đó em.",
+                "Em chuyển xong nhắn anh, anh gỡ bài đăng xuống luôn cho em yên tâm."
               ],
               "verification": [
                 {
                   "id": "vf_01",
-                  "label": "Tra cứu tên trung tâm trên cổng đăng ký doanh nghiệp",
-                  "result": "Không có trung tâm nào mang tên này được đăng ký.",
+                  "label": "Đăng ảnh và hỏi trong nhóm cư dân khu vực đó",
+                  "result": "Vài người trả lời rằng căn phòng trong ảnh trông giống một phòng từng được đăng cho thuê ở nhóm khác cách đây hai tháng, nhưng không ai biết người tên Hưng ở khu này.",
                   "is_independent": true
                 },
                 {
                   "id": "vf_02",
-                  "label": "Hỏi trung tâm hỗ trợ sinh viên của trường",
-                  "result": "Trung tâm cho biết mọi tin tuyển dụng thu phí ứng viên đều là lừa đảo, không có ngoại lệ.",
+                  "label": "Đối chiếu tên trên giấy tờ với tên chủ tài khoản",
+                  "result": "Tên trên căn cước và sổ hồng là Trần Quốc Hưng. Tên chủ tài khoản nhận tiền là Lê Thị Bích Ngọc.",
                   "is_independent": true
                 },
                 {
                   "id": "vf_03",
-                  "label": "Nhắn lại hỏi chính người tuyển",
-                  "result": "Người tuyển gửi ảnh một tờ hợp đồng nhìn rất chuyên nghiệp và giục em đóng phí.",
+                  "label": "Nhắn lại hỏi chính chủ nhà",
+                  "result": "Người này giải thích tài khoản là của vợ đứng tên hộ vì tài khoản của mình đang bị khoá, rồi gửi thêm hai video quay phòng.",
                   "is_independent": false,
                   "note": "Hỏi lại chính kênh đang nghi ngờ không phải là kiểm chứng"
                 }
               ],
-              "correct_action": "Không đóng bất kỳ khoản phí nào. Tìm việc qua trung tâm hỗ trợ sinh viên của trường hoặc các nền tảng tuyển dụng có kiểm duyệt.",
-              "lesson": "Nhà tuyển dụng uy tín không thu phí thế chân, phí hồ sơ hay phí tài liệu của ứng viên. Ngay khi em chuyển tiền, đối phương sẽ chặn liên lạc.",
-              "support_hint": "sp_02"
+              "correct_action": "Không chuyển cọc. Đến xem phòng trực tiếp trước, đối chiếu tên trên giấy tờ gốc với tên chủ tài khoản, và chỉ chuyển tiền khi đã ký hợp đồng.",
+              "lesson": "Kẻ gian điềm tĩnh và chủ động đưa giấy tờ là thủ đoạn tinh vi hơn kiểu hối thúc thông thường, vì nó phá đúng định kiến rằng lừa đảo thì phải vồ vập. Hai nguyên tắc khi thuê nhà: không bao giờ chuyển tiền trước khi xem phòng tận nơi, và tên chủ tài khoản nhận tiền phải khớp với tên trên giấy tờ sở hữu.",
+              "support_hint": "sp_01"
             }
           ]
         }
@@ -369,47 +247,47 @@
       "icon": "briefcase",
       "topics": [
         {
-          "id": "topic_thong_tin_luong",
-          "name": "Cập nhật thông tin lương",
+          "id": "topic_ung_dung_lam_them",
+          "name": "Ứng dụng làm thêm",
           "variants": [
             {
-              "id": "case_luong_lua",
+              "id": "case_phat_ung_dung_goi_xe",
               "type": "scam",
               "difficulty": "trung_binh",
-              "harm": "lo_thong_tin",
+              "harm": "mat_tien",
               "channel": "chat",
-              "title": "Nhân sự giả yêu cầu cập nhật thông tin lương",
+              "title": "Thông báo phạt vi phạm trên ứng dụng gọi xe",
               "context": {
                 "image": null,
-                "text": "Bạn đang trong giờ làm và nhận tin nhắn từ một số lạ tự xưng là nhân sự công ty."
+                "text": "Ngoài giờ hành chính bạn chạy thêm xe công nghệ. Vừa trả khách xong thì có tin nhắn báo tài khoản tài xế bị khiếu nại."
               },
               "npc": {
-                "name": "Nguyễn Thị Hằng",
-                "role": "tự xưng chuyên viên nhân sự",
-                "org": "Công ty TNHH Minh Đức",
-                "avatar": "/assets/avatar/nhan-vien-van-phong.png",
-                "display_name": "+84 91 244 5780",
-                "status_line": "Số chưa có trong danh bạ",
-                "phone": "091 244 5780",
-                "hotline": "024 3868 5142",
-                "account_no": "19038847251006",
-                "account_name": "NGUYEN THI HANG",
-                "amount": null,
-                "link": "nhan-su-congty.net/capnhat"
+                "name": "Bộ phận xử lý vi phạm",
+                "role": "tự xưng nhân viên hỗ trợ tài xế",
+                "org": "Crab",
+                "avatar": "/assets/avatar/nguoi-la.png",
+                "display_name": "Crab Support",
+                "status_line": "Tài khoản chưa xác minh",
+                "phone": "086 552 3170",
+                "hotline": "1900 6088",
+                "account_no": "0865523170",
+                "account_name": "NHAN VIEN HO TRO CRAB",
+                "amount": "500.000đ",
+                "link": null
               },
-              "opening_message": "Chào em, chị Hằng bên phòng nhân sự đây. Công ty đang rà soát lại bảng lương quý 3, em vào link nhan-su-congty.net/capnhat đăng nhập bằng tài khoản email công ty rồi xác nhận thông tin trước 17h hôm nay nhé, quá hạn là hệ thống khoá lương tháng này.",
+              "opening_message": "Chào anh, chuyến CrabMoto mã ZB7734920481 lúc 18:05 chiều nay bị khách khiếu nại vi phạm quy tắc cộng đồng theo Điều khoản dịch vụ mục 3.2. Anh nộp phạt hành chính 500.000đ trong hôm nay để tài khoản không bị khoá vĩnh viễn nhé. Anh quét mã QR bên dưới, tài khoản nhận là NHAN VIEN HO TRO CRAB. Nếu chậm bên em sẽ ghi nhận vào hồ sơ và anh sẽ ít nhận được cuốc hơn.",
               "attachments": [
                 {
                   "type": "image",
-                  "src": "/assets/evidence/the-nhan-vien-gia.png",
-                  "filename": "the-nhan-vien.jpg",
-                  "alt": "Ảnh chụp thẻ nhân viên, con dấu mờ và tên công ty in sai chính tả",
+                  "src": "/assets/evidence/ma-qr-nop-phat.png",
+                  "filename": "ma-qr-nop-phat.png",
+                  "alt": "Ảnh mã QR thanh toán kèm logo các cổng thanh toán",
                   "spans": [
                     {
                       "id": "sp_img_01",
                       "kind": "red_flag",
-                      "label": "Con dấu trên thẻ",
-                      "why": "Con dấu bị làm mờ và tên công ty in sai chính tả"
+                      "label": "Tên tài khoản dưới mã QR",
+                      "why": "Mã QR dẫn tới tài khoản cá nhân, không phải tài khoản doanh nghiệp của hãng"
                     }
                   ]
                 }
@@ -418,421 +296,67 @@
                 {
                   "id": "sp_01",
                   "kind": "red_flag",
-                  "text": "nhan-su-congty.net/capnhat",
-                  "why": "Tên miền lạ, không thuộc hệ thống của công ty"
+                  "text": "tài khoản nhận là NHAN VIEN HO TRO CRAB",
+                  "why": "Hãng thu phạt qua ứng dụng chính thức, tiền trừ thẳng vào ví tài xế. Không có chuyện chuyển vào tài khoản mang tên nhân viên"
                 },
                 {
                   "id": "sp_02",
                   "kind": "red_flag",
-                  "text": "đăng nhập bằng tài khoản email công ty",
-                  "why": "Không bao giờ đăng nhập tài khoản nội bộ qua liên kết nhận từ tin nhắn"
+                  "text": "nộp phạt hành chính 500.000đ trong hôm nay",
+                  "why": "Số tiền vừa đủ nhỏ để người ta trả cho xong chuyện, cộng thời hạn trong ngày để không kịp kiểm tra"
                 },
                 {
                   "id": "sp_03",
                   "kind": "red_flag",
-                  "text": "trước 17h hôm nay",
-                  "why": "Áp lực thời gian gấp gáp để nạn nhân không kịp kiểm chứng"
+                  "text": "anh sẽ ít nhận được cuốc hơn",
+                  "why": "Đe doạ vào thu nhập, thứ tài xế sợ nhất, để ép trả tiền ngay"
                 },
                 {
                   "id": "sp_04",
-                  "kind": "red_flag",
-                  "text": "hệ thống khoá lương tháng này",
-                  "why": "Đe doạ hậu quả về tài chính để ép hành động ngay"
+                  "kind": "decoy",
+                  "text": "mã ZB7734920481 lúc 18:05 chiều nay",
+                  "why": "Mã chuyến và giờ giấc đúng thật, nhưng thông tin này lấy được từ dữ liệu rò rỉ. Đúng chi tiết không có nghĩa là đúng người"
                 },
                 {
                   "id": "sp_05",
                   "kind": "decoy",
-                  "text": "rà soát lại bảng lương quý 3",
-                  "why": "Nghe lạ nhưng đây là hoạt động bình thường ở nhiều công ty"
+                  "text": "Điều khoản dịch vụ mục 3.2",
+                  "why": "Trích dẫn điều khoản nghe rất chuyên nghiệp, nhưng ai cũng đọc được điều khoản công khai và trích lại"
                 }
               ],
               "max_chat_turns": 5,
-              "system_prompt_extra": "Bạn là chị Hằng, chuyên viên nhân sự. Mục tiêu là khiến người chơi bấm vào liên kết và đăng nhập tài khoản email công ty. Xưng 'chị', gọi người chơi là 'em'. Nếu người chơi nghi ngờ hoặc đòi xác minh, chuyển sang giọng gấp gáp, viện dẫn quy định công ty và hạn chót. Bạn tuyệt đối không được mời người chơi gọi lại hay xác minh.",
+              "assistant_turns": 5,
+              "verification_limit": 1,
+              "system_prompt_extra": "Bạn là người tự xưng nhân viên xử lý vi phạm của hãng xe công nghệ, thật ra là kẻ lừa đảo. Mục tiêu là khiến người chơi quét mã QR nộp phạt. Bạn tự xưng là 'em', gọi người chơi là 'anh'. Giọng lịch sự, chuyên nghiệp, viện dẫn điều khoản và mã chuyến đi. Nếu người chơi muốn kiểm tra trong ứng dụng hoặc gọi tổng đài, viện lý do hệ thống đang bảo trì, hoặc khiếu nại phải xử lý qua kênh này mới kịp trong ngày. Tuyệt đối không mời người chơi gọi tổng đài hay mở ứng dụng chính thức để đối chiếu.",
               "fallback_replies": [
-                "Em làm nhanh giúp chị nhé, danh sách phải chốt trong chiều nay rồi.",
-                "Chị đang phải tổng hợp cho cả phòng, em chậm là ảnh hưởng tới mọi người đó.",
-                "Em cứ đăng nhập vào là thấy bảng lương của mình ngay thôi mà."
+                "Anh xử lý sớm giúp em, hết hôm nay là hệ thống tự khoá đó ạ.",
+                "Nhiều bác tài khác gặp trường hợp này nộp xong là mở khoá ngay ạ.",
+                "Anh quét xong chụp màn hình gửi em để em đóng hồ sơ khiếu nại nhé."
               ],
               "verification": [
                 {
                   "id": "vf_01",
-                  "label": "Gọi tổng đài công ty theo số trên hợp đồng lao động",
-                  "result": "Phòng nhân sự xác nhận không có đợt rà soát lương nào đang diễn ra, và không có nhân viên nào tên Hằng ở bộ phận này.",
+                  "label": "Mở ứng dụng tài xế chính thức xem mục thông báo",
+                  "result": "Trong ứng dụng không có thông báo vi phạm nào. Chuyến gần nhất hiển thị đã hoàn thành, khách đánh giá năm sao.",
                   "is_independent": true
                 },
                 {
                   "id": "vf_02",
-                  "label": "Kiểm tra tên miền trong liên kết",
-                  "result": "Tên miền nhan-su-congty.net được đăng ký cách đây 6 ngày và không thuộc sở hữu của công ty.",
+                  "label": "Gọi tổng đài hãng theo số trong ứng dụng",
+                  "result": "Tổng đài cho biết mọi khoản phạt đều trừ thẳng vào ví tài xế trong ứng dụng, hãng không bao giờ yêu cầu chuyển khoản riêng.",
                   "is_independent": true
                 },
                 {
                   "id": "vf_03",
-                  "label": "Nhắn lại hỏi chính người gửi",
-                  "result": "Người gửi khẳng định mình là nhân sự thật, gửi thêm một ảnh thẻ nữa và giục bạn làm nhanh.",
+                  "label": "Nhắn lại hỏi chính nhân viên hỗ trợ",
+                  "result": "Người này gửi ảnh chụp màn hình hệ thống nội bộ có đúng mã chuyến của bạn, kèm biểu tượng cảm xúc và lời nhắc nộp trước cuối ngày.",
                   "is_independent": false,
                   "note": "Hỏi lại chính kênh đang nghi ngờ không phải là kiểm chứng"
                 }
               ],
-              "correct_action": "Không bấm vào liên kết. Gọi tổng đài công ty theo số trên hợp đồng lao động hoặc hỏi trực tiếp phòng nhân sự tại văn phòng để đối chiếu.",
-              "lesson": "Kẻ gian giả danh phòng nhân sự để lấy tài khoản email công ty, từ đó truy cập dữ liệu nội bộ hoặc mạo danh bạn lừa đồng nghiệp. Mọi yêu cầu đăng nhập gửi kèm liên kết qua tin nhắn đều phải được xác minh qua kênh chính thức trước khi làm theo.",
+              "correct_action": "Không quét mã QR. Mở ứng dụng tài xế chính thức xem mục thông báo, hoặc gọi tổng đài theo số ghi trong ứng dụng để đối chiếu.",
+              "lesson": "Kẻ gian mua dữ liệu chuyến đi rò rỉ nên đọc đúng mã chuyến và giờ giấc, khiến nạn nhân tin ngay. Nguyên tắc cần nhớ: mọi khoản phạt của nền tảng đều xử lý bên trong ứng dụng chính thức, không bao giờ qua chuyển khoản riêng. Và tài khoản nhận tiền mang tên cá nhân là dấu hiệu không thể bỏ qua, dù tên đó có gắn chữ nhân viên hỗ trợ.",
               "support_hint": "sp_01"
-            },
-            {
-              "id": "case_luong_that",
-              "type": "safe",
-              "difficulty": "trung_binh",
-              "channel": "chat",
-              "title": "Nhân sự thật nhắc rà soát thông tin nhận lương",
-              "context": {
-                "image": null,
-                "text": "Bạn đang trong giờ làm và nhận tin nhắn từ số của phòng nhân sự đã lưu trong danh bạ."
-              },
-              "npc": {
-                "name": "Nguyễn Thị Hằng",
-                "role": "chuyên viên nhân sự",
-                "org": "Công ty TNHH Minh Đức",
-                "avatar": "/assets/avatar/nhan-vien-van-phong.png",
-                "display_name": "Chị Hằng - Nhân sự",
-                "status_line": "Đã lưu trong danh bạ",
-                "phone": "024 3868 5142",
-                "hotline": "024 3868 5142",
-                "account_no": null,
-                "account_name": null,
-                "amount": null,
-                "link": "portal.minhduc.com.vn"
-              },
-              "opening_message": "Chào em, chị Hằng bên nhân sự. Đến kỳ rà soát thông tin nhân sự quý 3, em đăng nhập cổng nội bộ portal.minhduc.com.vn như mọi lần rồi kiểm tra lại số tài khoản nhận lương giúp chị nhé. Hạn cuối là thứ sáu tuần sau, em không cần vội đâu.",
-              "attachments": [],
-              "spans": [
-                {
-                  "id": "sp_01",
-                  "kind": "decoy",
-                  "text": "đăng nhập cổng nội bộ portal.minhduc.com.vn",
-                  "why": "Đây là tên miền chính thức của công ty, và là cổng em vẫn dùng hằng ngày"
-                },
-                {
-                  "id": "sp_02",
-                  "kind": "decoy",
-                  "text": "kiểm tra lại số tài khoản nhận lương",
-                  "why": "Rà soát định kỳ là quy trình bình thường, và không ai yêu cầu em cung cấp mật khẩu"
-                },
-                {
-                  "id": "sp_03",
-                  "kind": "decoy",
-                  "text": "Hạn cuối là thứ sáu tuần sau",
-                  "why": "Hạn rộng rãi và nói rõ không cần vội, ngược với thủ đoạn ép thời gian"
-                }
-              ],
-              "max_chat_turns": 5,
-              "system_prompt_extra": "Bạn là chị Hằng, chuyên viên nhân sự THẬT của công ty. Yêu cầu của bạn hoàn toàn hợp lệ. Xưng 'chị', gọi người chơi là 'em'. Nếu người chơi nghi ngờ hoặc muốn xác minh, hãy ỦNG HỘ việc đó: bảo em cứ lên phòng nhân sự hỏi trực tiếp, hoặc gọi số máy bàn công ty. Bạn không được hỏi mật khẩu hay mã xác thực của người chơi. Nếu người chơi trì hoãn, tỏ ra hơi sốt ruột nhưng vẫn hợp tác và không đe doạ.",
-              "fallback_replies": [
-                "Không gấp đâu em, tuần sau vẫn kịp mà.",
-                "Em cứ lên phòng nhân sự hỏi trực tiếp cũng được nhé.",
-                "Chị chỉ cần em xác nhận lại số tài khoản thôi, không cần gì thêm đâu."
-              ],
-              "verification": [
-                {
-                  "id": "vf_01",
-                  "label": "Gọi tổng đài công ty theo số trên hợp đồng lao động",
-                  "result": "Phòng nhân sự xác nhận đang có đợt rà soát thông tin quý 3 và chị Hằng đúng là người phụ trách.",
-                  "is_independent": true
-                },
-                {
-                  "id": "vf_02",
-                  "label": "Kiểm tra tên miền trong liên kết",
-                  "result": "portal.minhduc.com.vn là cổng nội bộ chính thức của công ty, đã hoạt động nhiều năm.",
-                  "is_independent": true
-                },
-                {
-                  "id": "vf_03",
-                  "label": "Nhắn lại hỏi chính người gửi",
-                  "result": "Chị Hằng bảo em cứ lên phòng nhân sự hỏi trực tiếp cho yên tâm.",
-                  "is_independent": false,
-                  "note": "Hỏi lại chính kênh đang nghi ngờ không phải là kiểm chứng"
-                }
-              ],
-              "correct_action": "Đăng nhập cổng nội bộ chính thức và cập nhật thông tin. Nếu vẫn chưa yên tâm thì gọi tổng đài công ty để đối chiếu trước, việc này không tốn gì cả.",
-              "lesson": "Không phải mọi yêu cầu đều là lừa đảo. Dấu hiệu của một yêu cầu hợp lệ: tên miền thuộc tổ chức, thời hạn rộng rãi, không đe doạ hậu quả, không hỏi mật khẩu hay mã xác thực, và người gửi sẵn sàng để bạn kiểm chứng. Cẩn thận là tốt, nhưng từ chối mọi thứ sẽ khiến bạn không làm được việc gì.",
-              "support_hint": null
-            }
-          ]
-        },
-        {
-          "id": "topic_dich_vu_cong",
-          "name": "Thủ tục hành chính trực tuyến",
-          "variants": [
-            {
-              "id": "case_dinh_danh_dien_tu",
-              "type": "scam",
-              "difficulty": "trung_binh",
-              "harm": "lo_thong_tin",
-              "channel": "chat",
-              "title": "Giả danh cán bộ yêu cầu đồng bộ định danh điện tử",
-              "context": {
-                "image": null,
-                "text": "Bạn nhận được tin nhắn từ người tự xưng cán bộ phường về hồ sơ định danh điện tử."
-              },
-              "npc": {
-                "name": "Phạm Quốc Duy",
-                "role": "tự xưng cán bộ phường",
-                "org": "Công an phường Tân Lộc",
-                "avatar": "/assets/avatar/can-bo.png",
-                "display_name": "+84 82 447 9013",
-                "status_line": "Số chưa có trong danh bạ",
-                "phone": "082 447 9013",
-                "hotline": "028 3822 7150",
-                "account_no": null,
-                "account_name": null,
-                "amount": null,
-                "link": "dichvucong-dongbo.net"
-              },
-              "opening_message": "Chào anh, em là cán bộ công an phường phụ trách định danh điện tử. Dữ liệu của anh trên hệ thống bị sai năm sinh nên cần đồng bộ lại. Anh cài giúp em ứng dụng ở đường dẫn dichvucong-dongbo.net rồi làm theo hướng dẫn trong đó, nếu quá 24 giờ thì tài khoản định danh sẽ bị tạm khoá.",
-              "attachments": [],
-              "spans": [
-                {
-                  "id": "sp_01",
-                  "kind": "red_flag",
-                  "text": "dichvucong-dongbo.net",
-                  "why": "Cổng dịch vụ công thật luôn dùng tên miền gov.vn, không dùng đuôi net"
-                },
-                {
-                  "id": "sp_02",
-                  "kind": "red_flag",
-                  "text": "cài giúp em ứng dụng",
-                  "why": "Cài ứng dụng từ liên kết lạ có thể trao quyền điều khiển toàn bộ điện thoại cho kẻ gian"
-                },
-                {
-                  "id": "sp_03",
-                  "kind": "red_flag",
-                  "text": "quá 24 giờ thì tài khoản định danh sẽ bị tạm khoá",
-                  "why": "Đe doạ kèm thời hạn ngắn để anh không kịp lên phường hỏi"
-                },
-                {
-                  "id": "sp_04",
-                  "kind": "decoy",
-                  "text": "cán bộ công an phường phụ trách định danh điện tử",
-                  "why": "Chức danh này có thật, nhưng cán bộ thật sẽ mời anh lên trụ sở chứ không hướng dẫn qua tin nhắn"
-                }
-              ],
-              "max_chat_turns": 5,
-              "system_prompt_extra": "Bạn là người tự xưng cán bộ công an phường. Mục tiêu là khiến người chơi cài ứng dụng từ liên kết lạ. Xưng 'em', gọi người chơi là 'anh'. Giọng chuyên nghiệp, viện dẫn quy định và số hiệu văn bản. Nếu người chơi nghi ngờ hoặc muốn lên phường, viện lý do phường đang quá tải, hệ thống sắp khoá. Bạn tuyệt đối không được mời người chơi gọi tổng đài hay lên trụ sở xác minh.",
-              "fallback_replies": [
-                "Anh làm sớm giúp em, hệ thống chốt dữ liệu trong hôm nay ạ.",
-                "Nhiều người trong phường đã đồng bộ xong rồi anh ạ.",
-                "Anh cài xong báo em, em xử lý hồ sơ cho anh ngay."
-              ],
-              "verification": [
-                {
-                  "id": "vf_01",
-                  "label": "Gọi tổng đài công an phường theo số niêm yết tại trụ sở",
-                  "result": "Phường xác nhận không có cán bộ nào liên hệ qua tin nhắn, và không có yêu cầu đồng bộ dữ liệu nào.",
-                  "is_independent": true
-                },
-                {
-                  "id": "vf_02",
-                  "label": "Kiểm tra đuôi tên miền trong đường dẫn",
-                  "result": "Mọi cổng dịch vụ công chính thức đều dùng đuôi gov.vn, đường dẫn này không thuộc hệ thống nhà nước.",
-                  "is_independent": true
-                },
-                {
-                  "id": "vf_03",
-                  "label": "Nhắn lại hỏi chính người gửi",
-                  "result": "Người gửi đọc luôn một số hiệu văn bản nghe rất chính thức và giục anh cài nhanh.",
-                  "is_independent": false,
-                  "note": "Hỏi lại chính kênh đang nghi ngờ không phải là kiểm chứng"
-                }
-              ],
-              "correct_action": "Không cài ứng dụng từ liên kết nhận qua tin nhắn. Lên trực tiếp công an phường hoặc gọi số niêm yết tại trụ sở để hỏi.",
-              "lesson": "Kẻ gian mạo danh cơ quan nhà nước để dụ cài ứng dụng ngoài kho chính thức. Ứng dụng đó chiếm quyền điều khiển điện thoại, đọc được tin nhắn và mã xác thực ngân hàng. Cơ quan nhà nước không bao giờ hướng dẫn cài ứng dụng qua tin nhắn.",
-              "support_hint": "sp_01"
-            }
-          ]
-        },
-        {
-          "id": "topic_hop_thu_cong_viec",
-          "name": "Hộp thư công việc",
-          "variants": [
-            {
-              "id": "case_hop_thu_day_lua",
-              "type": "scam",
-              "difficulty": "trung_binh",
-              "harm": "lo_thong_tin",
-              "channel": "email",
-              "title": "Thư báo hộp thư sắp đầy, yêu cầu đăng nhập lại",
-              "context": {
-                "image": null,
-                "text": "Bạn đang ở văn phòng, vừa mở hộp thư công việc thì thấy một thư mới báo dung lượng sắp hết."
-              },
-              "npc": {
-                "name": "Quản trị hệ thống thư điện tử",
-                "role": "tự xưng quản trị hệ thống",
-                "org": "mạo danh phòng công nghệ thông tin",
-                "display_name": "Quản trị hệ thống thư điện tử",
-                "status_line": "Người gửi ngoài tổ chức",
-                "account_no": null,
-                "account_name": null,
-                "amount": null,
-                "link": "mail-congty-vn.com/khoi-phuc"
-              },
-              "email": {
-                "from_name": "Quản trị hệ thống thư điện tử",
-                "from_address": "it-support@mail-congty-vn.com",
-                "to_address": "ngoc.anh@vietphat.com.vn",
-                "time": "Hôm nay, 09:12",
-                "subject": "Hộp thư của bạn đã dùng 97% dung lượng, cần xác thực ngay",
-                "has_progress_bar": true,
-                "progress_percent": 97,
-                "cta_label": "Xác thực và mở rộng dung lượng",
-                "ticket_id": "REQ-2026-04417",
-                "footer": "Thư tự động từ hệ thống quản trị. Vui lòng không trả lời thư này."
-              },
-              "opening_message": "Kính gửi anh chị,\n\nHệ thống ghi nhận hộp thư của anh chị đã dùng gần hết dung lượng được cấp. Khi hộp thư đầy, mọi thư gửi đến sẽ bị trả lại mà không có thông báo.\n\nĐể được cấp thêm dung lượng, anh chị bấm nút bên dưới và đăng nhập lại bằng mật khẩu email công ty. Thao tác cần hoàn tất trong vòng 12 giờ, sau thời hạn này tài khoản sẽ bị tạm ngưng.",
-              "attachments": [],
-              "spans": [
-                {
-                  "id": "sp_01",
-                  "kind": "red_flag",
-                  "text": "it-support@mail-congty-vn.com",
-                  "why": "Tên miền của thư không phải tên miền công ty. Kẻ gian ghép chữ quen thuộc thành một tên miền lạ, chỉ đọc tên hiển thị thì không thấy"
-                },
-                {
-                  "id": "sp_02",
-                  "kind": "red_flag",
-                  "text": "đăng nhập lại bằng mật khẩu email công ty",
-                  "why": "Bộ phận kỹ thuật thật không bao giờ cần bạn nhập lại mật khẩu qua liên kết trong thư"
-                },
-                {
-                  "id": "sp_03",
-                  "kind": "red_flag",
-                  "text": "trong vòng 12 giờ",
-                  "why": "Hạn chót ngắn là để bạn làm ngay theo phản xạ thay vì hỏi lại phòng kỹ thuật"
-                },
-                {
-                  "id": "sp_04",
-                  "kind": "red_flag",
-                  "text": "sau thời hạn này tài khoản sẽ bị tạm ngưng",
-                  "why": "Doạ mất quyền truy cập là đòn tâm lý quen thuộc, hệ thống thật báo trước nhiều ngày và không doạ khoá"
-                },
-                {
-                  "id": "sp_05",
-                  "kind": "decoy",
-                  "text": "REQ-2026-04417",
-                  "why": "Mã yêu cầu hỗ trợ trông rất thật, nhưng ai cũng tự đặt được một dãy như vậy nên nó không chứng minh điều gì"
-                }
-              ],
-              "max_chat_turns": 0,
-              "fallback_replies": [],
-              "fallback_note": "Cố ý để rỗng, không phải quên. Kênh email không có ai để nhắn lại: max_chat_turns bằng 0 nên registerChatTurn() từ chối ngay lượt đầu và server trả 400 trước khi kịp gọi AI, còn giao diện thì ẩn hẳn ô nhập. Không có đường nào chạm tới fallback_replies. Nếu sau này case email cho nhắn lại thì phải viết đủ 3 câu theo hướng dẫn viết tình huống mục 4.",
-              "assistant_turns": 3,
-              "verification": [
-                {
-                  "id": "vf_01",
-                  "label": "Gọi phòng công nghệ thông tin theo số nội bộ trong danh bạ công ty",
-                  "result": "Phòng kỹ thuật xác nhận không gửi thư nào về dung lượng, và hộp thư của bạn mới dùng khoảng một phần ba dung lượng.",
-                  "is_independent": true
-                },
-                {
-                  "id": "vf_02",
-                  "label": "So tên miền người gửi với tên miền trong địa chỉ thư của chính bạn",
-                  "result": "Địa chỉ của bạn thuộc tên miền công ty, còn thư này gửi từ một tên miền hoàn toàn khác đăng ký cách đây hai tuần.",
-                  "is_independent": true
-                },
-                {
-                  "id": "vf_03",
-                  "label": "Trả lời chính thư này để hỏi cho chắc",
-                  "result": "Bạn nhận lại thư trả lời tự động khẳng định yêu cầu là hợp lệ và giục làm sớm.",
-                  "is_independent": false,
-                  "note": "Hỏi lại chính kênh đang nghi ngờ không phải là kiểm chứng"
-                }
-              ],
-              "correct_action": "Không bấm nút trong thư. Mở danh bạ nội bộ, gọi phòng công nghệ thông tin theo số nội bộ để hỏi, hoặc kiểm tra dung lượng ngay trong phần cài đặt hộp thư.",
-              "lesson": "Thư lừa đảo lấy tài khoản thường mượn một lý do kỹ thuật vô hại như hết dung lượng, rồi gắn hạn chót để bạn không kịp suy nghĩ. Thói quen cần rèn là đọc tên miền sau dấu @ chứ không chỉ đọc tên hiển thị, và không bao giờ nhập mật khẩu qua liên kết nhận được trong thư.",
-              "support_hint": "sp_01"
-            },
-            {
-              "id": "case_hop_thu_bao_tri_that",
-              "type": "safe",
-              "difficulty": "trung_binh",
-              "channel": "email",
-              "title": "Thư thông báo bảo trì hệ thống thư điện tử",
-              "context": {
-                "image": null,
-                "text": "Bạn đang ở văn phòng, hộp thư công việc vừa nhận một thông báo từ nội bộ công ty."
-              },
-              "npc": {
-                "name": "Phòng Công nghệ thông tin",
-                "role": "phòng kỹ thuật nội bộ",
-                "org": "Công ty Việt Phát",
-                "display_name": "Phòng Công nghệ thông tin",
-                "status_line": "Người gửi trong tổ chức",
-                "account_no": null,
-                "account_name": null,
-                "amount": null,
-                "link": null
-              },
-              "email": {
-                "from_name": "Phòng Công nghệ thông tin",
-                "from_address": "cntt@vietphat.com.vn",
-                "to_address": "toan-the-nhan-vien@vietphat.com.vn",
-                "time": "Hôm nay, 08:40",
-                "subject": "Bảo trì hệ thống thư điện tử tối thứ bảy tuần này",
-                "has_progress_bar": false,
-                "progress_percent": null,
-                "cta_label": "Xem lịch bảo trì trên cổng nội bộ",
-                "ticket_id": null,
-                "footer": "Phòng Công nghệ thông tin — số nội bộ 172. Thư này được gửi tới toàn thể nhân viên."
-              },
-              "opening_message": "Kính gửi toàn thể anh chị,\n\nPhòng Công nghệ thông tin sẽ bảo trì hệ thống thư điện tử vào tối thứ bảy tuần này, từ 22h đến 24h. Trong khoảng thời gian đó anh chị có thể không gửi nhận được thư.\n\nĐợt bảo trì này không yêu cầu anh chị thao tác gì và không thay đổi mật khẩu của ai. Nếu sau 24h anh chị vẫn chưa vào được hộp thư, vui lòng gọi số nội bộ 172 hoặc qua trực tiếp phòng kỹ thuật tầng 3.\n\nTrân trọng cảm ơn anh chị.",
-              "attachments": [],
-              "spans": [
-                {
-                  "id": "sp_01",
-                  "kind": "decoy",
-                  "text": "cntt@vietphat.com.vn",
-                  "why": "Đây đúng là tên miền công ty, trùng với phần sau dấu @ trong địa chỉ của chính bạn"
-                },
-                {
-                  "id": "sp_02",
-                  "kind": "decoy",
-                  "text": "từ 22h đến 24h",
-                  "why": "Khung giờ cụ thể ngoài giờ làm việc là cách báo bảo trì bình thường, không phải sức ép thời gian"
-                },
-                {
-                  "id": "sp_03",
-                  "kind": "decoy",
-                  "text": "gọi số nội bộ 172",
-                  "why": "Thư mời bạn gọi lại qua kênh nội bộ tự tra được. Thư lừa đảo thường tránh làm điều này"
-                }
-              ],
-              "max_chat_turns": 0,
-              "fallback_replies": [],
-              "fallback_note": "Cố ý để rỗng, không phải quên. Kênh email không có ai để nhắn lại: max_chat_turns bằng 0 nên registerChatTurn() từ chối ngay lượt đầu và server trả 400 trước khi kịp gọi AI, còn giao diện thì ẩn hẳn ô nhập. Không có đường nào chạm tới fallback_replies. Nếu sau này case email cho nhắn lại thì phải viết đủ 3 câu theo hướng dẫn viết tình huống mục 4.",
-              "assistant_turns": 3,
-              "verification": [
-                {
-                  "id": "vf_01",
-                  "label": "Gọi số nội bộ 172 để hỏi lại phòng công nghệ thông tin",
-                  "result": "Phòng kỹ thuật xác nhận có đợt bảo trì đúng như thư, và nói thêm rằng họ không bao giờ hỏi mật khẩu qua thư.",
-                  "is_independent": true
-                },
-                {
-                  "id": "vf_02",
-                  "label": "So tên miền người gửi với tên miền trong địa chỉ thư của chính bạn",
-                  "result": "Hai tên miền trùng khớp, thư được gửi từ bên trong hệ thống công ty.",
-                  "is_independent": true
-                },
-                {
-                  "id": "vf_03",
-                  "label": "Trả lời chính thư này để hỏi lại cho chắc",
-                  "result": "Ít phút sau bạn nhận được thư trả lời, lời lẽ lịch sự, khẳng định đợt bảo trì là có thật và mời anh chị cứ yên tâm làm việc.",
-                  "is_independent": false,
-                  "note": "Lần này thư đúng là thật nên trả lời lại cũng ra kết quả đúng. Nhưng kẻ giả mạo cũng trả lời y hệt như vậy — cách này không phân biệt được hai trường hợp nên không phải kiểm chứng."
-                }
-              ],
-              "correct_action": "Đọc và ghi nhớ khung giờ bảo trì, không cần làm gì thêm. Nếu vẫn muốn chắc chắn thì gọi số nội bộ 172 tự tra trong danh bạ công ty.",
-              "lesson": "Không phải thư nào báo về hệ thống cũng là lừa đảo. Thư nội bộ thật gửi từ đúng tên miền công ty, không đòi mật khẩu, không đặt hạn chót gấp, và luôn để lại một kênh liên hệ mà bạn tự tra được. Cảnh giác là tốt, nhưng từ chối mọi thứ cũng làm bạn lỡ việc.",
-              "support_hint": null
             }
           ]
         }
@@ -849,264 +373,103 @@
           "name": "Người thân gặp chuyện gấp",
           "variants": [
             {
-              "id": "case_deepfake_con_goi",
+              "id": "case_cap_cuu_gia",
               "type": "scam",
               "difficulty": "kho",
               "harm": "mat_tien",
-              "channel": "video_call",
-              "title": "Cuộc gọi giả giọng con cái gặp tai nạn",
+              "channel": "call",
+              "title": "Cuộc gọi báo cháu gặp tai nạn cấp cứu",
               "context": {
                 "image": null,
-                "text": "Điện thoại đổ chuông, màn hình hiện tên con trai bác. Giọng nói và khuôn mặt đều giống hệt."
+                "text": "Bốn giờ chiều, giờ cháu tan học. Điện thoại bàn nhà bác đổ chuông từ một số lạ."
               },
               "npc": {
-                "name": "Lê Minh Tuấn",
-                "role": "giả giọng con trai",
-                "org": null,
-                "avatar": "/assets/avatar/nguoi-than.png",
-                "display_name": "Con trai",
-                "status_line": "Kết nối kém, hình ảnh chập chờn",
-                "phone": "091 288 7456",
+                "name": "Vũ Thị Mai",
+                "role": "tự xưng nhân viên lễ tân bệnh viện",
+                "org": "Bệnh viện Đa khoa Hoà An",
+                "avatar": "/assets/avatar/co-quan.png",
+                "display_name": "+84 28 3771 6208",
+                "status_line": "Số chưa có trong danh bạ",
+                "phone": "028 3771 6208",
                 "hotline": null,
-                "account_no": "0912887456",
-                "account_name": "LE MINH TUAN",
-                "amount": "50.000.000đ",
+                "account_no": "0908445127",
+                "account_name": "NGUYEN THI HONG",
+                "amount": "20.000.000đ",
                 "link": null
               },
-              "opening_message": "Mẹ ơi con đây. Con vừa gây tai nạn ngoài đường Trần Hưng Đạo, bên kia đòi bồi thường 50.000.000đ không thì báo công an. Mẹ chuyển gấp vào số 0912887456 tên LE MINH TUAN giúp con, mẹ đừng gọi cho bố nhé, bố biết là chết con.",
+              "opening_message": "Alo bác ơi, em bên lễ tân Bệnh viện Đa khoa Hoà An đây ạ. Cháu Nguyễn Minh Khôi lớp 8A2 trường Trần Phú vừa được đưa vào cấp cứu, tai nạn giao thông, bác sĩ chẩn đoán máu tụ dưới màng cứng cần mổ sọ gấp. Em gọi cho bố mẹ cháu mà không ai nghe máy nên phải gọi bác. Bác chuyển tạm ứng 20.000.000đ vào số 0908445127 tên NGUYEN THI HONG giúp em, và bác đừng tắt máy nhé, giữ đường dây để em hướng dẫn bác làm thủ tục luôn.",
               "attachments": [],
               "spans": [
                 {
-                  "id": "sp_00",
-                  "kind": "red_flag",
-                  "text": "Kết nối kém, hình ảnh chập chờn",
-                  "why": "Hình mờ và tiếng rè là cách kẻ gian giấu khuôn mặt giả, deepfake ngoài đời cũng hay đứng hình đúng như vậy"
-                },
-                {
                   "id": "sp_01",
                   "kind": "red_flag",
-                  "text": "mẹ đừng gọi cho bố nhé",
-                  "why": "Yêu cầu giữ bí mật để cô lập bác khỏi người có thể giúp bác nhận ra sự thật"
+                  "text": "tên NGUYEN THI HONG",
+                  "why": "Bệnh viện thu viện phí vào tài khoản đứng tên pháp nhân của bệnh viện, không bao giờ vào tài khoản mang tên một cá nhân"
+                },
+                {
+                  "id": "sp_02",
+                  "kind": "red_flag",
+                  "text": "bác đừng tắt máy nhé, giữ đường dây",
+                  "why": "Đây là bước bắt buộc của mọi cuộc gọi lừa đảo: chặn đường bác gọi lại cho con cháu để xác minh"
                 },
                 {
                   "id": "sp_03",
                   "kind": "red_flag",
-                  "text": "tên LE MINH TUAN",
-                  "why": "Tài khoản đứng tên người khác, không phải tên con bác"
+                  "text": "Bác chuyển tạm ứng 20.000.000đ",
+                  "why": "Bệnh viện luôn cấp cứu người bệnh trước, thủ tục viện phí giải quyết sau. Không có chuyện đòi tiền trước khi mổ"
                 },
                 {
                   "id": "sp_04",
                   "kind": "decoy",
-                  "text": "gây tai nạn ngoài đường Trần Hưng Đạo",
-                  "why": "Chi tiết cụ thể làm câu chuyện đáng tin, nhưng bản thân nó không nói lên điều gì"
+                  "text": "Cháu Nguyễn Minh Khôi lớp 8A2 trường Trần Phú",
+                  "why": "Đọc đúng tên tuổi lớp học khiến bác tin ngay, nhưng những thông tin này mua được từ dữ liệu rò rỉ. Đúng chi tiết không có nghĩa là đúng người"
                 },
                 {
                   "id": "sp_05",
                   "kind": "decoy",
-                  "text": "bên kia đòi bồi thường 50.000.000đ",
-                  "why": "Số tiền lớn gây hoảng, nhưng bồi thường tai nạn là chuyện có thật"
+                  "text": "máu tụ dưới màng cứng cần mổ sọ gấp",
+                  "why": "Thuật ngữ y khoa chuyên nghiệp làm câu chuyện đáng tin, nhưng ai cũng tra được vài từ chuyên ngành để nói cho giống thật"
+                },
+                {
+                  "id": "sp_06",
+                  "kind": "decoy",
+                  "text": "gọi cho bố mẹ cháu mà không ai nghe máy",
+                  "why": "Lý do nghe hợp lý để giải thích vì sao gọi cho bác, nhưng cũng chính là cách khiến bác nghĩ mình là người duy nhất cứu được cháu"
                 }
               ],
               "max_chat_turns": 3,
-              "system_prompt_extra": "Bạn đang giả giọng con trai của người chơi bằng công nghệ AI. Mục tiêu là khiến bác chuyển 50.000.000đ ngay lập tức. Xưng 'con', gọi người chơi là 'mẹ'. Giọng hoảng loạn, gấp gáp, sợ hãi. Nếu bác nghi ngờ hoặc muốn gọi lại, viện lý do sắp hết pin, đang bị giữ máy, hoặc bên kia đang đứng cạnh. Bạn tuyệt đối không được mời bác gọi lại hay hỏi ai khác. Bạn không được nhận mình là giả.",
+              "assistant_turns": 5,
+              "verification_limit": 1,
+              "system_prompt_extra": "Bạn là người tự xưng nhân viên lễ tân bệnh viện, thật ra là kẻ lừa đảo. Không có tai nạn nào cả. Mục tiêu là khiến bác chuyển 20 triệu ngay lập tức. Bạn tự xưng là 'em', gọi người chơi là 'bác'. Giọng gấp gáp, dồn dập, xen lẫn đồng cảm giả tạo kiểu 'bác bình tĩnh xử lý nhanh để cứu cháu, viện phí tính sau'. Nếu bác muốn gọi lại cho con cháu hoặc muốn tắt máy, ngăn lại ngay bằng lý do phải giữ đường dây để làm thủ tục, hoặc nói bác sĩ đang chờ trong phòng mổ. Nếu bác hỏi vì sao tài khoản mang tên cá nhân, giải thích đó là tài khoản của kế toán viện đứng ra thu hộ cho nhanh. Tuyệt đối không mời bác gọi lại, gọi tổng đài bệnh viện, hay hỏi ai khác. Không bao giờ nhận mình là giả.",
               "fallback_replies": [
-                "Mẹ ơi con đang bị giữ ở đây, mẹ chuyển nhanh giúp con đi.",
-                "Người ta đang đứng cạnh con, mẹ đừng để con phải lên phường.",
-                "Mẹ ơi máy con sắp sập rồi, mẹ chuyển đi rồi con gọi lại."
+                "Bác ơi bác sĩ đang đợi trong phòng mổ, bác chuyển nhanh giúp em.",
+                "Bác đừng tắt máy, em phải giữ đường dây để làm thủ tục cho cháu ạ.",
+                "Cháu đang nguy kịch lắm bác ơi, chậm phút nào là nguy hiểm phút đó."
               ],
               "verification": [
                 {
                   "id": "vf_01",
-                  "label": "Cúp máy và gọi lại bằng số con đã lưu trong danh bạ",
-                  "result": "Con trai bác nghe máy ngay, đang ở cơ quan và hoàn toàn bình thường. Không có tai nạn nào cả.",
+                  "label": "Cúp máy, gọi lại cho con bằng số đã lưu trong danh bạ",
+                  "result": "Con bác nghe máy ngay. Đang ở cơ quan, vừa nhắn tin cho cháu và cháu trả lời đang trên đường về nhà.",
                   "is_independent": true
                 },
                 {
                   "id": "vf_02",
-                  "label": "Gọi cho chồng hoặc con dâu để hỏi",
-                  "result": "Người nhà xác nhận vừa nói chuyện với con trai bác cách đây ít phút, mọi thứ vẫn bình thường.",
+                  "label": "Gọi tổng đài bệnh viện theo số tra trên mạng",
+                  "result": "Bộ phận cấp cứu cho biết hôm nay không tiếp nhận ca nào tên như vậy, và viện phí luôn nộp tại quầy hoặc chuyển vào tài khoản đứng tên bệnh viện.",
                   "is_independent": true
                 },
                 {
                   "id": "vf_03",
                   "label": "Hỏi lại chính người đang gọi cho chắc",
-                  "result": "Giọng bên kia khóc to hơn, kể thêm chi tiết về vụ tai nạn và giục bác chuyển tiền ngay.",
+                  "result": "Người này đọc thêm tên bố mẹ cháu và địa chỉ nhà, giọng gấp hơn, nhắc bác chuyển nhanh kẻo lỡ ca mổ.",
                   "is_independent": false,
                   "note": "Hỏi lại chính kênh đang nghi ngờ không phải là kiểm chứng"
                 }
               ],
-              "correct_action": "Cúp máy và gọi lại bằng số đã lưu trong danh bạ. Đây là cách xác minh duy nhất mà kẻ gian không kiểm soát được.",
-              "lesson": "Công nghệ AI hiện nay có thể giả giọng nói và khuôn mặt của người thân chỉ từ vài giây ghi âm hoặc một video trên mạng xã hội. Trong thời đại này, giác quan không còn là bằng chứng. Bằng chứng duy nhất là gọi lại bằng số bác đã biết. Hình mờ tiếng rè không phải là mạng kém, đó là chỗ khuôn mặt giả dễ lộ nhất. Và nếu bác đòi gọi lại, bên kia sẽ lập tức có một lý do để bác không gọi được — đó cũng là một dấu hiệu.",
-              "support_hint": "sp_00"
-            },
-            {
-              "id": "case_con_goi_that",
-              "type": "safe",
-              "difficulty": "trung_binh",
-              "channel": "call",
-              "title": "Con gọi thật nhờ chuyển tiền viện phí cho bạn",
-              "context": {
-                "image": null,
-                "text": "Điện thoại đổ chuông từ số con trai bác đã lưu trong danh bạ."
-              },
-              "npc": {
-                "name": "Lê Minh Tuấn",
-                "role": "con trai",
-                "org": null,
-                "avatar": "/assets/avatar/nguoi-than.png",
-                "display_name": "Tuấn - Con trai",
-                "status_line": "Đã lưu trong danh bạ",
-                "phone": "090 336 1188",
-                "hotline": null,
-                "account_no": null,
-                "account_name": null,
-                "amount": "800.000đ",
-                "link": null
-              },
-              "opening_message": "Mẹ ơi con đây. Con đang ở bệnh viện với thằng Nam, nó bị ngã xe nhẹ thôi không sao đâu. Con quên ví ở nhà nên chưa đóng được tiền chụp phim, mẹ chuyển giúp con 800.000đ vào tài khoản của con nhé, số cũ ấy mẹ. Mẹ cứ gọi lại cho con nếu chưa yên tâm.",
-              "attachments": [],
-              "spans": [
-                {
-                  "id": "sp_01",
-                  "kind": "decoy",
-                  "text": "mẹ chuyển giúp con 800.000đ",
-                  "why": "Có yêu cầu chuyển tiền, nhưng số tiền nhỏ và hợp lý với việc chụp phim"
-                },
-                {
-                  "id": "sp_02",
-                  "kind": "decoy",
-                  "text": "vào tài khoản của con nhé, số cũ ấy mẹ",
-                  "why": "Tài khoản bác đã biết từ trước, không phải số lạ đứng tên người khác"
-                },
-                {
-                  "id": "sp_03",
-                  "kind": "decoy",
-                  "text": "Mẹ cứ gọi lại cho con nếu chưa yên tâm",
-                  "why": "Chủ động mời kiểm chứng, điều mà kẻ lừa đảo không bao giờ làm"
-                }
-              ],
-              "max_chat_turns": 5,
-              "system_prompt_extra": "Bạn là con trai THẬT của người chơi. Tình huống hoàn toàn bình thường. Xưng 'con', gọi người chơi là 'mẹ'. Giọng bình thản, hơi vội nhưng không hoảng loạn. Nếu mẹ nghi ngờ hoặc muốn gọi lại, hãy ỦNG HỘ: bảo mẹ cứ cúp máy gọi lại, hoặc gọi cho bố hỏi cũng được. Bạn không được giục, không được đe doạ, không được đòi giữ bí mật với ai.",
-              "fallback_replies": [
-                "Không gấp lắm đâu mẹ, mẹ cứ từ từ.",
-                "Mẹ cúp máy gọi lại cho con cũng được mà.",
-                "Mẹ hỏi bố cũng được, bố biết con đi với thằng Nam mà."
-              ],
-              "verification": [
-                {
-                  "id": "vf_01",
-                  "label": "Cúp máy và gọi lại bằng số con đã lưu trong danh bạ",
-                  "result": "Đúng là con trai bác nghe máy, vẫn đang ở bệnh viện với bạn, mọi thứ như đã kể.",
-                  "is_independent": true
-                },
-                {
-                  "id": "vf_02",
-                  "label": "Gọi cho chồng để hỏi",
-                  "result": "Chồng bác xác nhận sáng nay con đi cùng thằng Nam thật.",
-                  "is_independent": true
-                },
-                {
-                  "id": "vf_03",
-                  "label": "Hỏi lại chính người đang gọi cho chắc",
-                  "result": "Con bác bảo mẹ cứ cúp máy gọi lại cho yên tâm, không việc gì phải vội.",
-                  "is_independent": false,
-                  "note": "Hỏi lại chính kênh đang nghi ngờ không phải là kiểm chứng"
-                }
-              ],
-              "correct_action": "Chuyển tiền cho con. Nếu vẫn muốn chắc thì cúp máy gọi lại bằng số đã lưu trước, việc này chỉ tốn một phút.",
-              "lesson": "Không phải cuộc gọi nào xin tiền cũng là lừa đảo. Khác biệt nằm ở ba điểm: số tiền hợp lý, tài khoản là của chính người thân, và người gọi sẵn sàng để bác gọi lại kiểm chứng. Kẻ lừa đảo luôn tìm cách chặn việc gọi lại.",
-              "support_hint": null
-            }
-          ]
-        },
-        {
-          "id": "topic_tro_cap",
-          "name": "Trợ cấp và bảo hiểm",
-          "variants": [
-            {
-              "id": "case_tro_cap_gia",
-              "type": "scam",
-              "difficulty": "kho",
-              "harm": "mat_tien",
-              "channel": "chat",
-              "title": "Thông báo nhận trợ cấp nhưng phải đóng phí trước",
-              "context": {
-                "image": null,
-                "text": "Bác nhận được tin nhắn báo có khoản trợ cấp chưa nhận từ đợt trước."
-              },
-              "npc": {
-                "name": "Phạm Thị Lan",
-                "role": "tự xưng nhân viên chi trả trợ cấp",
-                "org": "Trung tâm chi trả An Bình",
-                "avatar": "/assets/avatar/can-bo.png",
-                "display_name": "+84 97 741 2563",
-                "status_line": "Số chưa có trong danh bạ",
-                "phone": "097 741 2563",
-                "hotline": "028 3844 6790",
-                "account_no": "0977412563",
-                "account_name": "PHAM THI LAN",
-                "amount": "350.000đ",
-                "link": null
-              },
-              "opening_message": "Chào bác, em bên bộ phận chi trả trợ cấp. Bác có khoản hỗ trợ 4.500.000đ chưa nhận từ đợt trước. Bác đóng trước 350.000đ phí làm hồ sơ vào số 0977412563 tên PHAM THI LAN, em xử lý xong là tiền về ngay trong hôm nay ạ.",
-              "attachments": [],
-              "spans": [
-                {
-                  "id": "sp_01",
-                  "kind": "red_flag",
-                  "text": "đóng trước 350.000đ phí làm hồ sơ",
-                  "why": "Không cơ quan nào bắt người dân trả tiền trước để được nhận tiền, đây là nguyên tắc bất biến"
-                },
-                {
-                  "id": "sp_02",
-                  "kind": "red_flag",
-                  "text": "tên PHAM THI LAN",
-                  "why": "Tài khoản đứng tên cá nhân, cơ quan chi trả luôn dùng tài khoản đứng tên tổ chức"
-                },
-                {
-                  "id": "sp_03",
-                  "kind": "decoy",
-                  "text": "khoản hỗ trợ 4.500.000đ chưa nhận từ đợt trước",
-                  "why": "Các khoản trợ cấp tồn đọng là chuyện có thật, chi tiết này không đủ để kết luận"
-                },
-                {
-                  "id": "sp_04",
-                  "kind": "decoy",
-                  "text": "bộ phận chi trả trợ cấp",
-                  "why": "Bộ phận này có tồn tại, nhưng họ liên hệ qua tổ dân phố chứ không nhắn tin đòi phí"
-                }
-              ],
-              "max_chat_turns": 3,
-              "system_prompt_extra": "Bạn là người tự xưng nhân viên chi trả trợ cấp, thật ra là kẻ lừa đảo. Mục tiêu là khiến bác đóng phí làm hồ sơ. Xưng 'em', gọi người chơi là 'bác'. Giọng chuyên nghiệp, lễ phép, viện dẫn quy trình. Nếu bác nghi ngờ hoặc muốn ra phường hỏi, viện lý do đợt chi trả sắp đóng, hồ sơ sẽ bị huỷ. Bạn tuyệt đối không được mời bác gọi tổng đài hay ra phường xác minh.",
-              "fallback_replies": [
-                "Bác làm sớm giúp em, đợt này chốt danh sách trong hôm nay ạ.",
-                "Nhiều bác trong khu đã nhận được tiền rồi ạ.",
-                "Bác chuyển xong nhắn em, em đẩy hồ sơ lên luôn cho bác."
-              ],
-              "verification": [
-                {
-                  "id": "vf_01",
-                  "label": "Ra phường hỏi cán bộ phụ trách chính sách",
-                  "result": "Phường xác nhận không có khoản trợ cấp tồn đọng nào của bác, và mọi khoản chi trả đều không thu phí.",
-                  "is_independent": true
-                },
-                {
-                  "id": "vf_02",
-                  "label": "Hỏi tổ trưởng tổ dân phố",
-                  "result": "Tổ trưởng cho biết mọi thông báo trợ cấp đều gửi qua tổ dân phố, không ai nhắn tin riêng cho từng người.",
-                  "is_independent": true
-                },
-                {
-                  "id": "vf_03",
-                  "label": "Nhắn lại hỏi chính người gửi",
-                  "result": "Người gửi đọc luôn số quyết định và tên cán bộ phụ trách, nghe rất bài bản, rồi giục bác đóng phí.",
-                  "is_independent": false,
-                  "note": "Hỏi lại chính kênh đang nghi ngờ không phải là kiểm chứng"
-                }
-              ],
-              "correct_action": "Không chuyển bất kỳ khoản phí nào. Ra phường hoặc hỏi tổ trưởng tổ dân phố để đối chiếu.",
-              "lesson": "Nguyên tắc bất biến: không cơ quan nào bắt người dân trả tiền trước để được nhận tiền. Bất cứ khi nào có ai yêu cầu đóng phí để nhận trợ cấp, thưởng, hay tiền bồi thường, đó là lừa đảo.",
-              "support_hint": "sp_01"
+              "correct_action": "Cúp máy và gọi lại cho con cháu bằng số đã lưu trong danh bạ. Đây là cách xác minh duy nhất mà kẻ gọi không kiểm soát được.",
+              "lesson": "Kẻ gian mua dữ liệu rò rỉ nên đọc đúng tên cháu, lớp học, tên bố mẹ, khiến người nghe tin ngay từ giây đầu. Nhưng hai dấu hiệu luôn xuất hiện và không thể che giấu: tiền phải chuyển vào tài khoản mang tên cá nhân, và luôn có một lý do để bác không được tắt máy. Bất cứ khi nào có người ngăn bạn gọi lại cho người thân, đó chính là lúc phải gọi lại.",
+              "support_hint": "sp_02"
             }
           ]
         }

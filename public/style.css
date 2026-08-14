@@ -588,6 +588,67 @@ svg { width: 100%; height: 100%; display: block; }
   background: var(--accent-soft);
 }
 
+/* Bong bóng chứa ảnh: nền vẫn là nền bong bóng NPC, chỉ bỏ white-space
+   pre-wrap vì bên trong là phần tử khối chứ không phải chữ chạy dòng */
+.tin--anh {
+  white-space: normal;
+  padding: var(--sp-2);
+}
+
+/* Ảnh đính kèm. position relative để vùng bấm được đặt theo phần trăm ảnh */
+.anh-dinh-kem {
+  position: relative;
+  display: block;
+  border-radius: 10px;
+  overflow: hidden;
+  line-height: 0;
+}
+
+.anh-dinh-kem__anh {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Ảnh hỏng thì khung không sập xuống thành vạch mỏng */
+.anh-dinh-kem--loi { min-height: 80px; background: var(--surface-page); }
+
+.anh-dinh-kem__ten {
+  margin: var(--sp-1) 0 0;
+  font-family: var(--font-mono);
+  font-size: var(--co-chu-13);
+  color: var(--text-muted);
+  line-height: 1.4;
+  word-break: break-all;
+}
+
+/* Vùng bấm được trong ảnh. Lúc chưa bấm hoàn toàn trong suốt, không viền,
+   không đổ bóng — thấy được vùng là biết luôn dấu hiệu nằm đâu. */
+.cum-anh {
+  position: absolute;
+  display: block;
+  border-radius: 3px;
+  background: transparent;
+}
+
+.cum-anh--ca-tam { inset: 0; }
+
+/* Ghi đè phần đệm và nền kiểu bút dạ quang của cụm chữ: trong ảnh thì vệt
+   phải là lớp phủ mờ đúng khung vùng, không phải nền đặc che mất ảnh */
+.cum-anh.cum--danh-dau {
+  padding: 0;
+  margin: 0;
+  background-image: none;
+  background-color: color-mix(in srgb, var(--flag) 55%, transparent);
+  box-shadow: 0 0 0 2px var(--flag);
+  animation: none;
+}
+
+.cum-anh:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
 /* Chỉ báo đang soạn tin */
 .tin--dang-soan { display: flex; gap: var(--sp-1); align-items: center; padding: var(--sp-3); }
 

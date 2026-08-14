@@ -628,6 +628,66 @@ function themTinMoDau(noiDung, spans, tuyChon = {}) {
   return tin;
 }
 
+// Ảnh đính kèm trong bong bóng chat. Vùng bấm được nằm đè lên ảnh: cụm có
+// trường `vung` thì chỉ đúng ô đó bấm được (toạ độ phần trăm so với ảnh, nên
+// ảnh co giãn thế nào ô vẫn bám đúng chỗ), cụm không có `vung` thì cả tấm ảnh
+// là một vùng. Bấm ra ngoài mọi vùng thì không có gì xảy ra.
+function taoVungAnh(span) {
+  const nut = document.createElement('span');
+  nut.className = span.vung ? 'cum cum-anh' : 'cum cum-anh cum-anh--ca-tam';
+  nut.dataset.spanId = span.id;
+  nut.setAttribute('role', 'button');
+  nut.setAttribute('tabindex', '0');
+  nut.setAttribute('aria-pressed', 'false');
+  // Nhãn cố tình không nói cụm này là dấu hiệu đỏ hay cụm mồi
+  nut.setAttribute('aria-label', span.label || 'Vùng trong ảnh đính kèm');
+  if (span.vung) {
+    const v = span.vung;
+    nut.style.left = `${v.trai}%`;
+    nut.style.top = `${v.tren}%`;
+    nut.style.width = `${v.rong}%`;
+    nut.style.height = `${v.cao}%`;
+  }
+  return nut;
+}
+
+// Một bong bóng cho một ảnh: ảnh bo góc, tên tệp nằm dưới như tệp đính kèm thật
+function themAnhDinhKem(dinhKem) {
+  const tin = document.createElement('div');
+  tin.className = 'tin tin--npc tin--anh';
+
+  const khungAnh = document.createElement('div');
+  khungAnh.className = 'anh-dinh-kem';
+
+  const anh = document.createElement('img');
+  anh.className = 'anh-dinh-kem__anh';
+  anh.src = dinhKem.src;
+  anh.alt = dinhKem.alt || dinhKem.filename || 'Ảnh đính kèm';
+  anh.loading = 'lazy';
+  anh.onerror = () => khungAnh.classList.add('anh-dinh-kem--loi');
+  khungAnh.appendChild(anh);
+
+  for (const s of dinhKem.spans || []) khungAnh.appendChild(taoVungAnh(s));
+  tin.appendChild(khungAnh);
+
+  if (dinhKem.filename) {
+    const ten = document.createElement('p');
+    ten.className = 'anh-dinh-kem__ten';
+    ten.textContent = dinhKem.filename;
+    tin.appendChild(ten);
+  }
+
+  o.vungTin.appendChild(tin);
+  return tin;
+}
+
+// Ảnh đi ngay sau tin mở đầu, đúng thứ tự khai trong database
+function themMoiAnhDinhKem(attachments) {
+  for (const a of attachments || []) {
+    if (a.type === 'image' && a.src) themAnhDinhKem(a);
+  }
+}
+
 function veCumDaDanhDau() {
   // Quét cả cột giữa chứ không riêng vùng tin, vì khung thư có cụm nằm ở
   // địa chỉ người gửi và tiêu đề, ngoài thân thư
@@ -811,6 +871,7 @@ function veKhungDienThoai(duLieu, { hoanNoiDung = false } = {}) {
     o.vungTin.appendChild(cho);
   } else {
     if (duLieu.openingMessage) themTinMoDau(duLieu.openingMessage, spans, tuyChon);
+    themMoiAnhDinhKem(c.attachments);
     for (const tin of duLieu.lichSuChat || []) themTin(tin.role, tin.content);
 
     // Dựng xong hết mới biết cụm nào không khớp vùng nào, lúc đó mới đáng kêu
@@ -1444,7 +1505,7 @@ function themDauHieu(khung, span) {
   const muc = document.createElement('li');
   const ten = document.createElement('p');
   ten.className = 'dau-hieu__ten';
-  ten.textContent = span.text || 'Dấu hiệu trong ảnh đính kèm';
+  ten.textContent = span.text || span.label || 'Dấu hiệu trong ảnh đính kèm';
   const why = document.createElement('p');
   why.className = 'dau-hieu__why';
   why.textContent = span.why || '';
@@ -1542,7 +1603,10 @@ function veBocTach(ketQua, { xemLai = false } = {}) {
     ? 'Bạn không cần nêu lý do khi làm theo, nên mục này không tính điểm.'
     : (ketQua.lyDo?.feedback || moTaThietHai[ketQua.thietHai] || '');
 
-  // Tin nhắn gốc với hai trạng thái đánh dấu
+  // Tin nhắn gốc với hai trạng thái đánh dấu. Không cảnh báo cụm không khớp:
+  // cụm nằm trong ảnh được máy chủ gán text bằng nhãn, mà nhãn thì không có
+  // trong lời nhắn nên lần nào cũng kêu oan. Chỗ soát trường text thật sự là
+  // lúc dựng màn chơi.
   o.tinGoc.innerHTML = '';
   veTinCoCum(o.tinGoc, tinGoc, bt.spans, (span) => {
     const cum = document.createElement('span');
@@ -1550,7 +1614,7 @@ function veBocTach(ketQua, { xemLai = false } = {}) {
     if (span.daDanhDau) cum.classList.add('cum-goc--trung');
     else if (span.boSot) cum.classList.add('cum-goc--bo-sot');
     return cum;
-  });
+  }, { canhBao: false });
 
   const spans = bt.spans || [];
   const nhanRa = spans.filter((s) => s.kind === 'red_flag' && s.daDanhDau);
