@@ -639,6 +639,27 @@
   </div>
 </div>
 
+<!-- ============ LỚP PHÓNG TO ẢNH ĐÍNH KÈM ============ -->
+<!-- Ảnh thu nhỏ trong khung chat quá bé để soi con dấu hay dãy số, nên đánh dấu
+     ở đó là bắt người chơi đoán mò. Overlay này là NƠI DUY NHẤT đánh dấu được
+     vùng trong ảnh; ảnh thu nhỏ và ô bằng chứng chỉ đọc lại trạng thái.
+     Vùng bấm dựng lại từ đúng bộ toạ độ trong database, không định nghĩa mới. -->
+<div class="lop-anh" id="lop-anh" hidden role="dialog" aria-modal="true" aria-label="Xem ảnh đính kèm phóng to">
+  <button type="button" class="lop-anh__dong" id="nut-dong-anh" aria-label="Đóng ảnh">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <path d="M18 6 6 18M6 6l12 12"/>
+    </svg>
+  </button>
+
+  <!-- Khung ôm sát ảnh: vùng bấm đặt theo phần trăm nên khung phải đúng bằng
+       ảnh đã vẽ, không phải bằng cả overlay, thì toạ độ mới bám đúng chỗ -->
+  <div class="lop-anh__khung" id="khung-lop-anh">
+    <img class="lop-anh__anh" id="anh-lop-anh" alt="">
+  </div>
+
+  <p class="lop-anh__ten" id="ten-lop-anh"></p>
+</div>
+
 <!-- ============ BÁO LỖI ============ -->
 <div class="bao-loi" id="bao-loi" hidden role="alert">
   <p id="chu-bao-loi"></p>

@@ -686,6 +686,106 @@ svg { width: 100%; height: 100%; display: block; }
   outline-offset: 1px;
 }
 
+/* Vùng trên ảnh THU NHỎ: chỉ để nhìn, không bấm được. Không có con trỏ tay,
+   không nhận sự kiện chuột — mọi thao tác đánh dấu dồn hết vào overlay. */
+.cum-anh--chi-doc { pointer-events: none; }
+
+/* ---- Ảnh thu nhỏ bấm để phóng to ---- */
+
+.anh-dinh-kem--bam-duoc { cursor: zoom-in; }
+
+/* Kính lúp góc ảnh: dấu hiệu duy nhất nói cho người chơi biết còn xem to được.
+   Nền tối mờ để nổi trên mọi ảnh, kể cả ảnh giấy tờ nền trắng. */
+.anh-dinh-kem__kinh-lup {
+  position: absolute;
+  right: var(--sp-2);
+  bottom: var(--sp-2);
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  pointer-events: none;
+}
+
+.anh-dinh-kem__kinh-lup svg { width: 16px; height: 16px; }
+
+/* ---- Lớp phủ phóng to ảnh ---- */
+
+/* Nền tối để ảnh giấy tờ nền trắng nổi hẳn lên, và để người chơi hiểu mình
+   đang ở một lớp riêng chứ không còn trong khung chat */
+.lop-anh {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-3);
+  padding: var(--sp-6) var(--sp-4);
+  background: rgba(0, 0, 0, 0.8);
+}
+
+/* Ôm sát ảnh: khung shrink-wrap đúng kích thước ảnh đã vẽ nên vùng bấm theo
+   phần trăm rơi đúng chỗ như ở ảnh thu nhỏ */
+.lop-anh__khung {
+  position: relative;
+  display: inline-block;
+  line-height: 0;
+  max-width: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* Giữ đúng tỷ lệ gốc: chỉ chặn trên bằng max, không ép width/height cụ thể */
+.lop-anh__anh {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: min(92vw, 1100px);
+  max-height: 78vh;
+}
+
+.lop-anh__ten {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--co-chu-13);
+  color: rgba(255, 255, 255, 0.75);
+  text-align: center;
+  word-break: break-all;
+}
+
+.lop-anh__dong {
+  position: absolute;
+  top: var(--sp-4);
+  right: var(--sp-4);
+  width: var(--h-cham);
+  height: var(--h-cham);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  cursor: pointer;
+}
+
+.lop-anh__dong svg { width: 22px; height: 22px; }
+.lop-anh__dong:hover { background: rgba(255, 255, 255, 0.28); }
+
+.lop-anh__dong:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+/* Trong overlay ảnh đủ to để soi, nên vùng bấm mới có con trỏ tay */
+.lop-anh .cum-anh { cursor: pointer; }
+
 /* Chỉ báo đang soạn tin */
 .tin--dang-soan { display: flex; gap: var(--sp-1); align-items: center; padding: var(--sp-3); }
 

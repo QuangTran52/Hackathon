@@ -30,6 +30,9 @@ const MASCOT = {
   baoDong:    { tep: 'mascot-bao-dong.png',    alt: 'Người hướng dẫn, vẻ mặt báo động' }
 };
 
+// Kính lúp góc ảnh thu nhỏ: dấu hiệu duy nhất nói còn xem to được
+const ICON_KINH_LUP = '<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3M11 8v6M8 11h6"/>';
+
 // Icon trạng thái từng chặng ở màn hành trình
 const ICON_CHANG = {
   dung: '<path d="M20 6 9 17l-5-5"/>',
@@ -175,6 +178,12 @@ const o = {
   khuQuyetDinh: el('khu-quyet-dinh'),
   nutLamTheo: el('nut-lam-theo'),
   nutKhongLam: el('nut-khong-lam'),
+
+  lopAnh: el('lop-anh'),
+  khungLopAnh: el('khung-lop-anh'),
+  anhLopAnh: el('anh-lop-anh'),
+  tenLopAnh: el('ten-lop-anh'),
+  nutDongAnh: el('nut-dong-anh'),
 
   lopKiemChung: el('lop-kiem-chung'),
   chuLuotKiemChung: el('chu-luot-kiem-chung'),
@@ -755,19 +764,32 @@ function themTinMoDau(noiDung, spans, tuyChon = {}) {
   return tin;
 }
 
-// Ảnh đính kèm trong bong bóng chat. Vùng bấm được nằm đè lên ảnh: cụm có
-// trường `vung` thì chỉ đúng ô đó bấm được (toạ độ phần trăm so với ảnh, nên
-// ảnh co giãn thế nào ô vẫn bám đúng chỗ), cụm không có `vung` thì cả tấm ảnh
-// là một vùng. Bấm ra ngoài mọi vùng thì không có gì xảy ra.
-function taoVungAnh(span) {
+// Vùng đè lên ảnh, dựng từ đúng toạ độ phần trăm khai trong database: cụm có
+// trường `vung` thì chỉ đúng ô đó, cụm không có `vung` thì cả tấm ảnh là một
+// vùng. Toạ độ theo phần trăm nên ảnh vẽ to nhỏ thế nào ô vẫn bám đúng chỗ —
+// nhờ vậy ảnh thu nhỏ và ảnh phóng to dùng lại y nguyên một bộ toạ độ.
+//
+// choBam: chỉ overlay phóng to mới cho bấm. Ở ảnh thu nhỏ, vùng chỉ để nhìn
+// lại vệt đã đánh dấu — ảnh bé quá, bắt bấm ở đó là bắt người chơi đoán mò.
+function taoVungAnh(span, { choBam = true } = {}) {
   const nut = document.createElement('span');
-  nut.className = span.vung ? 'cum cum-anh' : 'cum cum-anh cum-anh--ca-tam';
+  const caTam = span.vung ? '' : ' cum-anh--ca-tam';
+  nut.className = choBam
+    ? `cum cum-anh${caTam}`
+    : `cum-anh${caTam} cum-anh--chi-doc`;
   nut.dataset.spanId = span.id;
-  nut.setAttribute('role', 'button');
-  nut.setAttribute('tabindex', '0');
-  nut.setAttribute('aria-pressed', 'false');
-  // Nhãn cố tình không nói cụm này là dấu hiệu đỏ hay cụm mồi
-  nut.setAttribute('aria-label', span.label || 'Vùng trong ảnh đính kèm');
+
+  if (choBam) {
+    nut.setAttribute('role', 'button');
+    nut.setAttribute('tabindex', '0');
+    nut.setAttribute('aria-pressed', 'false');
+    // Nhãn cố tình không nói cụm này là dấu hiệu đỏ hay cụm mồi
+    nut.setAttribute('aria-label', span.label || 'Vùng trong ảnh đính kèm');
+  } else {
+    // Bản sao chỉ để nhìn, trình đọc màn hình đọc lại là thừa
+    nut.setAttribute('aria-hidden', 'true');
+  }
+
   if (span.vung) {
     const v = span.vung;
     nut.style.left = `${v.trai}%`;
@@ -778,13 +800,17 @@ function taoVungAnh(span) {
   return nut;
 }
 
-// Một bong bóng cho một ảnh: ảnh bo góc, tên tệp nằm dưới như tệp đính kèm thật
+// Một bong bóng cho một ảnh: ảnh bo góc, tên tệp nằm dưới như tệp đính kèm thật.
+// Bấm vào ảnh mở lớp phóng to chứ không đánh dấu gì.
 function themAnhDinhKem(dinhKem) {
   const tin = document.createElement('div');
   tin.className = 'tin tin--npc tin--anh';
 
   const khungAnh = document.createElement('div');
-  khungAnh.className = 'anh-dinh-kem';
+  khungAnh.className = 'anh-dinh-kem anh-dinh-kem--bam-duoc';
+  khungAnh.setAttribute('role', 'button');
+  khungAnh.setAttribute('tabindex', '0');
+  khungAnh.setAttribute('aria-label', `Xem to hơn: ${dinhKem.alt || dinhKem.filename || 'ảnh đính kèm'}`);
 
   const anh = document.createElement('img');
   anh.className = 'anh-dinh-kem__anh';
@@ -794,7 +820,23 @@ function themAnhDinhKem(dinhKem) {
   anh.onerror = () => khungAnh.classList.add('anh-dinh-kem--loi');
   khungAnh.appendChild(anh);
 
-  for (const s of dinhKem.spans || []) khungAnh.appendChild(taoVungAnh(s));
+  for (const s of dinhKem.spans || []) khungAnh.appendChild(taoVungAnh(s, { choBam: false }));
+
+  const kinhLup = document.createElement('span');
+  kinhLup.className = 'anh-dinh-kem__kinh-lup';
+  kinhLup.innerHTML = svgIcon(ICON_KINH_LUP, '');
+  khungAnh.appendChild(kinhLup);
+
+  // Giữ nguyên dinhKem trong closure: mỗi ảnh mở đúng ảnh của chính nó, không
+  // phải tra theo chỉ số rồi lệch khi tình huống có nhiều ảnh
+  khungAnh.addEventListener('click', () => moLopAnh(dinhKem));
+  khungAnh.addEventListener('keydown', (su) => {
+    if (su.key !== 'Enter' && su.key !== ' ') return;
+    su.preventDefault();
+    phatTiengBam();
+    moLopAnh(dinhKem);
+  });
+
   tin.appendChild(khungAnh);
 
   if (dinhKem.filename) {
@@ -808,6 +850,28 @@ function themAnhDinhKem(dinhKem) {
   return tin;
 }
 
+// ---- Lớp phóng to ảnh: nơi DUY NHẤT đánh dấu được vùng trong ảnh ----
+
+function moLopAnh(dinhKem) {
+  o.anhLopAnh.src = dinhKem.src;
+  o.anhLopAnh.alt = dinhKem.alt || dinhKem.filename || 'Ảnh đính kèm';
+  o.tenLopAnh.textContent = dinhKem.filename || '';
+  o.tenLopAnh.hidden = !dinhKem.filename;
+
+  // Xoá vùng của ảnh trước rồi mới dựng vùng của ảnh này. Tình huống có hai
+  // ảnh mà quên bước này là vùng của ảnh nọ nằm đè lên ảnh kia.
+  for (const cu of o.khungLopAnh.querySelectorAll('.cum-anh')) cu.remove();
+  for (const s of dinhKem.spans || []) o.khungLopAnh.appendChild(taoVungAnh(s, { choBam: true }));
+
+  veCumDaDanhDau();
+  o.lopAnh.hidden = false;
+  o.nutDongAnh.focus();
+}
+
+function dongLopAnh() {
+  o.lopAnh.hidden = true;
+}
+
 // Ảnh đi ngay sau tin mở đầu, đúng thứ tự khai trong database
 function themMoiAnhDinhKem(attachments) {
   for (const a of attachments || []) {
@@ -817,11 +881,21 @@ function themMoiAnhDinhKem(attachments) {
 
 function veCumDaDanhDau() {
   // Quét cả cột giữa chứ không riêng vùng tin, vì khung thư có cụm nằm ở
-  // địa chỉ người gửi và tiêu đề, ngoài thân thư
-  for (const nut of o.cotGiua.querySelectorAll('.cum')) {
+  // địa chỉ người gửi và tiêu đề, ngoài thân thư. Lấy theo data-span-id chứ
+  // không theo lớp .cum, để vùng chỉ-đọc trên ảnh thu nhỏ cũng sáng lên theo.
+  // Overlay ảnh quét riêng vì nó nằm ngoài cột giữa.
+  const moiVung = [
+    ...o.cotGiua.querySelectorAll('[data-span-id]'),
+    ...o.lopAnh.querySelectorAll('[data-span-id]')
+  ];
+
+  for (const nut of moiVung) {
     const bat = trangThai.spanDaDanhDau.has(nut.dataset.spanId);
     nut.classList.toggle('cum--danh-dau', bat);
-    nut.setAttribute('aria-pressed', bat ? 'true' : 'false');
+    // Vùng chỉ-đọc không phải nút bấm nên không mang trạng thái nhấn
+    if (nut.getAttribute('role') === 'button') {
+      nut.setAttribute('aria-pressed', bat ? 'true' : 'false');
+    }
   }
 }
 
@@ -1216,6 +1290,9 @@ function veTroLy(duLieu) {
 
 function veCase(duLieu) {
   const c = duLieu.caseData;
+  // Sang tình huống mới thì lớp ảnh của tình huống cũ phải đóng lại, không thì
+  // người chơi mở lại game và thấy ảnh của case trước còn nằm đè trên màn hình
+  dongLopAnh();
   trangThai.caseHienTai = c;
   // Giữ nguyên bản để dựng lại cột giữa lúc người chơi nhấc máy
   trangThai.duLieuCase = duLieu;
@@ -2048,6 +2125,31 @@ o.cotGiua.addEventListener('click', (su) => {
   if (cum) batTatCum(cum.dataset.spanId);
 });
 
+// ---- Lớp phóng to ảnh ----
+
+o.lopAnh.addEventListener('click', (su) => {
+  const cum = su.target.closest('.cum');
+  if (cum) {
+    batTatCum(cum.dataset.spanId);
+    return;
+  }
+  // Bấm trúng ảnh thì giữ nguyên lớp phủ — nền tối quanh ảnh, tên tệp và nút X
+  // đều là chỗ bấm để đóng
+  if (su.target.closest('.lop-anh__khung')) return;
+  dongLopAnh();
+});
+
+o.lopAnh.addEventListener('keydown', (su) => {
+  if (su.key !== 'Enter' && su.key !== ' ') return;
+  const cum = su.target.closest('.cum');
+  if (!cum) return;
+  su.preventDefault();
+  // Cụm là span mang role button chứ không phải thẻ button, bàn phím không
+  // sinh ra click nên phải tự gọi tiếng bấm
+  phatTiengBam();
+  batTatCum(cum.dataset.spanId);
+});
+
 // Bàn phím: Enter hoặc dấu cách cũng đánh dấu được
 o.cotGiua.addEventListener('keydown', (su) => {
   if (su.key !== 'Enter' && su.key !== ' ') return;
@@ -2103,7 +2205,9 @@ o.nutGoiLai.addEventListener('click', moKiemChung);
 // Escape gắn ở tài liệu để đóng được overlay dù con trỏ đang ở đâu
 document.addEventListener('keydown', (su) => {
   if (su.key !== 'Escape') return;
-  if (!o.lopChoiMoi.hidden) dongXacNhanChoiMoi();
+  // Lớp ảnh nằm trên cùng và mở sau nên đóng trước
+  if (!o.lopAnh.hidden) dongLopAnh();
+  else if (!o.lopChoiMoi.hidden) dongXacNhanChoiMoi();
   else if (!o.lopXacNhan.hidden) dongXacNhan();
   else if (!o.lopKiemChung.hidden) dongKiemChung();
   // Thoát khỏi màn cuộc gọi nghĩa là không nhấc máy, đúng như cúp máy
