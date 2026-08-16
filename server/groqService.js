@@ -17,8 +17,8 @@ import Groq from 'groq-sdk';
 import { MUC_LY_DO } from './gameState.js';
 
 const MODEL_HOI_THOAI = 'qwen/qwen3.6-27b';
-const MODEL_CHAM_DIEM = 'llama-3.3-70b-versatile';
-const MODEL_TRO_LY = 'llama-3.3-70b-versatile';
+const MODEL_CHAM_DIEM = 'qwen/qwen3.6-27b';
+const MODEL_TRO_LY = 'qwen/qwen3.6-27b';
 
 // Qwen bật chế độ suy nghĩ sẵn. Phần suy nghĩ mà lọt ra là người chơi đọc được
 // cả toan tính của kẻ gian, nên chặn ở ba lớp.
