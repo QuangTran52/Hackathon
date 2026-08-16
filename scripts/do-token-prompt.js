@@ -13,7 +13,7 @@ import { pathToFileURL, fileURLToPath } from 'url';
 const goc = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const { dungPromptNPC, dungPromptTroLy } = await import(pathToFileURL(path.join(goc, 'server/groqService.js')).href);
 const j = JSON.parse(fs.readFileSync(path.join(goc, 'data/database.json'), 'utf8'));
-const c = j.stages.flatMap((s) => s.topics).flatMap((t) => t.variants).find((v) => v.id === 'case_hoc_phi_lua');
+const c = j.stages.flatMap((s) => s.topics).flatMap((t) => t.variants).find((v) => v.id === 'case_hoc_phi_bo_sung_that');
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 const MODEL = 'qwen/qwen3.6-27b';
@@ -69,5 +69,5 @@ async function bang(nhan, prompt) {
   return tong;
 }
 
-await bang('PROMPT NPC (case_hoc_phi_lua)', dungPromptNPC(c));
-if (dungPromptTroLy) await bang('PROMPT TRỢ LÝ (case_hoc_phi_lua)', dungPromptTroLy(c, []));
+await bang('PROMPT NPC (case_hoc_phi_bo_sung_that)', dungPromptNPC(c));
+if (dungPromptTroLy) await bang('PROMPT TRỢ LÝ (case_hoc_phi_bo_sung_that)', dungPromptTroLy(c, []));

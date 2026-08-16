@@ -290,7 +290,7 @@ ${TAT_SUY_NGHI}`;
     const response = await goiChatTatSuyNghi(groq, {
       model: MODEL_CHAM_DIEM,
       messages: [{ role: 'user', content: prompt }],
-      temperature: 0.2,
+      temperature: 0,
       response_format: { type: 'json_object' }
     });
 

@@ -10,7 +10,7 @@ import { pathToFileURL, fileURLToPath } from 'url';
 const goc = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const { dungPromptNPC, goiModelNPC } = await import(pathToFileURL(path.join(goc, 'server/groqService.js')).href);
 const j = JSON.parse(fs.readFileSync(path.join(goc, 'data/database.json'), 'utf8'));
-const c = j.stages.flatMap((s) => s.topics).flatMap((t) => t.variants).find((v) => v.id === 'case_hoc_phi_lua');
+const c = j.stages.flatMap((s) => s.topics).flatMap((t) => t.variants).find((v) => v.id === 'case_hoc_phi_bo_sung_that');
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
@@ -79,7 +79,7 @@ for (const model of MODELS) {
 const tb = (a) => Math.round(a.reduce((x, y) => x + y, 0) / a.length);
 const trungVi = (a) => [...a].sort((x, y) => x - y)[Math.floor(a.length / 2)];
 
-console.log(`\n\n${'═'.repeat(70)}\nBẢNG SO SÁNH — 8 lượt, case_hoc_phi_lua\n${'═'.repeat(70)}`);
+console.log(`\n\n${'═'.repeat(70)}\nBẢNG SO SÁNH — 8 lượt, case_hoc_phi_bo_sung_that\n${'═'.repeat(70)}`);
 const cot = ['Chỉ số', ...MODELS];
 const hang = [
   ['Lượt tự xưng sai', (t) => `${t.loiXungHo}/8`],
