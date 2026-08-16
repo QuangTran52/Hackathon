@@ -275,6 +275,12 @@ Mọi nút đều có icon dẫn ở trước để nhóm người lớn tuổi 
 
 Hai chỉ số nằm ở góc phải thanh trên, mỗi cái gồm icon, rãnh nền, thanh màu và con số. Icon trái tim cho tinh thần, icon bóng đèn cho lý trí. Con số phải đọc được rõ vì đây là chỉ số quyết định thắng thua.
 
+### Hỗ trợ thích ứng
+
+Một ngưỡng duy nhất trên chỉ số lý trí: **dưới 50 thì bật, từ 50 trở lên thì tắt.** Bật hỗ trợ nghĩa là một cụm dấu hiệu đỏ được tô sẵn ngay khi mở tình huống, và người chơi được cộng thêm một lượt kiểm chứng. Lý trí thấp không bao giờ làm tăng độ khó — hỗ trợ chỉ cộng thêm, không bao giờ lấy bớt.
+
+Ngưỡng này được **đánh giá lại từ đầu mỗi khi mở một tình huống mới**, không phải cờ dính từ tình huống trước. Người chơi lên lại 50 là tắt ngay ở tình huống kế tiếp, xuống dưới 50 là bật lại ngay — việc bật tắt qua lại nhiều lần trong một lượt chơi là bình thường, không phải lỗi.
+
 ### Thanh tiến trình 9 chặng
 
 Chín đoạn ngang bằng nhau ngay dưới thanh trên. Màu theo trạng thái: `#1E7A4C` đúng, `#B3261E` sai, `#0B5C4E` đang chơi, `#DCDFDD` chưa tới.

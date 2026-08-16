@@ -210,7 +210,7 @@ kiemTra('chỉ số khởi điểm', gameState.stats, { sucKhoe: 80, lyTri: 70 }
   const view = gameState.openNextCase();
   console.log(`\n-- Case ${view.thuTu}/${view.tongSoCase} ${view.caseData.id} (${view.caseData.type} / ${view.caseData.difficulty})`);
   kiemTra('lý trí 70 chưa cần hỗ trợ', view.hoTro.bat, false);
-  kiemTra('lý trí 70 cũng chưa tính là tự lực', view.hoTro.duNangLuc, false);
+  kiemTra('lý trí 70 trên ngưỡng nên tính là tự lực', view.hoTro.duNangLuc, true);
   kiemTra('lượt kiểm chứng cơ bản', view.luotKiemChungConLai, 1);
 
   // Hết lượt chat thì bị chặn, không bị trừ chỉ số
@@ -508,11 +508,20 @@ kiemTra('lý trí sau khi làm đúng', gsC.stats.lyTri, 65);
 
 const viewC2 = gsC.openNextCase();
 kiemTra('lý trí 65 thì tắt hỗ trợ', viewC2.hoTro.bat, false);
-kiemTra('lý trí 65 chưa tính là tự lực', viewC2.hoTro.duNangLuc, false);
-// Lên đúng 80, tức chạm sát ngưỡng tự lực. Ngưỡng dùng phép so sánh >= nên
-// đứng ngay trên mốc phải tính là tự lực — chạm đúng mốc mới soi ra được.
-gsC.applyDelta({ lyTri: 15 }, 'lên 80');
-kiemTra('lý trí chạm đúng ngưỡng 80 là tự lực hoàn toàn', gsC.trangThaiHoTro().duNangLuc, true);
+// Một ngưỡng duy nhất: qua khỏi 50 là tự lực ngay, không còn vùng đệm tới 80
+kiemTra('lý trí 65 đã tính là tự lực', viewC2.hoTro.duNangLuc, true);
+
+// Đánh giá lại từ đầu mỗi lần mở case, không phải cờ dính từ case trước: rớt
+// lại xuống dưới 50 phải bật hỗ trợ lại ngay, dù case trước vừa mới tắt.
+gsC.applyDelta({ lyTri: -20 }, 'giả lập trượt dốc, rớt lại xuống 45');
+kiemTra('lý trí rớt lại xuống 45 thì bật hỗ trợ lại ngay', gsC.trangThaiHoTro().bat, true);
+kiemTra('lý trí 45 không còn tính là tự lực', gsC.trangThaiHoTro().duNangLuc, false);
+
+// Chạm đúng mốc 50: bat dùng phép so sánh < nên đứng ngay trên mốc đã phải tắt,
+// chạm đúng mốc mới soi ra được sai lệch một-đơn-vị nếu có.
+gsC.applyDelta({ lyTri: 5 }, 'lên đúng 50');
+kiemTra('lý trí chạm đúng ngưỡng 50 là tắt hỗ trợ', gsC.trangThaiHoTro().bat, false);
+kiemTra('lý trí chạm đúng ngưỡng 50 đã tính là tự lực', gsC.trangThaiHoTro().duNangLuc, true);
 
 // ================= LƯỢT D — ĐIỂM LÝ DO KHI SAI VÀ TRƯỜNG HARM =================
 

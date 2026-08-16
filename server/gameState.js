@@ -67,8 +67,8 @@ const CHI_SO_TOI_THIEU = 0;
 
 // Chỉ số khởi đầu. Cố tình đặt dưới trần: khởi đầu ở 100 thì mọi phần thưởng
 // đều bị kẹp trần nên người chơi không thấy chỉ số nhúc nhích, cơ chế thưởng
-// coi như vô hình cho tới lần mắc lỗi đầu tiên. Lý trí 70 cũng đặt hỗ trợ
-// thích ứng (< 50) và mốc tự lực (>= 80) vào tầm với thật sự.
+// coi như vô hình cho tới lần mắc lỗi đầu tiên. Lý trí 70 cũng đặt ngưỡng hỗ
+// trợ thích ứng (50) vào tầm với thật sự, không phải một con số không đời nào chạm tới.
 export const CHI_SO_KHOI_DAU = { sucKhoe: 80, lyTri: 70 };
 
 // Thua sớm ngay khi sức khoẻ tinh thần chạm ngưỡng này
@@ -82,10 +82,11 @@ const NGUONG_THUA_SOM = 30;
 // đi tiếp phải là đi tiếp thật, không phải được thả ra để thua phát nữa.
 const SUC_KHOE_SAU_ON_TAP = 60;
 
-// Dưới ngưỡng này thì bật hỗ trợ thích ứng, từ ngưỡng cao trở lên thì thôi.
-// Lý trí thấp KHÔNG bao giờ làm tăng độ khó.
-const NGUONG_BAT_HO_TRO = 50;
-const NGUONG_TAT_HO_TRO = 80;
+// Một ngưỡng duy nhất, đánh giá lại từ đầu mỗi khi mở tình huống mới — không
+// phải cờ dính từ tình huống trước. Dưới ngưỡng thì bật hỗ trợ thích ứng, từ
+// ngưỡng trở lên thì tắt; lên xuống quanh mốc này trong một lượt chơi là bật
+// tắt lại ngay, không có vùng đệm. Lý trí thấp KHÔNG bao giờ làm tăng độ khó.
+const NGUONG_HO_TRO = 50;
 
 // Số lượt kiểm chứng cơ bản mỗi case, và phần cộng thêm khi đang được hỗ trợ
 const LUOT_KIEM_CHUNG_MAC_DINH = 1;
@@ -286,7 +287,7 @@ class GameState {
   // Lý trí thấp thì được giúp thêm, không bao giờ bị làm khó thêm.
   trangThaiHoTro(tinhHuong = null) {
     const nguon = tinhHuong || (this.caseHienTai && this.caseHienTai.data);
-    const bat = this.stats.lyTri < NGUONG_BAT_HO_TRO;
+    const bat = this.stats.lyTri < NGUONG_HO_TRO;
 
     let spanToSan = [];
     if (bat && nguon && nguon.support_hint) {
@@ -295,8 +296,8 @@ class GameState {
 
     return {
       bat,
-      // Trên ngưỡng này chắc chắn không hỗ trợ, ghi rõ để giao diện khỏi đoán
-      duNangLuc: this.stats.lyTri >= NGUONG_TAT_HO_TRO,
+      // Một ngưỡng duy nhất nên đủ năng lực chỉ là phủ định của bật hỗ trợ
+      duNangLuc: !bat,
       spanToSan,
       luotKiemChung: LUOT_KIEM_CHUNG_MAC_DINH + (bat ? LUOT_KIEM_CHUNG_HO_TRO_THEM : 0)
     };
