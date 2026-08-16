@@ -595,3 +595,6 @@ app.listen(PORT, () => {
     console.warn('[server] Chưa có GROQ_API_KEY — nhân vật sẽ dùng câu dự phòng trong database.');
   }
 });
+
+// BẮT BUỘC CÓ DÒNG NÀY CHO VERCEL:
+module.exports = app;
