@@ -16,6 +16,9 @@ import Groq from 'groq-sdk';
 
 import { MUC_LY_DO } from './gameState.js';
 
+// Groq ngừng phục vụ llama-3.3-70b-versatile từ 16/8/2026, cả ba chỗ gọi AI
+// chuyển sang Qwen. Qwen bật chế độ suy nghĩ sẵn nên MỌI lời gọi đều phải đi
+// qua goiChatTatSuyNghi() và bóc thẻ <think>, xem khối chú thích ngay dưới.
 const MODEL_HOI_THOAI = 'qwen/qwen3.6-27b';
 const MODEL_CHAM_DIEM = 'qwen/qwen3.6-27b';
 const MODEL_TRO_LY = 'qwen/qwen3.6-27b';
@@ -40,6 +43,21 @@ const TUY_CHON_GOI = { timeout: HAN_CHO_MS, maxRetries: 0 };
 function laQuaHan(error) {
   return error?.constructor?.name === 'APIConnectionTimeoutError'
     || /timed out|timeout/i.test(String(error?.message || ''));
+}
+
+// Lời gọi có tắt chế độ suy nghĩ, dùng chung cho cả ba chỗ gọi AI.
+//
+// Model nào không hiểu reasoning_effort thì gọi lại lần nữa không kèm tham số —
+// khi ấy /no_think trong prompt và boCauSuyNghi() ở đầu ra là hai lớp còn lại.
+async function goiChatTatSuyNghi(groq, thamSo) {
+  const tham = { ...thamSo, reasoning_effort: 'none' };
+  try {
+    return await groq.chat.completions.create(tham, TUY_CHON_GOI);
+  } catch (error) {
+    if (!String(error?.message || '').includes('reasoning_effort')) throw error;
+    delete tham.reasoning_effort;
+    return groq.chat.completions.create(tham, TUY_CHON_GOI);
+  }
 }
 
 // Tạo client muộn để server vẫn chạy được khi chưa có khoá API
@@ -180,24 +198,13 @@ ${TAT_SUY_NGHI}`;
  * cùng cách tắt suy nghĩ, cùng cách bóc thẻ và cắt câu.
  */
 export async function goiModelNPC(groq, model, systemPrompt, chatHistory) {
-  const thamSo = {
+  const completion = await goiChatTatSuyNghi(groq, {
     model,
     messages: [{ role: 'system', content: systemPrompt }, ...chatHistory],
     temperature: 0.6,
     // Trần cứng cho 3 câu, để lời thoại không có chỗ mà dài dòng ra
-    max_completion_tokens: 160,
-    // Model nào không hiểu tham số này thì gọi lại lần nữa không kèm nó
-    reasoning_effort: 'none'
-  };
-
-  let completion;
-  try {
-    completion = await groq.chat.completions.create(thamSo, TUY_CHON_GOI);
-  } catch (error) {
-    if (!String(error?.message || '').includes('reasoning_effort')) throw error;
-    delete thamSo.reasoning_effort;
-    completion = await groq.chat.completions.create(thamSo, TUY_CHON_GOI);
-  }
+    max_completion_tokens: 160
+  });
 
   return catBotCau(boCauSuyNghi(completion.choices[0]?.message?.content));
 }
@@ -275,17 +282,21 @@ Với tình huống an toàn, lý do thuyết phục là nêu được vì sao y
 {
   "muc": "thuyet_phuc" | "tam_duoc" | "khong_dat",
   "feedback": "một câu nhận xét ngắn, không mắng người chơi"
-}`;
+}
+
+${TAT_SUY_NGHI}`;
 
   try {
-    const response = await groq.chat.completions.create({
+    const response = await goiChatTatSuyNghi(groq, {
       model: MODEL_CHAM_DIEM,
       messages: [{ role: 'user', content: prompt }],
       temperature: 0.2,
       response_format: { type: 'json_object' }
-    }, TUY_CHON_GOI);
+    });
 
-    const ketQua = JSON.parse(response.choices[0].message.content);
+    // Thẻ <think> lọt ra là JSON.parse ném ngay, cả lượt chấm rơi xuống mức
+    // giữa dù model chấm đúng. Bóc thẻ trước khi parse, giống hệt đường NPC.
+    const ketQua = JSON.parse(boCauSuyNghi(response.choices[0].message.content));
     const muc = Object.values(MUC_LY_DO).includes(ketQua.muc) ? ketQua.muc : MUC_LY_DO.TAM_DUOC;
 
     return {
@@ -315,7 +326,9 @@ const PROMPT_TRO_LY = `Bạn là trợ lý an toàn mạng trong một game giá
 Tối đa 2 câu, tiếng Việt tự nhiên, không ngoại lệ. Vào thẳng gợi ý ngay từ chữ đầu — không nhắc lại, tóm tắt hay xác nhận câu hỏi, không dạo đầu kiểu "Câu hỏi hay", "Bạn đang hỏi về…".
 
 Ví dụ đúng cho câu hỏi "tin nhắn tới mang tên trường hay số riêng":
-"Trường thường nhắn từ tài khoản có tên, không phải số lạ. Bạn thử đối chiếu số này với số ghi trên cổng sinh viên xem."`;
+"Trường thường nhắn từ tài khoản có tên, không phải số lạ. Bạn thử đối chiếu số này với số ghi trên cổng sinh viên xem."
+
+${TAT_SUY_NGHI}`;
 
 /**
  * Dựng phần tình huống gửi cho trợ lý.
@@ -421,7 +434,7 @@ export async function hoiTroLyAnToan(caseData, cauHoi, lichSuTroLy = [], lichSuC
   const systemPrompt = dungPromptTroLy(caseData, lichSuChatNPC);
 
   try {
-    const completion = await groq.chat.completions.create({
+    const completion = await goiChatTatSuyNghi(groq, {
       model: MODEL_TRO_LY,
       messages: [
         { role: 'system', content: systemPrompt },
@@ -431,9 +444,9 @@ export async function hoiTroLyAnToan(caseData, cauHoi, lichSuTroLy = [], lichSuC
       temperature: 0.4,
       // Trần cứng, để câu trả lời không có chỗ mà dài dòng ra
       max_completion_tokens: 120
-    }, TUY_CHON_GOI);
+    });
 
-    const reply = completion.choices[0]?.message?.content?.trim();
+    const reply = boCauSuyNghi(completion.choices[0]?.message?.content);
     if (!reply) return { reply: cauTroLyDuPhong(lichSuTroLy), nguon: 'du_phong' };
     return { reply, nguon: 'ai' };
   } catch (error) {
