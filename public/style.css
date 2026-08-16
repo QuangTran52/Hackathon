@@ -1824,6 +1824,54 @@ svg { width: 100%; height: 100%; display: block; }
   .nhan-vat__the:has(.nhan-vat__radio:checked) { transform: none; }
 }
 
+/* ============ MÀN CÁCH CHƠI ============ */
+
+.man-cach-choi {
+  max-width: 560px;
+  min-height: calc(100dvh - var(--sp-6) * 2);
+  justify-content: center;
+  align-items: center;
+  gap: var(--sp-6);
+  text-align: center;
+}
+
+.cach-choi__slide {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-4);
+}
+
+.cach-choi__mascot { width: var(--mascot-choi); }
+
+.cach-choi__chu {
+  margin: 0;
+  font-size: var(--co-chu-17);
+  line-height: 1.6;
+}
+
+.cach-choi__cham {
+  display: flex;
+  justify-content: center;
+  gap: var(--sp-2);
+}
+
+.cach-choi__cham span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--border);
+}
+
+.cach-choi__cham span[aria-selected="true"] { background: var(--accent); }
+
+.cach-choi__nut {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-3);
+}
+
 /* ============ MÀN MENU ============ */
 
 /* Màn đầu tiên người chơi thấy, nên nó thuộc lớp vỏ hoàn toàn: thoáng, căn

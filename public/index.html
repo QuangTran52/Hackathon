@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Tỉnh táo — nhận diện lừa đảo</title>
+  <title>ONE MORE CLICK</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,7 +18,7 @@
      là vào thẳng menu, những lần vào game sau đi thẳng menu như cũ. -->
 <div class="man man-nhap-ten" id="man-nhap-ten" hidden>
   <div>
-    <h1 class="menu__ten">Tỉnh táo</h1>
+    <h1 class="menu__ten">GAME: ONE MORE CLICK</h1>
     <p class="menu__mo-ta">Trước khi bắt đầu, cho mình biết bạn là ai nhé</p>
   </div>
 
@@ -64,7 +64,7 @@
      không được bỏ. -->
 <div class="man man-menu" id="man-menu" hidden>
   <div>
-    <h1 class="menu__ten">Tỉnh táo</h1>
+    <h1 class="menu__ten">GAME: ONE MORE CLICK</h1>
     <p class="menu__mo-ta">Tập nhận ra tin nhắn, thư và cuộc gọi lừa đảo trước khi gặp ngoài đời</p>
   </div>
 
@@ -105,6 +105,36 @@
         <button type="button" class="chon" data-am-thanh="0" aria-pressed="false">Tắt</button>
       </div>
     </fieldset>
+  </div>
+</div>
+
+<!-- ============ MÀN XEM TRƯỚC HÀNH TRÌNH ============ -->
+<!-- Hiện đúng một lần, ngay sau /api/run/start, trước khi vào tình huống đầu
+     tiên. Dùng lại nguyên component thẻ giai đoạn của màn Hành trình
+     (veHanhTrinh) — route /api/run/outline đã tự ẩn tên các chặng chưa mở. -->
+<div class="man" id="man-xem-truoc" hidden>
+  <h1 class="tieu-de-man">Hành trình phía trước</h1>
+  <p class="nhan-nho">Chặng đầu đã mở, những chặng còn lại sẽ lộ ra khi bạn chơi tới</p>
+  <div class="ds-giai-doan" id="ds-giai-doan-xem-truoc"></div>
+  <button type="button" class="nut nut--chinh nut--rong" id="nut-bat-dau-hanh-trinh">Bắt đầu</button>
+</div>
+
+<!-- ============ MÀN CÁCH CHƠI ============ -->
+<!-- Carousel bốn bước, mascot đổi biểu cảm theo từng bước. Bỏ qua có ở mọi
+     bước vì nút nằm ngoài slide, không phải trong nội dung từng slide. -->
+<div class="man man-cach-choi" id="man-cach-choi" hidden>
+  <h1 class="tieu-de-man">Cách chơi</h1>
+
+  <div class="cach-choi__slide">
+    <img class="mascot cach-choi__mascot" id="cach-choi-mascot" src="/assets/mascot/mascot-binh-thuong.png" alt="Người hướng dẫn" width="180" height="180">
+    <p class="cach-choi__chu" id="cach-choi-chu"></p>
+  </div>
+
+  <div class="cach-choi__cham" id="cach-choi-cham" role="tablist" aria-label="Bước hướng dẫn"></div>
+
+  <div class="cach-choi__nut">
+    <button type="button" class="nut nut--vien" id="nut-bo-qua-cach-choi">Bỏ qua</button>
+    <button type="button" class="nut nut--chinh" id="nut-tiep-cach-choi">Tiếp</button>
   </div>
 </div>
 

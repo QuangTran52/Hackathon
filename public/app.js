@@ -64,6 +64,17 @@ const o = {
   nutHuyChoiMoi: el('nut-huy-choi-moi'),
   nutXacNhanChoiMoi: el('nut-xac-nhan-choi-moi'),
 
+  manXemTruoc: el('man-xem-truoc'),
+  dsGiaiDoanXemTruoc: el('ds-giai-doan-xem-truoc'),
+  nutBatDauHanhTrinh: el('nut-bat-dau-hanh-trinh'),
+
+  manCachChoi: el('man-cach-choi'),
+  cachChoiMascot: el('cach-choi-mascot'),
+  cachChoiChu: el('cach-choi-chu'),
+  cachChoiCham: el('cach-choi-cham'),
+  nutTiepCachChoi: el('nut-tiep-cach-choi'),
+  nutBoQuaCachChoi: el('nut-bo-qua-cach-choi'),
+
   manChoi: el('man-choi'),
   manQuyetDinh: el('man-quyet-dinh'),
   manBocTach: el('man-boc-tach'),
@@ -288,7 +299,7 @@ function canhBaoNoiDung(danhSach = []) {
 
 // ================= ĐIỀU HƯỚNG MÀN =================
 
-const MOI_MAN = ['manNhapTen', 'manMenu', 'manChoi', 'manQuyetDinh', 'manBocTach', 'manHanhTrinh', 'manKet'];
+const MOI_MAN = ['manNhapTen', 'manMenu', 'manXemTruoc', 'manCachChoi', 'manChoi', 'manQuyetDinh', 'manBocTach', 'manHanhTrinh', 'manKet'];
 
 function hienMan(ten) {
   for (const m of MOI_MAN) o[m].hidden = m !== ten;
@@ -300,6 +311,7 @@ function hienMan(ten) {
 const KHOA_CAI_DAT = 'tinh-tao:cai-dat';
 const KHOA_TIEN_DO = 'tinh-tao:tien-do';
 const KHOA_NGUOI_CHOI = 'tinh-tao:nguoi-choi';
+const KHOA_DA_XEM_GIOI_THIEU = 'tinh-tao:da-xem-gioi-thieu';
 
 // Đổi số này khi hình dạng bản lưu đổi, bản cũ sẽ bị bỏ qua thay vì dựng hỏng
 const PHIEN_BAN_LUU = 1;
@@ -333,6 +345,11 @@ function xoaKho(khoa) {
   }
 }
 
+// Cờ xem màn xem trước hành trình + cách chơi. Đọc lỗi (riêng tư, hết dung
+// lượng) thì coi như chưa xem — thà hiện lại còn hơn kẹt người chơi mới.
+const daXemGioiThieu = () => docKho(KHOA_DA_XEM_GIOI_THIEU) === true;
+const danhDauDaXemGioiThieu = () => ghiKho(KHOA_DA_XEM_GIOI_THIEU, true);
+
 // ================= CÀI ĐẶT: CỠ CHỮ VÀ ÂM THANH =================
 
 const caiDat = { coChu: 'vua', amThanh: true, ...(docKho(KHOA_CAI_DAT) || {}) };
@@ -364,6 +381,16 @@ function datCaiDat(phan) {
 const tiengBam = new Audio('/assets/sound/click.mp3');
 tiengBam.volume = 0.4;
 tiengBam.preload = 'auto';
+
+// Nghe ở tầng tài liệu, giai đoạn bắt, nên mọi nút đều kêu mà không nút nào
+// phải tự nhớ gọi — kể cả nút dựng ra sau này. Giai đoạn bắt vì vài chỗ chặn
+// lan truyền, mà chặn lan truyền là chuyện của luồng xử lý chứ không phải cớ
+// để im tiếng. Nút đang disabled thì trình duyệt không bắn click, tự khắc im.
+const CHON_BAM_DUOC = 'button, [role="button"], summary';
+
+function nghePhimBam(su) {
+  if (su.target.closest(CHON_BAM_DUOC)) phatTiengBam();
+}
 
 function phatTiengBam() {
   if (!caiDat.amThanh) return;
@@ -1274,13 +1301,76 @@ async function batDauLuot() {
     trangThai.luotId = batDau.tienDo.luotId;
     trangThai.chang = Array.from({ length: batDau.tienDo.tongSoCase }, () => 'chua_toi');
     veTienTrinh();
-    await napCaseHienTai();
     await luuTienDo();
+
+    if (daXemGioiThieu()) await napCaseHienTai();
+    else await moManXemTruocHanhTrinh();
   } catch (loi) {
     hienLoi(loi);
     noiMascot('Chưa vào được lượt. Thử lại từ menu nhé.');
     moManMenu();
   }
+}
+
+// ================= XEM TRƯỚC HÀNH TRÌNH VÀ CÁCH CHƠI =================
+// Chỉ chen vào lượt chơi đầu tiên trên một máy. Từ lượt chơi mới thứ hai trở
+// đi, đã có cờ trong localStorage nên batDauLuot() bỏ qua thẳng napCaseHienTai.
+
+async function moManXemTruocHanhTrinh() {
+  try {
+    anLoi();
+    await veHanhTrinh(o.dsGiaiDoanXemTruoc);
+    hienMan('manXemTruoc');
+  } catch (loi) {
+    // Xem trước hỏng thì cũng không chặn được lượt chơi vì việc chính
+    hienLoi(loi);
+    await napCaseHienTai();
+  }
+}
+
+const CACH_CHOI_SLIDE = [
+  { mascot: 'canhGiac', chu: 'Đọc kỹ tình huống, bấm vào chỗ bạn thấy đáng ngờ để đánh dấu lại' },
+  { mascot: 'binhThuong', chu: 'Chưa chắc thì bấm Kiểm chứng để hỏi lại kênh chính thức — không bao giờ bị phạt vì hỏi' },
+  { mascot: 'binhThuong', chu: 'Chốt lại bằng cách chọn Làm theo hoặc Không làm' },
+  { mascot: 'khenNgoi', chu: 'Xem bài học ở màn kết quả — mỗi tình huống đều có lời giải' }
+];
+
+let chiSoCachChoi = 0;
+
+function veCachChoi() {
+  const buoc = CACH_CHOI_SLIDE[chiSoCachChoi];
+  datMascot(o.cachChoiMascot, buoc.mascot);
+  o.cachChoiChu.textContent = buoc.chu;
+
+  o.cachChoiCham.innerHTML = '';
+  CACH_CHOI_SLIDE.forEach((_, i) => {
+    const cham = document.createElement('span');
+    cham.setAttribute('role', 'presentation');
+    cham.setAttribute('aria-selected', i === chiSoCachChoi ? 'true' : 'false');
+    o.cachChoiCham.appendChild(cham);
+  });
+
+  o.nutTiepCachChoi.textContent = chiSoCachChoi === CACH_CHOI_SLIDE.length - 1 ? 'Bắt đầu chơi' : 'Tiếp';
+}
+
+function moManCachChoi() {
+  chiSoCachChoi = 0;
+  veCachChoi();
+  hienMan('manCachChoi');
+}
+
+function bamTiepCachChoi() {
+  if (chiSoCachChoi < CACH_CHOI_SLIDE.length - 1) {
+    chiSoCachChoi += 1;
+    veCachChoi();
+  } else {
+    hoanTatGioiThieu();
+  }
+}
+
+async function hoanTatGioiThieu() {
+  danhDauDaXemGioiThieu();
+  await napCaseHienTai();
 }
 
 async function napCaseHienTai() {
@@ -1334,7 +1424,6 @@ async function guiTinNhan(su) {
   const chu = o.nhapTin.value.trim();
   if (!chu || trangThai.dangCho || trangThai.daChotQuyetDinh) return;
 
-  phatTiengBam();
   trangThai.dangCho = true;
   o.nhapTin.value = '';
   o.nhapTin.disabled = true;
@@ -1926,6 +2015,9 @@ async function vaoManOnTap() {
 
 // ================= SỰ KIỆN =================
 
+// Tiếng bấm cho mọi nút và mọi cụm đánh dấu, gắn một chỗ duy nhất
+document.addEventListener('click', nghePhimBam, true);
+
 // ---- Màn menu ----
 
 o.nutChoiMoi.addEventListener('click', bamChoiMoi);
@@ -1959,6 +2051,9 @@ o.cotGiua.addEventListener('keydown', (su) => {
   const cum = su.target.closest('.cum');
   if (!cum) return;
   su.preventDefault();
+  // Cụm là span mang role button chứ không phải thẻ button, nên bàn phím
+  // không sinh ra click — không gọi ở đây là đánh dấu bằng phím thì im tiếng
+  phatTiengBam();
   batTatCum(cum.dataset.spanId);
 });
 
@@ -1986,10 +2081,7 @@ manRong.addEventListener('change', chinhOBangChung);
 chinhOBangChung();
 
 // Bước 1 sang bước 2
-o.nutSanSang.addEventListener('click', () => {
-  phatTiengBam();
-  moXacNhan();
-});
+o.nutSanSang.addEventListener('click', moXacNhan);
 
 // Bước 2: hai lối ra, quay lại hỏi thêm hoặc sang màn quyết định
 o.nutQuayLaiHoi.addEventListener('click', dongXacNhan);
@@ -2003,10 +2095,7 @@ o.nutNgheLai.addEventListener('click', () => {
 });
 // Cùng một lượt kiểm chứng với nút ở dưới màn chơi, chỉ khác cách gọi tên cho
 // hợp bối cảnh cuộc gọi. Design Spec mục 9.
-o.nutGoiLai.addEventListener('click', () => {
-  phatTiengBam();
-  moKiemChung();
-});
+o.nutGoiLai.addEventListener('click', moKiemChung);
 
 // Escape gắn ở tài liệu để đóng được overlay dù con trỏ đang ở đâu
 document.addEventListener('keydown', (su) => {
@@ -2020,14 +2109,12 @@ document.addEventListener('keydown', (su) => {
 
 // Bước 3
 o.nutLamTheo.addEventListener('click', () => {
-  phatTiengBam();
   o.oLyDo.hidden = true;
   guiQuyetDinh(QUYET_DINH.LAM_THEO, '');
 });
 
 // Không làm thì hỏi lý do trước khi gửi
 o.nutKhongLam.addEventListener('click', () => {
-  phatTiengBam();
   o.oLyDo.hidden = false;
   o.nhapLyDo.focus();
 });
@@ -2041,15 +2128,11 @@ o.nutGuiLyDo.addEventListener('click', () => {
   guiQuyetDinh(QUYET_DINH.KHONG_LAM, o.nhapLyDo.value.trim());
 });
 
-o.nutKiemChung.addEventListener('click', () => {
-  phatTiengBam();
-  moKiemChung();
-});
+o.nutKiemChung.addEventListener('click', moKiemChung);
 o.nutDongKiemChung.addEventListener('click', dongKiemChung);
 o.nutQuayLaiChat.addEventListener('click', dongKiemChung);
 
 o.nutChoiTiep.addEventListener('click', () => {
-  phatTiengBam();
   if (trangThai.changDangXem === 'ket') {
     veManKet();
     return;
@@ -2057,6 +2140,10 @@ o.nutChoiTiep.addEventListener('click', () => {
   if (trangThai.hetCase) veManKet();
   else moManHanhTrinh();
 });
+
+o.nutBatDauHanhTrinh.addEventListener('click', moManCachChoi);
+o.nutTiepCachChoi.addEventListener('click', bamTiepCachChoi);
+o.nutBoQuaCachChoi.addEventListener('click', hoanTatGioiThieu);
 
 o.nutTiepChang.addEventListener('click', napCaseHienTai);
 o.nutOnTap.addEventListener('click', vaoManOnTap);
