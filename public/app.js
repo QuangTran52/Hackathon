@@ -1904,8 +1904,9 @@ function veTheGiaiDoan(giaiDoan, { moHet, choBam }) {
 
     const ten = document.createElement('span');
     ten.className = 'chang-hang__ten';
-    // Tên chặng chỉ hiện sau khi đã mở
-    ten.textContent = ch.title || 'chưa mở';
+    // Tên tình huống cụ thể chỉ hiện sau khi đã mở. Chưa mở thì hiện tên chủ
+    // đề thay vì "chưa mở" trống trơn — biết chủ đề không mách trước diễn biến
+    ten.textContent = ch.title || ch.topicName || 'chưa mở';
 
     hang.append(so, ten);
 

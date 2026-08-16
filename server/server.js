@@ -360,6 +360,13 @@ app.post('/api/case/decision', async_(async (req, res) => {
 app.get('/api/run/outline', (req, res) => {
   if (gameState.run.cases.length === 0) return chuaBatDau(res);
 
+  // Tên topic tra theo id, dùng để lộ chủ đề ngay cả khi chặng chưa mở —
+  // khác với title (tên tình huống cụ thể), tên topic không mách trước diễn biến
+  const tenTopicTheoId = new Map();
+  for (const stage of database.stages || []) {
+    for (const topic of stage.topics || []) tenTopicTheoId.set(topic.id, topic.name);
+  }
+
   const moHet = Boolean(gameState.ketCuc);
   const chang = gameState.run.cases.map((c, i) => {
     const ketQua = gameState.ketQuaTheoCase[c.id];
@@ -377,6 +384,7 @@ app.get('/api/run/outline', (req, res) => {
       caseId: daMo ? c.id : null,
       stageId: c.stageId || null,
       trangThai,
+      topicName: tenTopicTheoId.get(c.topicId) || null,
       title: daMo ? c.title : null
     };
   });
