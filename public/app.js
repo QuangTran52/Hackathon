@@ -1329,6 +1329,8 @@ async function moManXemTruocHanhTrinh() {
 }
 
 const CACH_CHOI_SLIDE = [
+  { mascot: 'binhThuong', chu: 'Bạn sắp bước vào một hành trình cuộc đời, từ học sinh sinh viên, đến người đi làm, rồi người lớn tuổi. Ở mỗi chặng, sẽ có người tìm đến bạn qua tin nhắn, email, hay cuộc gọi. Có người thật, có kẻ giả danh. Nhiệm vụ của bạn là nhận ra sự khác biệt trước khi quá muộn' },
+  { mascot: 'binhThuong', chu: 'Cột giữa là nơi bạn nói chuyện với người vừa liên hệ. Có thể là người thật, cũng có thể là kẻ lừa đảo. Cột bên phải là trợ lý an toàn của bạn, luôn sẵn sàng gợi ý nếu cần, nhưng không biết trước ai đúng ai sai' },
   { mascot: 'canhGiac', chu: 'Đọc kỹ tình huống, bấm vào chỗ bạn thấy đáng ngờ để đánh dấu lại' },
   { mascot: 'binhThuong', chu: 'Chưa chắc thì bấm Kiểm chứng để hỏi lại kênh chính thức — không bao giờ bị phạt vì hỏi' },
   { mascot: 'binhThuong', chu: 'Chốt lại bằng cách chọn Làm theo hoặc Không làm' },
