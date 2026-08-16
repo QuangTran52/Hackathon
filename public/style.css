@@ -1885,13 +1885,19 @@ svg { width: 100%; height: 100%; display: block; }
   text-align: center;
 }
 
-.menu__ten {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: var(--co-chu-40);
-  line-height: 1.2;
-  font-weight: 600;
+.menu__logo { margin: 0; }
+
+.menu__logo-anh {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0 auto;
 }
+
+/* Menu chính là màn rộng rãi nhất nên logo lớn nhất. Màn chọn nhân vật còn
+   phải chia chỗ với ảnh nhân vật nên logo vừa phải hơn. */
+.menu__logo--lon .menu__logo-anh { max-width: 320px; }
+.menu__logo--vua .menu__logo-anh { max-width: 240px; }
 
 .menu__mo-ta {
   margin: var(--sp-2) 0 0;
@@ -2013,6 +2019,8 @@ svg { width: 100%; height: 100%; display: block; }
   /* Mascot xuống cuối cột, dưới cả trợ lý thì lạc chỗ, nên giữ trong sổ tay */
   .khu-mascot--cuoi .mascot { width: 140px; }
   .menu__mascot { width: 160px; }
+  .menu__logo--lon .menu__logo-anh { max-width: 220px; }
+  .menu__logo--vua .menu__logo-anh { max-width: 180px; }
 
   .dien-thoai { width: 100%; max-width: var(--rong-dien-thoai-max); }
   .nhom-nut { grid-template-columns: 1fr; }
