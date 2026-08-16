@@ -265,9 +265,9 @@ kiemTra('chỉ số khởi điểm', gameState.stats, { sucKhoe: 80, lyTri: 70 }
     danhDau: 'moi'
   });
   kiemTra('từ chối nhầm không trừ sức khoẻ', gameState.stats.sucKhoe, truoc);
-  // -5 vì từ chối nhầm, +2 vì lý do tạm được đã bị giảm nửa (5 -> 2) do quyết định sai
-  kiemTra('điểm lý do bị giảm nửa khi sai', [kq.diemLyDoGoc, kq.diem.lyDo], [5, { lyTri: 2 }]);
-  kiemTra('chỉ số sau case 2', gameState.stats.lyTri, 57);
+  // -5 vì từ chối nhầm, +1 vì lý do tạm được đã bị giảm nửa (3 -> 1) do quyết định sai
+  kiemTra('điểm lý do bị giảm nửa khi sai', [kq.diemLyDoGoc, kq.diem.lyDo], [3, { lyTri: 1 }]);
+  kiemTra('chỉ số sau case 2', gameState.stats.lyTri, 56);
   kiemTra('bấm nhầm cụm mồi không bị phạt', kq.diem.danhDau, { lyTri: 0 });
 }
 
@@ -281,7 +281,7 @@ kiemTra('chỉ số khởi điểm', gameState.stats, { sucKhoe: 80, lyTri: 70 }
     kiemChung: 1,
     soLuotChat: 2
   });
-  kiemTra('bị lừa mất tiền', [kq.thietHai, gameState.stats.sucKhoe, gameState.stats.lyTri], ['mat_tien', 60, 42]);
+  kiemTra('bị lừa mất tiền', [kq.thietHai, gameState.stats.sucKhoe, gameState.stats.lyTri], ['mat_tien', 60, 41]);
 }
 
 // --- Case 4: case khó nhưng vẫn làm theo — mất tiền, không có thưởng case khó ---
@@ -291,22 +291,22 @@ kiemTra('chỉ số khởi điểm', gameState.stats, { sucKhoe: 80, lyTri: 70 }
     reasonLevel: MUC_LY_DO.KHONG_DAT,
     kiemChung: 1
   });
-  kiemTra('lý trí 42 đã bật hỗ trợ nên được thêm lượt kiểm chứng', kq.hoTroDaBat, true);
+  kiemTra('lý trí 41 đã bật hỗ trợ nên được thêm lượt kiểm chứng', kq.hoTroDaBat, true);
   kiemTra('sai thì không có thưởng case khó', kq.diem.caseKho, { sucKhoe: 0 });
-  kiemTra('chỉ số sau case 4', [gameState.stats.sucKhoe, gameState.stats.lyTri], [45, 27]);
+  kiemTra('chỉ số sau case 4', [gameState.stats.sucKhoe, gameState.stats.lyTri], [45, 26]);
 }
 
 // --- Case 5: lại từ chối nhầm case an toàn ---
 {
   choiMotCase(gameState, { decision: QUYET_DINH.KHONG_LAM, reasonLevel: MUC_LY_DO.KHONG_DAT });
-  kiemTra('chỉ số sau case 5', [gameState.stats.sucKhoe, gameState.stats.lyTri], [45, 22]);
+  kiemTra('chỉ số sau case 5', [gameState.stats.sucKhoe, gameState.stats.lyTri], [45, 21]);
 }
 
 // --- Case 6: làm theo, lộ thông tin, lý trí xuống sát đáy ---
 {
   choiMotCase(gameState, { decision: QUYET_DINH.LAM_THEO, reasonLevel: MUC_LY_DO.KHONG_DAT, kiemChung: 1 });
-  kiemTra('chỉ số sau case 6', [gameState.stats.sucKhoe, gameState.stats.lyTri], [40, 12]);
-  kiemTra('lý trí 12 vẫn đang bật hỗ trợ', gameState.trangThaiHoTro().bat, true);
+  kiemTra('chỉ số sau case 6', [gameState.stats.sucKhoe, gameState.stats.lyTri], [40, 11]);
+  kiemTra('lý trí 11 vẫn đang bật hỗ trợ', gameState.trangThaiHoTro().bat, true);
   kiemTra('sức khoẻ 40 chưa chạm ngưỡng thua sớm 30', gameState.isGameOver, false);
 }
 
@@ -323,10 +323,10 @@ kiemTra('chỉ số khởi điểm', gameState.stats, { sucKhoe: 80, lyTri: 70 }
   kiemTra('hỗ trợ cho đủ 2 lượt kiểm chứng', kq.kiemChungDaChon.length, 2);
   kiemTra('vượt case khó và đúng', kq.diem.caseKho, { sucKhoe: 5 });
   kiemTra('quyết định đúng cộng 10 lý trí', kq.diem.quyetDinh, { lyTri: 10 });
-  kiemTra('lý do thuyết phục cộng 10', kq.diem.lyDo, { lyTri: 10 });
+  kiemTra('lý do thuyết phục cộng 5', kq.diem.lyDo, { lyTri: 5 });
   kiemTra('đánh dấu đủ cộng 5', kq.diem.danhDau, { lyTri: 5 });
-  // 40 + 5 (kiểm chứng lần đầu) + 5 (vượt case khó) = 50 sức khoẻ; 12 + 25 = 37 lý trí
-  kiemTra('chỉ số sau case 7', [gameState.stats.sucKhoe, gameState.stats.lyTri], [50, 37]);
+  // 40 + 5 (kiểm chứng lần đầu) + 5 (vượt case khó) = 50 sức khoẻ; 11 + 20 = 31 lý trí
+  kiemTra('chỉ số sau case 7', [gameState.stats.sucKhoe, gameState.stats.lyTri], [50, 31]);
   kiemTra('làm đúng thì phần thưởng vào đủ, không bị trần nuốt', tongYeuCau(kq.diem), kq.tongThayDoi);
 }
 
@@ -338,7 +338,7 @@ kiemTra('chỉ số khởi điểm', gameState.stats, { sucKhoe: 80, lyTri: 70 }
     danhDau: 'mot_phan'
   });
   kiemTra('case an toàn không có dấu hiệu đỏ để chấm', kq.mucDanhDau, 'khong_ap_dung');
-  kiemTra('chỉ số sau case 8', [gameState.stats.sucKhoe, gameState.stats.lyTri], [50, 52]);
+  kiemTra('chỉ số sau case 8', [gameState.stats.sucKhoe, gameState.stats.lyTri], [50, 44]);
   kiemTra('hết case trong lượt', kq.hetCase, true);
   kiemTra('kết cục chưa đạt', kq.ketCuc.loai, KET_CUC.CHUA_DAT);
   kiemTra('chưa đạt thì chưa kết thúc game', gameState.isGameOver, false);
@@ -400,27 +400,27 @@ chiSo(gsB, '(khởi điểm)');
 // mà khởi đầu 100 làm hỏng — mọi thứ bị kẹp trần và chỉ số đứng im.
 {
   const kq = choiMotCase(gsB, { decision: QUYET_DINH.LAM_THEO, reasonLevel: MUC_LY_DO.THUYET_PHUC, kiemChung: 1 });
-  kiemTra('phần thưởng case đầu làm chỉ số tăng thật', gsB.stats, { sucKhoe: 85, lyTri: 90 });
+  kiemTra('phần thưởng case đầu làm chỉ số tăng thật', gsB.stats, { sucKhoe: 85, lyTri: 85 });
   kiemTra('không còn phải báo "chỉ số đang ở mức tối đa"', tongYeuCau(kq.diem), kq.tongThayDoi);
 }
 
 choiMotCase(gsB, { decision: QUYET_DINH.LAM_THEO, reasonLevel: MUC_LY_DO.KHONG_DAT });
-kiemTra('sau lần bị lừa thứ nhất', [gsB.stats.sucKhoe, gsB.stats.lyTri], [65, 75]);
+kiemTra('sau lần bị lừa thứ nhất', [gsB.stats.sucKhoe, gsB.stats.lyTri], [65, 70]);
 
 choiMotCase(gsB, { decision: QUYET_DINH.LAM_THEO, reasonLevel: MUC_LY_DO.KHONG_DAT });
-kiemTra('sau lần bị lừa thứ hai, vẫn chưa thua', [gsB.stats.sucKhoe, gsB.stats.lyTri], [45, 60]);
-kiemTra('lý trí 60 chưa bật hỗ trợ', gsB.trangThaiHoTro().bat, false);
+kiemTra('sau lần bị lừa thứ hai, vẫn chưa thua', [gsB.stats.sucKhoe, gsB.stats.lyTri], [45, 55]);
+kiemTra('lý trí 55 chưa bật hỗ trợ', gsB.trangThaiHoTro().bat, false);
 kiemTra('chưa thua sau hai lần mất tiền', gsB.isGameOver, false);
 
 const cuoiB = choiMotCase(gsB, { decision: QUYET_DINH.LAM_THEO, reasonLevel: MUC_LY_DO.KHONG_DAT });
 kiemTra('lần mất tiền thứ ba là thua sớm', cuoiB.ketCuc.loai, KET_CUC.THUA_SOM);
 kiemTra('game kết thúc', gsB.isGameOver, true);
-kiemTra('chỉ số lúc thua', [gsB.stats.sucKhoe, gsB.stats.lyTri], [25, 45]);
+kiemTra('chỉ số lúc thua', [gsB.stats.sucKhoe, gsB.stats.lyTri], [25, 40]);
 
 // Sau khi thua, chỉ số đóng băng và không mở được case mới
 const dongBang = gsB.applyDelta({ sucKhoe: -50, lyTri: 50 }, 'thử đổi sau khi thua');
 kiemTra('applyDelta bị bỏ qua sau khi thua', dongBang.boQua, true);
-kiemTra('chỉ số không đổi sau khi thua', [gsB.stats.sucKhoe, gsB.stats.lyTri], [25, 45]);
+kiemTra('chỉ số không đổi sau khi thua', [gsB.stats.sucKhoe, gsB.stats.lyTri], [25, 40]);
 kiemTra('không mở được case mới', gsB.openNextCase(), null);
 
 // ---- Thua sớm vẫn phải vào được ôn tập (Design Spec mục 10, màn 9) ----
@@ -504,13 +504,15 @@ const kqC = gsC.submitDecision({
 console.log(`   tổng thay đổi: ${JSON.stringify(kqC.tongThayDoi)}`);
 chiSo(gsC);
 kiemTra('đánh dấu đủ nhờ hỗ trợ', kqC.mucDanhDau, 'du');
-kiemTra('lý trí sau khi làm đúng', gsC.stats.lyTri, 70);
+kiemTra('lý trí sau khi làm đúng', gsC.stats.lyTri, 65);
 
 const viewC2 = gsC.openNextCase();
-kiemTra('lý trí 70 thì tắt hỗ trợ', viewC2.hoTro.bat, false);
-kiemTra('lý trí 70 chưa tính là tự lực', viewC2.hoTro.duNangLuc, false);
-gsC.applyDelta({ lyTri: 15 }, 'lên 85');
-kiemTra('lý trí 85 là tự lực hoàn toàn', gsC.trangThaiHoTro().duNangLuc, true);
+kiemTra('lý trí 65 thì tắt hỗ trợ', viewC2.hoTro.bat, false);
+kiemTra('lý trí 65 chưa tính là tự lực', viewC2.hoTro.duNangLuc, false);
+// Lên đúng 80, tức chạm sát ngưỡng tự lực. Ngưỡng dùng phép so sánh >= nên
+// đứng ngay trên mốc phải tính là tự lực — chạm đúng mốc mới soi ra được.
+gsC.applyDelta({ lyTri: 15 }, 'lên 80');
+kiemTra('lý trí chạm đúng ngưỡng 80 là tự lực hoàn toàn', gsC.trangThaiHoTro().duNangLuc, true);
 
 // ================= LƯỢT D — ĐIỂM LÝ DO KHI SAI VÀ TRƯỜNG HARM =================
 
@@ -527,41 +529,43 @@ gsD.startRun([
   taoTinhHuong({ id: 'd5_an_toan', type: 'safe', difficulty: 'de', soDauHieuDo: 0, hoTro: false })
 ]);
 
-// Từ chối nhầm case an toàn kèm lý do thuyết phục: -5 và +10 giảm nửa thành +5 → hoà vốn
+// Từ chối nhầm case an toàn kèm lý do thuyết phục: -5 và +5 giảm nửa thành +2 → vẫn lỗ 3.
+// Trước đây thang điểm cũ cho đúng hoà vốn ở nước này; thang mới cố tình để lỗ,
+// nên lý do hay đến mấy cũng không gỡ nổi một quyết định sai.
 {
   const kq = choiMotCase(gsD, { decision: QUYET_DINH.KHONG_LAM, reasonLevel: MUC_LY_DO.THUYET_PHUC });
-  kiemTra('lý do thuyết phục nhưng sai chỉ còn +5', [kq.diemLyDoGoc, kq.diem.lyDo], [10, { lyTri: 5 }]);
-  kiemTra('từ chối nhầm kèm lý do tốt hoà vốn, không được thưởng', kq.tongThayDoi, { sucKhoe: 0, lyTri: 0 });
-  kiemTra('chỉ số giữ nguyên', gsD.stats, { sucKhoe: 80, lyTri: 70 });
+  kiemTra('lý do thuyết phục nhưng sai chỉ còn +2', [kq.diemLyDoGoc, kq.diem.lyDo], [5, { lyTri: 2 }]);
+  kiemTra('từ chối nhầm kèm lý do tốt vẫn lỗ, không hoà vốn', kq.tongThayDoi, { sucKhoe: 0, lyTri: -3 });
+  kiemTra('sức khoẻ không bị đụng, lý trí lỗ 3', gsD.stats, { sucKhoe: 80, lyTri: 67 });
 }
 
-// Lý do tạm được khi sai: 5 * 0.5 = 2.5, làm tròn xuống còn 2
+// Lý do tạm được khi sai: 3 * 0.5 = 1.5, làm tròn xuống còn 1
 {
   const kq = choiMotCase(gsD, { decision: QUYET_DINH.KHONG_LAM, reasonLevel: MUC_LY_DO.TAM_DUOC });
-  kiemTra('lý do tạm được khi sai làm tròn xuống còn +2', kq.diem.lyDo, { lyTri: 2 });
-  kiemTra('vẫn lỗ 3 lý trí', [kq.tongThayDoi, gsD.stats.lyTri], [{ sucKhoe: 0, lyTri: -3 }, 67]);
+  kiemTra('lý do tạm được khi sai làm tròn xuống còn +1', kq.diem.lyDo, { lyTri: 1 });
+  kiemTra('vẫn lỗ 4 lý trí', [kq.tongThayDoi, gsD.stats.lyTri], [{ sucKhoe: 0, lyTri: -4 }, 63]);
 }
 
 // Thiếu harm: suy ra lo_thong_tin và in cảnh báo cho bên nội dung
 {
   const kq = choiMotCase(gsD, { decision: QUYET_DINH.LAM_THEO, reasonLevel: MUC_LY_DO.THUYET_PHUC });
   kiemTra('thiếu harm thì suy ra lo_thong_tin', kq.thietHai, 'lo_thong_tin');
-  kiemTra('bị lừa mà lý do hay cũng chỉ được +5', kq.diem.lyDo, { lyTri: 5 });
-  kiemTra('chỉ số sau case thiếu harm', [gsD.stats.sucKhoe, gsD.stats.lyTri], [70, 62]);
+  kiemTra('bị lừa mà lý do hay cũng chỉ được +2', kq.diem.lyDo, { lyTri: 2 });
+  kiemTra('chỉ số sau case thiếu harm', [gsD.stats.sucKhoe, gsD.stats.lyTri], [70, 55]);
 }
 
 // Có harm khai báo thì dùng harm, không nhìn npc.amount nữa
 {
   const kq = choiMotCase(gsD, { decision: QUYET_DINH.LAM_THEO, reasonLevel: MUC_LY_DO.KHONG_DAT });
   kiemTra('harm khai báo thắng suy đoán từ npc.amount', kq.thietHai, 'lo_thong_tin');
-  kiemTra('chỉ số sau case có harm', [gsD.stats.sucKhoe, gsD.stats.lyTri], [60, 52]);
+  kiemTra('chỉ số sau case có harm', [gsD.stats.sucKhoe, gsD.stats.lyTri], [60, 45]);
 }
 
 // Quyết định đúng thì điểm lý do vẫn nguyên giá
 {
   const kq = choiMotCase(gsD, { decision: QUYET_DINH.LAM_THEO, reasonLevel: MUC_LY_DO.THUYET_PHUC });
-  kiemTra('đúng thì lý do vẫn được đủ 10', [kq.quyetDinhDung, kq.diem.lyDo], [true, { lyTri: 10 }]);
-  kiemTra('cả 20 điểm thưởng vào thật, không bị trần cắt', [tongYeuCau(kq.diem), gsD.stats.lyTri], [kq.tongThayDoi, 72]);
+  kiemTra('đúng thì lý do vẫn được đủ 5', [kq.quyetDinhDung, kq.diem.lyDo], [true, { lyTri: 5 }]);
+  kiemTra('cả 15 điểm thưởng vào thật, không bị trần cắt', [tongYeuCau(kq.diem), gsD.stats.lyTri], [kq.tongThayDoi, 60]);
 }
 
 // ================= LƯỢT F — THUA SỚM GIỮA CHỪNG RỒI CHƠI NỐT LƯỢT =================

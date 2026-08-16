@@ -47,8 +47,8 @@ export const BANG_DIEM = {
   quyetDinhDung: { lyTri: 10 },
   lyDo: {
     [MUC_LY_DO.KHONG_DAT]: { lyTri: 0 },
-    [MUC_LY_DO.TAM_DUOC]: { lyTri: 5 },
-    [MUC_LY_DO.THUYET_PHUC]: { lyTri: 10 }
+    [MUC_LY_DO.TAM_DUOC]: { lyTri: 3 },
+    [MUC_LY_DO.THUYET_PHUC]: { lyTri: 5 }
   },
   // Quyết định sai thì điểm lý do chỉ còn một nửa, làm tròn xuống.
   // Lý do hay vẫn được ghi nhận, nhưng không đủ để biến một nước sai thành có lời.
