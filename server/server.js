@@ -597,4 +597,4 @@ app.listen(PORT, () => {
 });
 
 // BẮT BUỘC CÓ DÒNG NÀY CHO VERCEL:
-module.exports = app;
+export default app;
