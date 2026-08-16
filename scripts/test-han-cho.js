@@ -28,7 +28,7 @@ process.env.GROQ_API_KEY = process.env.GROQ_API_KEY || 'khoa-gia-de-dung-client'
 const { taoLoiThoaiNPC, hoiTroLyAnToan, chamDiemLyDo } =
   await import(pathToFileURL(path.join(goc, 'server/groqService.js')).href);
 const j = JSON.parse(fs.readFileSync(path.join(goc, 'data/database.json'), 'utf8'));
-const c = j.stages.flatMap((s) => s.topics).flatMap((t) => t.variants).find((v) => v.id === 'case_hoc_phi_lua');
+const c = j.stages.flatMap((s) => s.topics).flatMap((t) => t.variants).find((v) => v.id === 'case_hack_ban_xin_tin_chi');
 
 // Hạn chờ là 6000ms. Nới thêm 2 giây cho lúc máy chậm, nhưng không nới nữa:
 // SDK mặc định thử lại 2 lần, nên quên maxRetries: 0 là vượt ngưỡng này ngay.

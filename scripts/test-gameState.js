@@ -189,8 +189,8 @@ tieuDe('LƯỢT A — chơi hết case, chưa đạt, vào ôn tập rồi thắ
 // Lượt A pin sẵn danh sách tình huống của riêng nó để mọi con số kiểm tra bên
 // dưới cố định. Việc khớp với casePicker.pickRun() thử riêng ở lượt E.
 const luotA = [
-  layTinhHuongThat('case_luong_lua'),  // scam thật trong database, harm = lo_thong_tin
-  layTinhHuongThat('case_luong_that'), // safe thật trong database
+  layTinhHuongThat('case_hack_ban_xin_tin_chi'),  // scam thật trong database, harm = lo_thong_tin
+  layTinhHuongThat('case_hoc_phi_bo_sung_that'),  // safe thật trong database
   taoTinhHuong({ id: 'fx_chuyen_khoan', type: 'scam', difficulty: 'trung_binh', soDauHieuDo: 3, coTien: true }),
   taoTinhHuong({ id: 'fx_deepfake', type: 'scam', difficulty: 'kho', soDauHieuDo: 2, coTien: true }),
   taoTinhHuong({ id: 'fx_hoc_bong', type: 'safe', difficulty: 'de', soDauHieuDo: 0, hoTro: false }),
