@@ -20,8 +20,9 @@ import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
+import { randomUUID } from 'crypto';
 
-import gameState, { QUYET_DINH, KET_CUC } from './gameState.js';
+import { GameState, QUYET_DINH, KET_CUC } from './gameState.js';
 import { pickRun, pickDemoRun, pickCaseIds } from './casePicker.js';
 import { taoLoiThoaiNPC, chamDiemLyDo, hoiTroLyAnToan, coKhoaAI } from './groqService.js';
 
@@ -41,34 +42,106 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
 });
 
-// ================= TRẠNG THÁI PHỤ =================
+// ================= PHIÊN THEO TRÌNH DUYỆT =================
 
-// gameState không giữ nội dung hội thoại, chỉ đếm lượt. Lịch sử chat sống ở đây
-// và bị xoá mỗi khi sang tình huống mới.
+// Mỗi trình duyệt một trạng thái riêng. Trước đây cả máy chủ dùng chung đúng
+// một thực thể GameState, nên hai người mở game cùng lúc là đè chỉ số lên nhau
+// và nhảy vào tình huống của nhau.
+//
+// Cookie chỉ giữ mã phiên, toàn bộ trạng thái nằm trong bộ nhớ máy chủ. Khởi
+// động lại máy chủ là mất sạch — đó đúng là việc POST /api/run/restore lo, và
+// giờ nó càng quan trọng: mỗi phiên mới là một "người chơi mới" cho tới khi
+// giao diện tự khôi phục từ localStorage.
+const TEN_COOKIE_PHIEN = 'tinh-tao-phien';
+
+// Không hoạt động quá hạn này thì phiên bị dọn, tránh rò rỉ bộ nhớ khi máy chủ
+// chạy dài ngày. Người chơi quay lại sau đó vẫn khôi phục được từ localStorage.
+const HAN_PHIEN_MS = 2 * 60 * 60 * 1000;
+
+// Dọn theo nhịp chứ không dọn mỗi request: quét là duyệt cả Map, mà các request
+// cách nhau vài giây thì gần như không có gì mới để dọn.
+const NHIP_DON_MS = 5 * 60 * 1000;
+
+const moiPhien = new Map();
+let lanDonGanNhat = Date.now();
+
+// gameState không giữ nội dung hội thoại, chỉ đếm lượt. Lịch sử chat sống trong
+// phiên và bị xoá mỗi khi sang tình huống mới.
 //
 // Hai cuộc hội thoại tách hẳn nhau: NPC ở cột giữa, trợ lý an toàn ở cột phải.
 // Không được gộp chung một mảng — trợ lý mà đọc được lời thoại của mình nhét
 // vào ngữ cảnh NPC thì cả hai vai đều hỏng.
-let phienChat = { caseId: null, messages: [] };
-let phienTroLy = { caseId: null, messages: [] };
-
-function dongBoPhienChat(caseId) {
-  if (phienChat.caseId !== caseId) {
-    phienChat = { caseId, messages: [] };
-  }
-  return phienChat;
+function taoPhien() {
+  return {
+    gameState: new GameState(),
+    chat: { caseId: null, messages: [] },
+    troLy: { caseId: null, messages: [] },
+    chamLuc: Date.now()
+  };
 }
 
-function dongBoPhienTroLy(caseId) {
-  if (phienTroLy.caseId !== caseId) {
-    phienTroLy = { caseId, messages: [] };
+function donPhienCu(bayGio) {
+  if (bayGio - lanDonGanNhat < NHIP_DON_MS) return;
+  lanDonGanNhat = bayGio;
+  for (const [ma, phien] of moiPhien) {
+    if (bayGio - phien.chamLuc > HAN_PHIEN_MS) moiPhien.delete(ma);
   }
-  return phienTroLy;
 }
 
-function xoaMoiPhien() {
-  phienChat = { caseId: null, messages: [] };
-  phienTroLy = { caseId: null, messages: [] };
+// Tự đọc cookie thay vì thêm cookie-parser: cần đúng một giá trị, không đáng
+// để kéo thêm phụ thuộc. res.cookie() thì Express có sẵn.
+function docMaPhien(header) {
+  if (!header) return null;
+  for (const manh of header.split(';')) {
+    const dauBang = manh.indexOf('=');
+    if (dauBang < 0) continue;
+    if (manh.slice(0, dauBang).trim() !== TEN_COOKIE_PHIEN) continue;
+    return decodeURIComponent(manh.slice(dauBang + 1).trim()) || null;
+  }
+  return null;
+}
+
+// Chỉ gắn vào /api chứ không gắn toàn cục: lần tải trang đầu bắn song song một
+// loạt request tài nguyên tĩnh, đều chưa có cookie, nên gắn toàn cục là mỗi
+// request đẻ một phiên rồi vứt đi gần hết. Các lời gọi API thì đi tuần tự.
+app.use('/api', (req, res, next) => {
+  const bayGio = Date.now();
+  donPhienCu(bayGio);
+
+  const ma = docMaPhien(req.headers.cookie);
+  let phien = ma ? moiPhien.get(ma) : null;
+
+  if (!phien) {
+    const maMoi = randomUUID();
+    phien = taoPhien();
+    moiPhien.set(maMoi, phien);
+    // Không đặt maxAge: đây là cookie phiên, đóng trình duyệt là mất.
+    // httpOnly vì chỉ máy chủ cần đọc, giao diện không đụng tới mã này.
+    res.cookie(TEN_COOKIE_PHIEN, maMoi, { httpOnly: true, sameSite: 'lax', path: '/' });
+  }
+
+  phien.chamLuc = bayGio;
+  req.phien = phien;
+  next();
+});
+
+function dongBoChat(phien, caseId) {
+  if (phien.chat.caseId !== caseId) {
+    phien.chat = { caseId, messages: [] };
+  }
+  return phien.chat;
+}
+
+function dongBoTroLy(phien, caseId) {
+  if (phien.troLy.caseId !== caseId) {
+    phien.troLy = { caseId, messages: [] };
+  }
+  return phien.troLy;
+}
+
+function xoaHoiThoai(phien) {
+  phien.chat = { caseId: null, messages: [] };
+  phien.troLy = { caseId: null, messages: [] };
 }
 
 // Bọc route async để lỗi rơi vào middleware xử lý lỗi thay vì treo request
@@ -82,7 +155,7 @@ function chuaBatDau(res) {
 
 // Ba route thao tác trong case dùng chung bộ kiểm tra này. Thứ tự quan trọng:
 // hết lượt chơi cũng làm caseHienTai rỗng, báo nhầm thành "chưa bắt đầu" thì khó lần ra.
-function caseDangMo(res) {
+function caseDangMo(gameState, res) {
   if (gameState.run.cases.length === 0) {
     chuaBatDau(res);
     return false;
@@ -134,6 +207,7 @@ function duLieuBocTach(caseData, banGhi) {
 // demoCaseIds: chế độ demo, chạy đúng danh sách tình huống đó theo đúng thứ tự
 // và bỏ qua casePicker. Dùng khi quay video để mỗi lần chạy ra cùng một lượt.
 app.post('/api/run/start', (req, res) => {
+  const { gameState } = req.phien;
   const { name = '', birthYear = null, gender = '', seed = null, demo = false, demoCaseIds = null } = req.body || {};
 
   const dsDemo = Array.isArray(demoCaseIds) ? demoCaseIds.filter(Boolean) : [];
@@ -157,7 +231,7 @@ app.post('/api/run/start', (req, res) => {
   gameState.reset();
   gameState.setProfile(name, birthYear, gender);
   const tienDo = gameState.startRun(ketQuaPick);
-  xoaMoiPhien();
+  xoaHoiThoai(req.phien);
 
   res.json({
     tienDo,
@@ -171,6 +245,7 @@ app.post('/api/run/start', (req, res) => {
 
 // 2. Lấy tình huống hiện tại, tự mở tình huống kế tiếp nếu chưa mở
 app.get('/api/run/current-case', (req, res) => {
+  const { gameState } = req.phien;
   if (gameState.run.cases.length === 0) return chuaBatDau(res);
 
   if (gameState.isGameOver) {
@@ -183,22 +258,23 @@ app.get('/api/run/current-case', (req, res) => {
     return res.json({ ketThuc: true, ketCuc: gameState.ketCuc, stats: gameState.stats });
   }
 
-  const phien = dongBoPhienChat(view.caseData.id);
-  const phienTL = dongBoPhienTroLy(view.caseData.id);
+  const chatNPC = dongBoChat(req.phien, view.caseData.id);
+  const chatTroLy = dongBoTroLy(req.phien, view.caseData.id);
 
   res.json({
     ketThuc: false,
     ...view,
     // Tin nhắn mở đầu cố định, không do AI sinh
     openingMessage: view.caseData.opening_message,
-    lichSuChat: phien.messages,
-    lichSuTroLy: phienTL.messages
+    lichSuChat: chatNPC.messages,
+    lichSuTroLy: chatTroLy.messages
   });
 });
 
 // 3. Gửi tin nhắn tới nhân vật
 app.post('/api/case/chat', async_(async (req, res) => {
-  if (!caseDangMo(res)) return;
+  const { gameState } = req.phien;
+  if (!caseDangMo(gameState, res)) return;
 
   const { message } = req.body || {};
   if (!message || !message.trim()) {
@@ -211,11 +287,11 @@ app.post('/api/case/chat', async_(async (req, res) => {
     return res.status(400).json({ error: luot.lyDo, luotConLai: 0 });
   }
 
-  const phien = dongBoPhienChat(caseData.id);
-  phien.messages.push({ role: 'user', content: message.trim() });
+  const chatNPC = dongBoChat(req.phien, caseData.id);
+  chatNPC.messages.push({ role: 'user', content: message.trim() });
 
-  const { reply, nguon } = await taoLoiThoaiNPC(caseData, phien.messages);
-  phien.messages.push({ role: 'assistant', content: reply });
+  const { reply, nguon } = await taoLoiThoaiNPC(caseData, chatNPC.messages);
+  chatNPC.messages.push({ role: 'assistant', content: reply });
 
   res.json({
     reply,
@@ -236,7 +312,8 @@ app.post('/api/case/chat', async_(async (req, res) => {
 // Hỏi trợ lý KHÔNG cộng điểm: không gọi applyDelta ở đây, và cũng không có
 // đường nào để cộng. Chỉ kiểm chứng mới được thưởng.
 app.post('/api/case/assistant', async_(async (req, res) => {
-  if (!caseDangMo(res)) return;
+  const { gameState } = req.phien;
+  if (!caseDangMo(gameState, res)) return;
 
   const { message } = req.body || {};
   if (!message || !message.trim()) {
@@ -249,18 +326,18 @@ app.post('/api/case/assistant', async_(async (req, res) => {
     return res.status(400).json({ error: luot.lyDo, luotConLai: 0 });
   }
 
-  const phienTL = dongBoPhienTroLy(caseData.id);
-  const phienNPC = dongBoPhienChat(caseData.id);
+  const chatTroLy = dongBoTroLy(req.phien, caseData.id);
+  const chatNPC = dongBoChat(req.phien, caseData.id);
 
   const { reply, nguon } = await hoiTroLyAnToan(
     caseData,
     message.trim(),
-    phienTL.messages,
-    phienNPC.messages
+    chatTroLy.messages,
+    chatNPC.messages
   );
 
-  phienTL.messages.push({ role: 'user', content: message.trim() });
-  phienTL.messages.push({ role: 'assistant', content: reply });
+  chatTroLy.messages.push({ role: 'user', content: message.trim() });
+  chatTroLy.messages.push({ role: 'assistant', content: reply });
 
   res.json({
     reply,
@@ -273,7 +350,8 @@ app.post('/api/case/assistant', async_(async (req, res) => {
 
 // 5. Gửi các cụm đã đánh dấu
 app.post('/api/case/spans', (req, res) => {
-  if (!caseDangMo(res)) return;
+  const { gameState } = req.phien;
+  if (!caseDangMo(gameState, res)) return;
 
   const { spanIds, spanId } = req.body || {};
   let daDanhDau;
@@ -292,7 +370,8 @@ app.post('/api/case/spans', (req, res) => {
 
 // 6. Dùng một lượt kiểm chứng
 app.post('/api/case/verify', (req, res) => {
-  if (!caseDangMo(res)) return;
+  const { gameState } = req.phien;
+  if (!caseDangMo(gameState, res)) return;
 
   const { optionId } = req.body || {};
   if (!optionId) return res.status(400).json({ error: 'Thiếu "optionId".' });
@@ -312,7 +391,8 @@ app.post('/api/case/verify', (req, res) => {
 
 // 7. Chốt quyết định kèm lý do
 app.post('/api/case/decision', async_(async (req, res) => {
-  if (!caseDangMo(res)) return;
+  const { gameState } = req.phien;
+  if (!caseDangMo(gameState, res)) return;
 
   const { decision, reason = '', spanIds = null } = req.body || {};
   if (decision !== QUYET_DINH.LAM_THEO && decision !== QUYET_DINH.KHONG_LAM) {
@@ -333,7 +413,7 @@ app.post('/api/case/decision', async_(async (req, res) => {
     markedSpanIds: spanIds
   });
 
-  xoaMoiPhien();
+  xoaHoiThoai(req.phien);
 
   res.json({
     quyetDinhDung: ketQua.quyetDinhDung,
@@ -358,6 +438,7 @@ app.post('/api/case/decision', async_(async (req, res) => {
 // Tên chặng chưa mở không gửi xuống, giữ yếu tố bất ngờ kể cả khi người chơi
 // mở công cụ lập trình xem dữ liệu.
 app.get('/api/run/outline', (req, res) => {
+  const { gameState } = req.phien;
   if (gameState.run.cases.length === 0) return chuaBatDau(res);
 
   // Tên topic tra theo id, dùng để lộ chủ đề ngay cả khi chặng chưa mở —
@@ -411,6 +492,7 @@ app.get('/api/run/outline', (req, res) => {
 
 // 9. Trạng thái kết thúc và dữ liệu màn ôn tập
 app.get('/api/run/summary', (req, res) => {
+  const { gameState } = req.phien;
   if (gameState.history.length === 0 && gameState.run.cases.length === 0) return chuaBatDau(res);
 
   const tongKet = gameState.getSummary();
@@ -439,11 +521,12 @@ app.get('/api/run/summary', (req, res) => {
 
 // 10. Vào màn ôn tập — chơi lại đúng những tình huống đã sai, giữ nguyên chỉ số
 app.post('/api/run/review', (req, res) => {
+  const { gameState } = req.phien;
   if (gameState.run.cases.length === 0) return chuaBatDau(res);
 
   try {
     const tienDo = gameState.startReviewRun();
-    xoaMoiPhien();
+    xoaHoiThoai(req.phien);
     res.json({ tienDo, stats: gameState.stats });
   } catch (error) {
     res.status(409).json({ error: error.message, ketCuc: gameState.ketCuc });
@@ -452,6 +535,7 @@ app.post('/api/run/review', (req, res) => {
 
 // 11. Ảnh chụp tiến trình để giao diện cất vào localStorage
 app.get('/api/run/state', (req, res) => {
+  const { gameState } = req.phien;
   if (gameState.run.cases.length === 0) return chuaBatDau(res);
   res.json({ tienDo: gameState.xuatTienDo() });
 });
@@ -463,6 +547,7 @@ app.get('/api/run/state', (req, res) => {
 // tục" đúng nghĩa: bản lưu ở máy người chơi mới là nguồn, máy chủ dựng lại
 // theo nó. Trong bản lưu chỉ có id, nội dung tình huống luôn lấy từ database.
 app.post('/api/run/restore', (req, res) => {
+  const { gameState } = req.phien;
   const ban = req.body?.tienDo;
   if (!ban || !ban.run) {
     return res.status(400).json({ error: 'Thiếu "tienDo" trong bản lưu.' });
@@ -487,9 +572,9 @@ app.post('/api/run/restore', (req, res) => {
       cases: dsRun.cases,
       casesLuotChinh: dsChinh.cases
     });
-    // Hội thoại không nằm trong bản lưu, nên phải xoá phiên cũ của máy chủ để
+    // Hội thoại không nằm trong bản lưu, nên phải xoá hội thoại cũ của phiên để
     // tình huống mở lại không thừa lời thoại của lượt trước
-    xoaMoiPhien();
+    xoaHoiThoai(req.phien);
     res.json({ tienDo, stats: gameState.stats, coKhoaAI: coKhoaAI() });
   } catch (error) {
     res.status(409).json({ error: error.message });
